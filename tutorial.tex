@@ -1,0 +1,236 @@
+\documentclass[%twoside,% regular options
+			   halfparskip,smallheadings,pointlessnumbers]% KOMA options
+			   {scrartcl} % Class: KOMA-script version of 'article'
+\usepackage[T1]{fontenc} % T1 for Vera sans
+% Including figures
+\usepackage[dvipsnames,usenames]{color}
+\usepackage[pdftex]{graphicx}
+\def\pdfshellescape{1} % to get rid of warning
+\usepackage{epstopdf}
+\usepackage{subfigure}
+% Palatino font
+\usepackage[osf,sc]{mathpazo}
+\linespread{1.05} % Palatino needs slightly larger spacing
+% Vera Sans for sans serif fonts
+\usepackage[scaled]{berasans}
+% Vera Mono for typewriter
+\usepackage[scaled]{beramono}
+% Code listing
+\usepackage{listings}
+
+\definecolor{LightGray}{gray}{0.9}
+
+\begin{document}
+\lstset{language=C, columns=fullflexible, captionpos=b, breaklines,% General options
+	frame=single, framerule=0pt, backgroundcolor=\color{LightGray},% Gray background
+	basicstyle=\ttfamily\small,%
+	keywordstyle=\color{MidnightBlue},%
+	commentstyle=\rmfamily\itshape\color{PineGreen},%
+	stringstyle=\rmfamily\bfseries\color{RoyalBlue},%
+	emph={GObject, GObjectClass, GtkContainer, GtkContainerClass, GType, GtkWidget, GtkWidgetClass, GList, GtkRequisition, GtkAllocation, gboolean, GtkCallback, gpointer, guint, gint, GtkToolButton, gchar, GtkObject, GtkToolItem, GtkWindow, GtkVBox, GtkButton, GtkBuildable, GtkAnchorType, GtkEntry, GtkAction, GtkActionGroup, GtkStatusbar, GtkBox, GtkBuilder, GtkActionEntry, GtkToggleActionEntry, GtkUIManager, GtkAccelGroup},%
+	emphstyle=\color{Maroon}%
+	}
+\lstdefinestyle{XML}%
+	{language=XML, columns=fullflexible, captionpos=b, breaklines,%
+	frame=single, framerule=0pt, backgroundcolor=\color{LightGray},%
+	basicstyle=\rmfamily\bfseries\small,%
+	keywordstyle=\ttfamily\mdseries\color{MidnightBlue},%
+	commentstyle=\rmfamily\mdseries\itshape\color{PineGreen},%
+	stringstyle=\rmfamily\bfseries\color{RoyalBlue},
+	markfirstintag=true, tagstyle=\ttfamily\mdseries\color{Maroon}%
+	}
+\lstdefinestyle{make}%
+	{language=[gnu]make, columns=fullflexible, captionpos=b, breaklines,%
+	frame=single, framerule=0pt, backgroundcolor=\color{LightGray},%
+	basicstyle=\ttfamily\small,%
+	keywordstyle=\color{MidnightBlue},%
+	commentstyle=\rmfamily\itshape\color{PineGreen},%
+	makemacrouse=true%
+	}
+
+\title{Advanced GTK+ Techniques}
+\author{Philip Chimento}
+\maketitle
+
+\section{Introduction}
+I decided to write this paper after reading the excellent book \emph{Foundations of GTK+ Development} by Andrew Krause. The book does a wonderful job of describing GTK's most-used widgets and how to use them, and even though I had already had a certain amount of experience with GTK, reading it taught me several tricks I didn't know. There is also a section on writing your own widgets, but I found it a little too short to really get into the nitty-gritty. So, I thought I'd share some of the stuff that I had to find out through trial and error.
+
+My intended audience is people who are able to get to the end of \emph{Foundations} without their brains exploding, and are capable of programming a small application in GTK. You don't literally have to have read the book, of course, but it will help to have done so, since I won't be covering things in great detail that the book already covered. If you have some experience with GTK, you should be able to get by without reading it. If you are a GTK beginner, I suggest you do read it, or some other tutorial, or do some programming and read the GTK docs as you go, if that's your preferred way of learning things.
+
+If you have a reasonable amount of experience with GTK, GLib, and GObject, you will know about the naming scheme for GObject classes. The classes in this paper will use the namespace prefix \lstinline$P$, which is the first letter of my name, and easy to type and pronounce. After all, it's my tutorial.
+
+\section{Using dynamic menu and toolbar actions}
+
+There are several ways to design and build the graphical interface for your GTK program. Glade 3 is by far the best if your interface has any degree of complication at all. However, the menu editor in Glade does not take advantage of the advanced features for menus and toolbars added in GTK 2.4, such as action groups and accelerator maps. These features are explained in \emph{Foundations}, but not how to use them in combination with Glade. A serious application, big enough to require Glade for its design, will often want to do things like:
+\begin{itemize}
+\item Change the ``sensitive'' status of some actions like Cut and Copy, depending on whether there is text selected in the application;
+\item Programmatically change the contents of menus;
+\item Have customizable toolbars and keyboard shortcuts.
+\end{itemize}
+The latter facility, for example, is easily enabled in Mac OS X applications designed with Apple's Interface Builder for Cocoa. The infrastructure for it is there in GTK, just not as easily accessible. Glade's menu and toolbar editor doesn't build its menus using \lstinline$GtkAction$s, even though \lstinline$GtkBuilder$ is capable of constructing them from XML files. This functionality will appear in the future, when Glade is able to write \lstinline$GtkBuilder$ XML files.
+
+Until then, some trickery is required, and some extra dialogues must be constructed. We will build an example application with ridiculous do-nothing actions inspired by the Beatles' \emph{Ballad of Rocky Raccoon}, about a young man who fights a duel to win back his lady love. Our program will take special note of the fact that ``her name was Magill, and she called herself Lil, but everyone knew her as Nancy''; \lstinline$GtkAction$s can also be known by more than one name.
+
+\subsection{Building the interface}
+
+First we will build the interface using Glade 3, and call it \texttt{rocky-interface.glade}. Figure~\ref{fig:rocky-interface-screenshot} shows a screenshot of the various windows we built in Glade. There is a main application window and an about dialog. For details, see the file itself, included in the code distribution, or load the file in Glade.
+
+\begin{figure}
+\framebox{Screenshot}
+\caption{Screenshots of the Rocky Raccoon user interface} \label{fig:rocky-interface-screenshot}
+\end{figure}
+
+You will notice that the main application window does not contain a menu bar or a toolbar. That is because we will automatically generate these from an XML file with the menu structure, which we will write in the next section. It is also important to notice that the text view (representing the actual application widget, whatever it may be) and the status bar are end-packed into their containing \lstinline$GtkVBox$; that is, they appear below any start-packed widgets. This is convenient because we can then start-pack the menu bar and toolbar, and not have to worry about where to insert them.
+
+\subsection{Building the menu structure}
+
+The menus and 
+
+\lstinputlisting[style=XML, numbers=left, stepnumber=5]{rocky-raccoon/rocky-menus.xml}
+
+\lstinputlisting[numbers=left, stepnumber=5]{rocky-raccoon/rocky.c}
+
+\lstinputlisting[style=make, numbers=left, stepnumber=5]{rocky-raccoon/Makefile}
+
+\section{A container that does its own size allocation}
+
+Size allocation is not a very difficult procedure in GTK; every widget has overridable \lstinline$size_request$ and \lstinline$size_allocate$ methods. Sizes are requested from the bottom of the widget tree up, with each container calling \lstinline$gtk_widget_size_request()$ on each of its children and then calculating its own size request using that information. Once the total size is known, the available space is calculated and allocated from the top down: each container divides up the space it receives among its children by calling their \lstinline$gtk_widget_size_allocate()$ methods. This is covered in chapter 11 of \emph{Foundations}.
+
+In most cases, such as writing a composite widget or adding functionality to an existing container, you can get away with subclassing a container like \lstinline$GtkVBox$. That way, you don't have to deal with size negotiation and other container stuff directly, since it's already implemented in your parent class. But what if you want a container that arranges its children differently than all the existing GTK containers? Then you'll have to write a new container with its own size request and allocation algorithms.
+
+It wasn't easy to think of a realistic-yet-simple example, since anytime you really have to do this, you're probably attempting something complicated. Therefore, we will write a fairly useless container which arranges all its children in a square, inspired by '80's video clips with cheesy split screen effects, like \emph{Heat of the Moment}. The container will find an integer $n$ so that 
+\[ n^2 \geq V, \]
+where $V$ is the number of visible children of the container. The container will then divide its space into an $n \times n$ grid, which it will fill from left to right and top to bottom.
+
+\subsection{Header file}
+
+We will create a subclass of \lstinline$GtkContainer$ called \lstinline$PSquare$. The header file, \texttt{psquare.h}, is a textbook case if there ever was one, so I won't reprint it here. It exports only two functions, \lstinline$p_square_get_type()$ and \lstinline$p_square_new()$, since all of the interesting stuff happens in overridden \lstinline$GtkContainer$ functions.
+
+\subsection{Class boilerplate}
+
+We will briefly go over the required GObject stuff in the \texttt{psquare.c} file, since \emph{Foundations} doesn't cover the \lstinline$G_DEFINE_TYPE$ macros or the \lstinline$g_type_class_add_private()$ mechanism.
+
+\lstinline$G_DEFINE_TYPE()$ is a handy macro that saves you a lot of typing. It writes your \lstinline$p_square_get_type()$ function for you, which you then export in your header file; it also declares a static \lstinline$p_square_parent_class$ variable, a static \lstinline$p_square_class_init()$ function, and a static \lstinline$p_square_init()$ function.
+
+\lstinputlisting[linerange=24-24]{psquare/psquare.c}
+
+The parent class variable is there to avoid a costly call to \lstinline$g_type_class_peek_parent()$ every time you need to chain up to a method in the parent class (often in \lstinline$finalize$). You need to write the class and instance initialization functions yourself.
+
+\lstinputlisting[linerange=27-44]{psquare/psquare.c}
+
+The class initialization function \lstinline$p_square_class_init$ overrides several methods in ancestor classes. If you are not familiar with the GObject way of doing this, then take a good look now. Our test program will not use the \lstinline$forall$ and \lstinline$child_type$ methods, but a peek at \texttt{gtkcontainer.c} will reveal that they are set to \lstinline$NULL$ in the \lstinline$GtkContainer$ class initializer; in other words, they are pure virtual functions, and are required to be overridden.
+
+The other thing the class initializer does is register \lstinline$PSquare$'s private indirection member. This is probably the most effective way of hiding your implementation details when you write a class. This is achieved by defining a private member structure and telling GObject to allocate space for it in each instance of that class, using \lstinline$g_type_class_add_private()$. That way, each object has private data stored in it, but you can only access that data if the composition of your private structure is exposed. The private structure is defined in the following code.
+
+\lstinputlisting[linerange=6-13]{psquare/psquare.c}
+
+You might prefer to put these lines in a file called something like \texttt{psquare-private.h}. That way, any implementation file that includes it will be able to access the private data, kind of like the \lstinline[language=C++]$friend$ directive in C++. It also comes in handy if the implementation of your class is very big and you want to split it over several files.
+
+The macro \lstinline$P_SQUARE_PRIVATE()$ gives us the private data of a \lstinline$PSquare$. Our only private member is the list of our container's children. We need to keep track of this list ourselves, since \lstinline$GtkContainer$ won't do it for us. 
+
+The instance initialization function \lstinline$p_square_init()$ initializes the public and private members of our object:
+
+\begin{lstlisting}
+static void
+p_square_init(PSquare *square)
+{
+	GTK_WIDGET_SET_FLAGS(GTK_WIDGET(square), GTK_NO_WINDOW);
+	
+	/* Initialize private members */
+	PSquarePrivate *priv = P_SQUARE_PRIVATE(square);
+	priv->children = NULL;
+}
+\end{lstlisting}
+
+The \lstinline$GTK_NO_WINDOW$ flag means that \lstinline$Psquare$ doesn't have a \lstinline$GdkWindow$ associated with it; we don't do any drawing ourselves, we just arrange the container's children. The private member \lstinline$children$ is initialized to \lstinline$NULL$, which is an empty \lstinline$GList$, as you should know.
+
+You should also know that it is customary to create a widget with a \lstinline$p_square_new()$ function, which returns a new instance of the class, cast to a \lstinline$GtkWidget$ pointer. It's too trivial to reprint here.
+
+\subsection{Overriding \lstinline$GtkContainer$ methods}
+
+Now for the overridden ancestor methods. The \lstinline$GtkContainer$ ones are fairly trivial, so we'll do them first. The \lstinline$child_type$ method, specifying what types of children can be added to the container, simply returns \lstinline$GTK_TYPE_WIDGET$. The \lstinline$forall$ pointer in the \lstinline$GtkContainerClass$ structure doesn't correspond exactly to a \lstinline$GtkContainer$ method, but \lstinline$gtk_container_forall()$ and \lstinline$gtk_container_foreach()$ are implemented in terms of it, as well as some other functions. One iterates over all children including ``internal'' ones (such as the \lstinline$GtkButton$s in a dialog), the other doesn't. The class \lstinline$forall$ function takes a flag telling whether to include internal children or not. \lstinline$PSquare$ doesn't have any internal children, so we just ignore that.
+
+\lstinputlisting[firstline=280]{psquare/psquare.c} %p_square_forall
+
+The next things to implement are the \lstinline$add$ and \lstinline$remove$ methods. Note that you don't have to have them if, for example, your container has a different mechanism for adding widgets; the default \lstinline$GtkContainer$ implementations do nothing, and print a warning message saying that the method is not implemented.
+
+\lstinputlisting[linerange=235-253]{psquare/psquare.c} %p_square_add
+
+It may surprise you that this function is not longer. However, as the comment says, all the real work is done in \lstinline$gtk_widget_set_parent()$: sinking the child's floating reference, redrawing the child, emitting the appropriate signals, etc. We still have to redraw the container ourselves. The corresponding method to remove a child is much the same, with all the real work being done in \lstinline$gtk_widget_unparent()$.
+
+\lstinputlisting[linerange=255-277]{psquare/psquare.c} %p_square_remove
+
+Note that we don't have to write \lstinline$p_square_destroy()$ or \lstinline$p_square_finalize()$ methods to unref the child widgets, since the \lstinline$GtkContainer$ code already does that when the container is destroyed.
+
+\subsection{Size negotiation}
+
+Now that we have all that out of the way, we can get to the meat of this section. We will determine how much width our container needs by adding up the width of each column. The width of a column will be equal to the width of the widest widget in that column. The container height will be determined likewise. We will also respect the \lstinline$border_width$ property of \lstinline$GtkContainer$.
+
+The \lstinline$size_request$ method is passed a pointer to a \lstinline$GtkRequisition$ structure, which it must fill with its requested size.
+
+\begin{lstlisting}
+static void p_square_size_request(GtkWidget *widget, GtkRequisition *requisition);
+\end{lstlisting}
+
+We start by setting the \lstinline$width$ and \lstinline$height$ fields of the size requisition to their minimum value, twice the border width. Then we compute the number of visible children, and if that is zero, our work is done; we don't layout unshown widgets.
+
+\lstinputlisting[linerange=76-88]{psquare/psquare.c}
+
+Then, we compute the size of the side of our square, and allocate arrays to store that number of column widths and row heights. When we get all the size requests of the container's children, we will store a running maximum for each row and column in those arrays, then add them up.
+
+\lstinputlisting[linerange=90-95]{psquare/psquare.c}
+
+We then iterate over the children again, asking them for their size requests. The simplest way is to allocate a \lstinline$GtkRequisition$ structure on the stack and pass its address to the child's size request function. If the child's width is larger than the width we have stored for the column we're in, we replace the stored width by the child's width, and likewise for the height. Then we add the widths and heights to our own requisition.
+
+\lstinputlisting[linerange=97-116]{psquare/psquare.c}
+
+The \lstinline$size_allocate$ method is similar. It receives a pointer to a \lstinline$GtkAllocation$ structure, which contains the size that the widget will have to deal with.
+
+\begin{lstlisting}
+static void p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation);
+\end{lstlisting}
+
+The first thing it must do is store the allocation in the widget structure.
+
+\lstinputlisting[linerange=131-131]{psquare/psquare.c}
+
+The next section is very similar to the code in the \lstinline$size_request$ method.
+
+\lstinputlisting[linerange=133-163]{psquare/psquare.c}
+
+The only thing different here is that instead of calling \lstinline$gtk_widget_size_request()$ on each child, we call \lstinline$gtk_widget_get_size_requisition()$ instead. The latter function does not ask the child to calculate a size request, but instead retrieves the last known size request, which is either the size set in the child's size request method, or from program code calling \lstinline$gtk_widget_set_size_request()$ on the widget. The GTK documentation says it should only be used when you know that the widget's size request is up to date, and in this case, we do.
+
+Now we have to distribute the container's allocated space to the children. Our policy will be to divide any extra width equally among the columns, and any extra height equally among the rows. If there is too little space, it will be taken equally from each column or row. First we calculate the space surplus or deficit per column and row.
+
+\lstinputlisting[linerange=166-167]{psquare/psquare.c}
+
+Then we calculate the actual space to allocate to each column and row, by adding the extra space (which can be negative) to each column. We have to watch out that we don't allocate less than zero space to any widget, so if any space is less than zero, we borrow pixels one by one from any other nonzero columns until the space is zero.
+
+\lstinputlisting[linerange=169-193]{psquare/psquare.c}
+
+We will keep track of the $(x,y)$ coordinates at which we will place the top left corner of our next child widget. Note that the \lstinline$x$ and \lstinline$y$ members of the \lstinline$GtkAllocation$ structure contains (I think) screen coordinates, not offsets from the top left of the containing widget, so you always need to start from those values.
+
+\lstinputlisting[linerange=196-198]{psquare/psquare.c}
+
+Then we iterate once more over the visible children. For each child, we allocate a \lstinline$GtkAllocation$ structure on the stack, fill it with the correct $(x,y)$ coordinates and size, and notify the child by calling \lstinline$gtk_widget_size_allocate()$. Then we update our $x$ and $y$ coordinates appropriately for the next child, moving down a row and returning to the left edge of the container when we reach the end of a row.
+
+\lstinputlisting[linerange=200-221]{psquare/psquare.c}
+
+\subsection{Example application}
+
+We will create a simple example application to showcase our new container. You will find \texttt{test-psquare.c} in the code distribution, along with a simple \texttt{Makefile}. We create a toplevel window and require it to be a specific size (although you can resize it to be larger while the program is running), using \lstinline$gtk_widget_set_size_request()$. Since the window will stay the same size, then the widgets in the container will have more than enough space if there are only a few, but as more and more widgets are added, they will have to start squeezing themselves into spaces smaller than their size requests. 
+
+We will add a toolbar to the window with add and remove buttons, to add a random widget to the container (using \lstinline$gtk_container_add()$) or remove the last one added (with \lstinline$gtk_container_remove()$).
+
+If you compile the example application and run it, try adding lots of widgets to the container. You'll notice that a \lstinline$GtkEntry$ requests a lot of width, and so columns with \lstinline$GtkEntry$s in them tend to crowd out other columns when horizontal space gets tight. You shouldn't get any warnings about negative size allocations, however.
+
+\subsection{Exercises}
+
+\begin{itemize}
+\item Change \lstinline$p_square_size_allocate()$ so that it allocates any extra space according to the proportion of the total space that the column or row takes up. Likewise, if there is not enough space, then narrow columns and short rows lose less space, and wide columns and tall rows lose more.
+\item Change \lstinline$PSquare$ so that instead of filling its cells from left to right and top to bottom, it fills them in a clockwise spiral starting at the top left.
+\item Implement child properties for \lstinline$PSquare$ children: for example, \lstinline$fill-horizontal$ and \lstinline$fill-vertical$ properties, which control whether the child widget fills all of its allocated space or sticks to its own request; and a property that controls how the child aligns itself if it does not fill the entire cell. You could implement this last one as two properties, for horizontal and vertical alignment, or you could use one value of type \lstinline$GtkAnchorType$.
+\item Make \lstinline$PSquare$ implement the \lstinline$GtkBuildable$ interface.
+\end{itemize}
+
+\end{document}

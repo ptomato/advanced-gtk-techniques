@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui>
+	<menubar name="Menubar">
+		<menu name="Stuff" action="StuffMenuAction">
+			<menuitem name="Visible" action="VisibleToggle" />
+			<menuitem name="Active" action="ActiveToggle" />
+			<separator/>
+			<menuitem name="Lil" action="Magill" />
+			<separator/>
+			<menuitem name="Quit" action="ExitProgram" />
+			<placeholder name="FileMenuAdditions" />
+		</menu>
+		<menu name="Help" action="HelpMenuAction">
+			<menuitem name="About" action="ShowAbout" />
+			<menuitem name="Beatles" action="PlayMusic" />
+			<separator/>
+			<placeholder name="HelpMenuAdditions" />
+		</menu>
+	</menubar>
+	<toolbar name="Toolbar">
+		<placeholder name="ToolbarPlaceholder">
+			<toolitem name="New" action="VisibleToggle" />
+			<toolitem name="Open" action="ActiveToggle" />
+			<separator/>
+			<toolitem name="Nancy" action="Magill" />
+		</placeholder>
+	</toolbar>
+</ui>
+
