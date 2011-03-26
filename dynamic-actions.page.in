@@ -42,4 +42,29 @@ Our program will take special note of the fact that</p>
 
 <p><code>GtkAction</code>s can also be known by more than one name.</p>
 
+<section id="interface">
+<title>Building the interface</title>
+
+<p>First we will build the interface using Glade 3, and call it <file>rocky.ui</file>.
+Here is a screenshot of the various windows we built in Glade.</p>
+
+<media type="image" src="rocky-screenshot.png">
+  <p>(Screenshots of the Rocky Raccoon user interface)</p>
+</media>
+
+<p>There is a main application window and an about dialog.
+For details, see the file itself, included in the code distribution, or load the file in Glade.</p>
+
+<p>You will notice that the main application window does not contain a menu bar or a toolbar. 
+That is because we will automatically generate these from an XML file with the menu structure, which we will write in the next section.
+It is also important to notice that the text view (representing the actual application widget, whatever it may be) and the status bar are end-packed into their containing <code>GtkVBox</code>; that is, they appear below any start-packed widgets.
+This is convenient because we can then start-pack the menu bar and toolbar, and not have to worry about where to insert them.</p>
+
+</section>
+<section>
+<title>Building the menu structure</title>
+
+The menus and
+
+</section>
 </page>
