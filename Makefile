@@ -6,8 +6,8 @@ PAGES = \
 	dynamic-actions.page \
 	custom-container.page
 
-%.page: %.page.in
-	cp $< $@
+%.page: %.page.in add-listings.py
+	./add-listings.py $< >$@
 
 all: $(PAGES)
 
