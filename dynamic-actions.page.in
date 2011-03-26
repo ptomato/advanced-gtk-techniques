@@ -1,0 +1,45 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="dynamic-actions">
+<info>
+  <link type="guide" xref="index"/>
+  <link type="next" xref="custom-container"/>
+</info>
+<title>Using dynamic menu and toolbar actions</title>
+
+<p>There are several ways to design and build the graphical interface for your GTK program.
+Glade 3 is by far the best if your interface has any degree of complication at all.
+However, the menu editor in Glade does not take advantage of the advanced features for menus and toolbars added in GTK 2.4, such as action groups and accelerator maps.
+These features are explained in <em>Foundations</em>, but not how to use them in combination with Glade.
+A serious application, big enough to require Glade for its design, will often want to do things like:</p>
+
+<list>
+  <item>
+    <p>Change the "sensitive" status of some actions like Cut and Copy, depending on whether there is text selected in the application;</p>
+  </item>
+  <item>
+    <p>Programmatically change the contents of menus;</p>
+  </item>
+  <item>
+    <p>Have customizable toolbars and keyboard shortcuts.</p>
+  </item>
+</list>
+
+<p>The latter facility, for example, is easily enabled in Mac OS X applications designed with Apple's Interface Builder for Cocoa.
+The infrastructure for it is there in GTK, just not as easily accessible.
+Glade's menu and toolbar editor doesn't build its menus using <code>GtkAction</code>s, even though <code>GtkBuilder</code> is capable of constructing them from XML files.
+This functionality will appear in the future, when Glade is able to write <code>GtkBuilder</code> XML files.</p>
+
+<p>Until then, some trickery is required, and some extra dialogues must be constructed.
+We will build an example application with ridiculous do-nothing actions inspired by the Beatles' <em>Ballad of Rocky Raccoon</em>, about a young man who fights a duel to win back his lady love.
+Our program will take special note of the fact that</p>
+
+<quote>
+  <p>Her name was Magill / 
+  and she called herself Lil / 
+  but everyone knew her as Nancy;</p>
+</quote> 
+
+<p><code>GtkAction</code>s can also be known by more than one name.</p>
+
+</page>

@@ -1,0 +1,22 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="introduction">
+<info>
+  <link type="guide" xref="index"/>
+  <link type="next" xref="dynamic-actions"/>
+</info>
+<title>Introduction</title>
+<p>I decided to write this guide after reading the excellent book <em href="http://gtkbook.com">Foundations of GTK+ Development</em><!-- TODO: Semantic markup to show it's a book --> by Andrew Krause.
+The book does a wonderful job of describing GTK's most-used widgets and how to use them, and even though I had already had a certain amount of experience with GTK, reading it taught me several tricks I didn't know.
+There is also a section on writing your own widgets, but I found it a little too short to really get into the nitty-gritty.
+So, I thought I'd share some of the stuff that I had to find out through trial and error.</p>
+
+<p>My intended audience is people who are able to get to the end of <em>Foundations</em> without their brains exploding, and are capable of programming a small application in GTK.
+You don't literally have to have read the book, of course, but it will help to have done so, since I won't be covering things in great detail that the book already covered.
+If you have some experience with GTK, you should be able to get by without reading it.
+If you are a GTK beginner, I suggest you do read it, or some other tutorial, or do some programming and read the GTK docs as you go, if that's your preferred way of learning things.</p>
+
+<p>If you have a reasonable amount of experience with GTK, GLib, and GObject, you will know about the naming scheme for GObject classes.
+The classes in this guide will use the namespace prefix <code>P</code>, which is the first letter of my name, and easy to type and pronounce.
+After all, it's my tutorial.</p>
+</page>

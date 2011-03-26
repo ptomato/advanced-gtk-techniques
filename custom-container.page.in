@@ -1,0 +1,41 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="custom-container">
+<info>
+  <link type="guide" xref="index"/>
+  <title type="link">Custom container</title>
+</info>
+<title>A container that does its own size allocation</title>
+
+<p>Size allocation is not a very difficult procedure in GTK; every widget has overridable <code>size_request</code> and <code>size_allocate</code> methods.
+Sizes are requested from the bottom of the widget tree up, with each container calling <code>gtk_widget_size_request()</code> on each of its children and then calculating its own size request using that information.
+Once the total size is known, the available space is calculated and allocated from the top down: each container divides up the space it receives among its children by calling their <code>gtk_widget_size_allocate()</code> methods.
+This is covered in chapter 11 of <em>Foundations</em>.</p>
+
+<p>In most cases, such as writing a composite widget or adding functionality to an existing container, you can get away with subclassing a container like <code>GtkVBox</code>.
+That way, you don't have to deal with size negotiation and other container stuff directly, since it's already implemented in your parent class.
+But what if you want a container that arranges its children differently than all the existing GTK containers?
+Then you'll have to write a new container with its own size request and allocation algorithms.</p>
+
+<p>It wasn't easy to think of a realistic-yet-simple example, since anytime you really have to do this, you're probably attempting something complicated.
+Therefore, we will write a fairly useless container which arranges all its children in a square, inspired by '80's video clips with cheesy split screen effects, like <em>Heat of the Moment</em>.
+The container will find an integer <span xmlns="http://www.w3.org/1998/Math/MathML"><math><mrow><mi>n</mi></mrow></math></span> so that</p>
+
+<!-- TODO: find a better way to do math -->
+<table><tr><td>
+  <span xmlns="http://www.w3.org/1998/Math/MathML"><math><mrow>
+    <mi>n</mi><msup><mn>2</mn></msup>
+    <mo>&#x2265;<!--geq--></mo>
+    <mi>V</mi>
+  </mrow></math></span>
+</td></tr></table>
+
+<p>where <span xmlns="http://www.w3.org/1998/Math/MathML"><math><mi>V</mi></math></span> is the number of visible children of the container. The container will then divide its space into an <span xmlns="http://www.w3.org/1998/Math/MathML"><math><mi>n</mi><mo>&#x00D7;<!--Times--></mo><mi>n</mi></math></span> grid, which it will fill from left to right and top to bottom.</p>
+
+<section id="header-file">
+<title>Header file</title>
+
+<p>We will create a subclass of <code>GtkContainer</code> called <code>PSquare</code>. The header file, <file>psquare.h</file>, is a textbook case if there ever was one, so I won't reprint it here. It exports only two functions, <code>p_square_get_type()</code> and <code>p_square_new()</code>, since all of the interesting stuff happens in overridden <code>GtkContainer</code> functions.</p>
+
+</section>
+</page>
