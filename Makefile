@@ -11,4 +11,9 @@ PAGES = \
 
 all: $(PAGES)
 
-.PHONY: all
+html: all
+	mkdir -p html
+	cd html && \
+	gnome-doc-tool html ../*.page
+
+.PHONY: all html
