@@ -19,18 +19,18 @@ Then you'll have to write a new container with its own size request and allocati
 
 <p>It wasn't easy to think of a realistic-yet-simple example, since anytime you really have to do this, you're probably attempting something complicated.
 Therefore, we will write a fairly useless container which arranges all its children in a square, inspired by '80's video clips with cheesy split screen effects, like <em>Heat of the Moment</em>.
-The container will find an integer <span xmlns="http://www.w3.org/1998/Math/MathML"><math><mrow><mi>n</mi></mrow></math></span> so that</p>
+The container will find an integer <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mi>n</m:mi></m:mrow></m:math></span> so that</p>
 
 <!-- TODO: find a better way to do math -->
 <table><tr><td>
-  <span xmlns="http://www.w3.org/1998/Math/MathML"><math><mrow>
-    <mi>n</mi><msup><mn>2</mn></msup>
-    <mo>&#x2265;<!--geq--></mo>
-    <mi>V</mi>
-  </mrow></math></span>
+  <p><span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow>
+    <m:mi>n</m:mi><m:msup><m:mn>2</m:mn></m:msup>
+    <m:mo>&#x2265;<!--geq--></m:mo>
+    <m:mi>V</m:mi>
+  </m:mrow></m:math></span></p>
 </td></tr></table>
 
-<p>where <span xmlns="http://www.w3.org/1998/Math/MathML"><math><mrow><mi>V</mi></mrow></math></span> is the number of visible children of the container. The container will then divide its space into an <span xmlns="http://www.w3.org/1998/Math/MathML"><math><mrow><mi>n</mi><mo>&#x00D7;<!--Times--></mo><mi>n</mi></mrow></math></span> grid, which it will fill from left to right and top to bottom.</p>
+<p>where <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mi>V</m:mi></m:mrow></m:math></span> is the number of visible children of the container. The container will then divide its space into an <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mi>n</m:mi><m:mo>&#x00D7;<!--Times--></m:mo><m:mi>n</m:mi></m:mrow></m:math></span> grid, which it will fill from left to right and top to bottom.</p>
 
 <section id="header-file">
 <title>Header file</title>
@@ -185,14 +185,14 @@ We have to watch out that we don't allocate less than zero space to any widget, 
 
 <!--{{{psquare/psquare.c:169-193}}}-->
 
-<p>We will keep track of the <span xmlns="http://www.w3.org/1998/Math/MathML"><math><mrow><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo></mrow></math></span> coordinates at which we will place the top left corner of our next child widget.
+<p>We will keep track of the <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow></m:math></span> coordinates at which we will place the top left corner of our next child widget.
 Note that the <code>x</code> and <code>y</code> members of the <code>GtkAllocation</code> structure contain (I think) screen coordinates, not offsets from the top left of the containing widget, so you always need to start from those values.</p>
 
 <!--{{{psquare/psquare.c:196-198}}}-->
 
 <p>Then we iterate once more over the visible children.
-For each child, we allocate a <code>GtkAllocation</code> structure on the stack, fill it with the correct <span xmlns="http://www.w3.org/1998/Math/MathML"><math><mrow><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo></mrow></math></span> coordinates and size, and notify the child by calling <code>gtk_widget_size_allocate()</code>.
-Then we update our <span xmlns="http://www.w3.org/1998/Math/MathML"><math><mrow><mi>x</mi></mrow></math></span> and <span xmlns="http://www.w3.org/1998/Math/MathML"><math><mrow><mi>y</mi></mrow></math></span> coordinates appropriately for the next child, moving down a row and returning to the left edge of the container when we reach the end of a row.</p>
+For each child, we allocate a <code>GtkAllocation</code> structure on the stack, fill it with the correct <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow></m:math></span> coordinates and size, and notify the child by calling <code>gtk_widget_size_allocate()</code>.
+Then we update our <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mi>x</m:mi></m:mrow></m:math></span> and <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mi>y</m:mi></m:mrow></m:math></span> coordinates appropriately for the next child, moving down a row and returning to the left edge of the container when we reach the end of a row.</p>
 
 <!--{{{psquare/psquare.c:200-221}}}-->
 
