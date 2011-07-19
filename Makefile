@@ -4,7 +4,8 @@ PAGES = \
 	index.page \
 	introduction.page \
 	dynamic-actions.page \
-	custom-container.page
+	custom-container.page \
+	skeleton-application.page
 
 %.page: %.page.in add-listings.py
 	./add-listings.py $< >$@

@@ -1,0 +1,76 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="skeleton-application">
+<info>
+  <link type="guide" xref="index"/>
+</info>
+<title>A real-life GTK application</title>
+
+<p>Learning to write a GTK program using a tutorial is all well and good.
+At some point, though, you will have gone through enough beginners' tutorials that you won't learn any more from them.
+How do you make the step from simple tutorial program to whole application?</p>
+
+<p>This section will show you how to set up an application that does the simple job of displaying information about a file.
+You will learn how to set up your build system using GNU Autotools, something that most tutorials don't cover, because using Autotools for a one-file sample program is overkill.
+For larger programs, however, you cannot do without Autotools, or another automated build system.
+You will also learn how to write an application based on <code>GtkApplication</code>, an extensible application class, and how to write a multi-document interface with one window for each document.</p>
+
+<note>
+  <title>Why Autotools?</title>
+  <p>There is no such thing as indifference towards Autotools.
+  They are loved by thousands and hated by millions, so to speak.
+  My suspicion is that the haters don't understand what Autotools do: they aid you in implementing the <link href="http://www.gnu.org/prep/standards/">GNU Coding Standards</link>.
+  They are <em>not</em> meant to aid you in implementing your own preferred build workflow.
+  This is probably the reason for a lot of the frustration.</p>
+
+  <p>Looking at the complaints objectively, though, one cannot deny that the Autotools have a steep learning curve.
+  This is partly because of a lack of tutorial-style documentation.
+  If you want to learn, your only recourse is to read the entire manual (no easy task), or learn by copying incantations from existing projects and lots of trial and error.</p>
+
+  <p>There are two resources, unfortunately little-known, to which one can turn for an introduction to Autotools.
+  One is John Calcote's excellent <em>Autotools: A Practitioner's Guide to Automake, Autoconf and Libtool</em>.
+  Chapters from this book have also been published online, at <link href="http://fsmsh.com/2753">Free Software Magazine</link>.
+  The other is Alexandre Duret-Lutz' <em href="http://www.lrde.epita.fr/~adl/autotools.html">Autotools Tutorial</em>, available online.
+  In its form of presentation slides, it is a little difficult to read like a book, but its diagrams and code examples are very helpful.</p>
+</note>
+
+<section id="autoconf">
+<title>Starting a new project with Autoconf</title>
+
+<p>To get started, we will build up an Autotools project from scratch.
+First create a directory called <file>app-skeleton1</file>.
+In the directory, create an empty file called <file>Makefile.am</file>.
+(For example, you can type <cmd>touch Makefile.am</cmd> in a terminal.)
+This is an Automake file, which is where we put the instructions for transforming source code into programs.
+We will fill it later.
+First, we will use Autoconf to configure our project.</p>
+
+<p>Open a new file in the directory with your editor and call it <file>configure.ac</file>.
+This is an Autoconf file, where we put instructions for what tools we would like to use to build our project.
+We also note what capabilities of the system we would like to use, so that Autoconf can check to make sure the system has those capabilities.
+In <file>configure.ac</file>, write:</p>
+
+<!--{{{app-skeleton1/configure.ac:1-4}}}-->
+
+<p>This file consists of macros that Autoconf expands into shell scripts.
+Macros beginning with <code>AC_</code> are Autoconf's own macros, and macros that start with <code>AM_</code> belong to Automake.
+</p>
+
+<p>We must now <em>bootstrap</em> this project (initialize it from this pristine state into a state where the build system is working.)
+The Autoreconf program does this.
+In a terminal, type:</p>
+<screen>
+  <input>autoreconf -i</input>
+  <output>configure.ac:2: installing `./install.sh'</output>
+  <output>configure.ac:2: installing `./missing'</output>
+</screen>
+<p>You will be notified of files being installed.
+(That is what the <cmd>-i</cmd> option does; once the files are there, you can simply run <cmd>autoreconf</cmd> without any options.)
+If you look inside the directory, however, those won't be the only files that have appeared.
+<file>Makefile.in</file>, <file>aclocal.m4</file>, <file>configure</file>, and a directory <file>autom4te.cache</file> will also have been created.
+
+</p>
+
+</section>
+
+</page>
