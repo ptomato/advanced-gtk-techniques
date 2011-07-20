@@ -54,23 +54,95 @@ In <file>configure.ac</file>, write:</p>
 
 <p>This file consists of macros that Autoconf expands into shell scripts.
 Macros beginning with <code>AC_</code> are Autoconf's own macros, and macros that start with <code>AM_</code> belong to Automake.
+Notice that the macros' argument lists are enclosed in parentheses, and each argument is enclosed in square brackets.
+The square brackets are <em>quotes</em>.
+They are quite complicated and explained in detail in the Autoconf manual, but a good rule of thumb is:
+always quote each argument of a macro.
+We will go through these macros one by one:
 </p>
+<terms>
+  <item>
+    <title><code>AC_INIT</code></title>
+    <p>This initializes Autoconf, telling it the name and version of the project.
+    The third, optional argument is an e-mail address for reporting bugs in the program.
+    You can replace it with your own e-mail address if you like, but bugs in the tutorial programs should probably still be reported to me.</p>
+  </item>
+
+  <item>
+    <title><code>AM_INIT_AUTOMAKE</code></title>
+    <p>This tells Autoconf that we will be using Automake (yes, it is possible to use one without the other.)
+    It also initializes Automake and configures it.
+    <code>-Wall</code> and <code>foreign</code> are Automake options.
+    Note that they are not separate arguments to the <code>AM_INIT_AUTOMAKE</code> macro; all the options are one space-separated argument.</p>
+
+    <p><code>-Wall</code> tells Automake to have the compiler report all warnings when compiling our program, much like the <cmd>-Wall</cmd> option to the C compiler.
+    <code>foreign</code> tells Automake that we will not be building a GNU package, so it will not complain about the lack of files such as README.
+    If you are building a real application, you might want to remove the <code>foreign</code> option so that you will not forget to provide any files that users might expect.</p>
+  </item>
+
+  <item>
+    <title><code>AC_CONFIG_FILES</code></title>
+    <p>This is a list of files that we would like to output when configuring our project.
+    If we put a file named <file>plerp</file> in this list, then Autoconf will look for a file named <file>plerp.in</file> and transform it into <file>plerp</file>.
+    It does this by scanning <file>plerp.in</file> and replacing any text in the form of <code>@VARIABLE@</code> with the contents of the variable <code>VARIABLE</code>.
+    We have not defined any of these variables explicitly yet, but they are defined internally by many Autoconf and Automake macros.</p>
+
+    <p>Here, we tell Autoconf that we would like to transform <file>Makefile.in</file> into <file>Makefile</file>.
+    Where is <file>Makefile.in</file>?
+    When we run Automake, it creates <file>Makefile.in</file> from <file>Makefile.am</file>.
+    We will do this in the next step.</p>
+  </item>
+
+  <item>
+    <title><code>AC_OUTPUT</code></title>
+    <p>This macro takes care of outputting any files we have asked Autoconf to output.</p>
+  </item>
+</terms>
 
 <p>We must now <em>bootstrap</em> this project (initialize it from this pristine state into a state where the build system is working.)
 The Autoreconf program does this.
+Autoreconf runs Autoconf, Automake, and several other programs in order to get the project ready to be built.
 In a terminal, type:</p>
+
 <screen>
-  <input>autoreconf -i</input>
-  <output>configure.ac:2: installing `./install.sh'</output>
-  <output>configure.ac:2: installing `./missing'</output>
+<input>autoreconf -i</input>
+<output>configure.ac:2: installing `./install.sh'
+configure.ac:2: installing `./missing'</output>
 </screen>
+
 <p>You will be notified of files being installed.
 (That is what the <cmd>-i</cmd> option does; once the files are there, you can simply run <cmd>autoreconf</cmd> without any options.)
 If you look inside the directory, however, those won't be the only files that have appeared.
-<file>Makefile.in</file>, <file>aclocal.m4</file>, <file>configure</file>, and a directory <file>autom4te.cache</file> will also have been created.
+<file>Makefile.in</file>, <file>aclocal.m4</file>, <file>configure</file>, and a directory <file>autom4te.cache</file> will also have been created.</p>
 
-</p>
+<p>Now the build system is initialized, we can build the source in the usual way:</p>
 
+<screen>
+<input>./configure</input>
+<output>checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking for a thread-safe mkdir -p... /bin/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+configure: creating ./config.status
+config.status: creating Makefile</output>
+<input>make</input>
+<output>make: Nothing to be done for `all'.</output>
+</screen>
+
+<p>Of course there is nothing for <cmd>make</cmd> to do.
+We have no source files, and our <file>Makefile.am</file> was empty.
+If you look at the size of the generated <file>Makefile</file>, however, it is anything but empty: my system reports it to be 14 kilobytes large.
+Even though we have no project yet, we still have a versatile build system in place.</p>
+
+<p>For an example of just how versatile, type <input>make dist</input>.
+A file named <file>app-skeleton-1.tar.gz</file> will appear in the directory.
+It is a <em>tarball</em> (archive) of the project's source code, ready to be distributed.
+It is also worth noting that whoever downloads this tarball can build the project without having Autotools installed:
+all they need are the <file>configure</file> and <file>Makefile</file> files, which are included.</p>
+
+<p>We can do other things, such as clean up our project directory.
+For a full list of standard <em>make targets</em>, refer to the <link href="http://www.gnu.org/s/hello/manual/make/Standard-Targets.html">Make manual</link>.</p>
 </section>
 
 </page>
