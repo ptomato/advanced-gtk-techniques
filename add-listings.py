@@ -2,7 +2,7 @@
 
 import re, fileinput
 
-regex = re.compile('<!--{{{(?P<file>.*):(?P<start>\d+)(?:-(?P<end>\d+))?}}}-->')
+regex = re.compile('<!--{{{(?P<file>.*):(?P<start>\d+)(?:-(?P<end>\d+))?(?:%(?P<lang>.*))?}}}-->')
 
 for line in fileinput.input():
 	m = regex.match(line)
@@ -23,13 +23,22 @@ for line in fileinput.input():
 			end = start + 1
 
 		lines = lines[start:end]
+		
+		if m.group('lang') is None:
+			mimetype = 'x-csrc'
+		elif m.group('lang') == 'c':
+			mimetype = 'x-csrc'
+		elif m.group('lang') == 'autoconf':
+			mimetype = 'm4'
+		else:
+			mimetype = 'plain'
 
 		# Remove any indentation common to the whole block
 		while all([l.startswith(' ') for l in lines if l != '\n']) \
 			or all([l.startswith('\t') for l in lines if l != '\n']):
 			lines = [l[1:] for l in lines if l != '\n']
 
-		print '<code mime="text/x-csrc"><![CDATA['
+		print '<code mime="text/{0}"><![CDATA['.format(mimetype)
 		for l in lines:
 			print l,
 		print ']]></code>'

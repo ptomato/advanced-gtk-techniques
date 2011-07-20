@@ -50,7 +50,7 @@ This is an Autoconf file, where we put instructions for what tools we would like
 We also note what capabilities of the system we would like to use, so that Autoconf can check to make sure the system has those capabilities.
 In <file>configure.ac</file>, write:</p>
 
-<!--{{{app-skeleton1/configure.ac:1-4}}}-->
+<!--{{{app-skeleton1/configure.ac:1-4%autoconf}}}-->
 
 <p>This file consists of macros that Autoconf expands into shell scripts.
 Macros beginning with <code>AC_</code> are Autoconf's own macros, and macros that start with <code>AM_</code> belong to Automake.
