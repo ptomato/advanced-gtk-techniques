@@ -10,6 +10,8 @@ PAGES = \
 %.page: %.page.in add-listings.py
 	./add-listings.py $< >$@
 
+skeleton-application.page: app-skeleton1/configure.ac
+
 all: $(PAGES)
 
 html: all
