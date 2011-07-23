@@ -1,0 +1,6 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="autoconf-project">
+<title>Generating Makefiles with Automake</title>
+
+</page>

@@ -1,6 +1,9 @@
 <page xmlns="http://projectmallard.org/1.0/"
       type="topic"
       id="autoconf-project">
+<info>
+  <link type="next" xref="automake-project"/>
+</info>
 <title>Starting a new project with Autoconf</title>
 
 <p>To get started, we will build up an Autotools project from scratch.
@@ -81,7 +84,18 @@ configure.ac:2: installing `./missing'</output>
 If you look inside the directory, however, those won't be the only files that have appeared.
 <file>Makefile.in</file>, <file>aclocal.m4</file>, <file>configure</file>, and a directory <file>autom4te.cache</file> will also have been created.</p>
 
-<p>Now the build system is initialized, we can build the source in the usual way:</p>
+<note>
+  <title>Bootstrapping</title>
+  <p>It is worth noting here that anybody who wants to build your program from this point onwards doesn't need Autoconf or Automake, only a shell and Make.
+  Distributions of source code usually include all the files that are in the directory right now, so that users who want to compile the software from source don't have to bother with Autotools.
+  When checking out source code from a repository, however, only the handwritten files are included.
+  The reasoning goes that those who are savvy enough to mess with development snapshots of software can be expected to have various build tools installed.
+  If you check out source code from a repository, bootstrap it using <cmd>autoreconf -i</cmd>.
+  Sometimes there is a script called <cmd>autogen.sh</cmd> or <cmd>bootstrap</cmd> to do this for you, especially if there are other steps needed for bootstrapping.
+  If one of these files exists, use it instead.</p>
+</note>
+
+<p>Now the build system is initialized, we can build the source in the usual way.</p>
 
 <screen>
 <input>./configure</input>

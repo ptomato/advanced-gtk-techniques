@@ -6,7 +6,8 @@ PAGES = \
 	dynamic-actions.page \
 	custom-container.page \
 	real-life-app.page \
-	autoconf-project.page
+	autoconf-project.page \
+	automake-project.page
 
 %.page: %.page.in add-listings.py
 	./add-listings.py $< >$@
