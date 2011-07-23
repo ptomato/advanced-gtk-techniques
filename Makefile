@@ -5,12 +5,13 @@ PAGES = \
 	introduction.page \
 	dynamic-actions.page \
 	custom-container.page \
-	skeleton-application.page
+	real-life-app.page \
+	autoconf-project.page
 
 %.page: %.page.in add-listings.py
 	./add-listings.py $< >$@
 
-skeleton-application.page: app-skeleton1/configure.ac
+autoconf-project.page: app-skeleton1/configure.ac
 
 all: $(PAGES)
 
