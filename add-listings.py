@@ -23,7 +23,7 @@ for line in fileinput.input():
 			end = start + 1
 
 		lines = lines[start:end]
-		
+
 		if m.group('lang') is None:
 			mimetype = 'x-csrc'
 		elif m.group('lang') == 'c':

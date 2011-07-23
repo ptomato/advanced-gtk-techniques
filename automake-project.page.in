@@ -1,6 +1,174 @@
 <page xmlns="http://projectmallard.org/1.0/"
       type="topic"
-      id="autoconf-project">
+      id="automake-project">
 <title>Generating Makefiles with Automake</title>
+
+<p>Now to move on to Automake, the other major component of our build system.
+After we get Automake set up, we can start writing some source code.</p>
+
+<p>Make is a program that reads a file called <file>Makefile</file> that describes how to compile source code into executable code.
+The contents of a <file>Makefile</file> depend upon the compiler you use, the system you are on, and many other things.
+<file>Makefile</file>s can also get quite long if you want to implement all the standard make targets described in the <link xref="autoconf-project">previous section</link>.</p>
+
+<p>This is where Automake comes in.
+Automake allows you to write the Make code in a more abstract, platform-independent way.
+Automake looks for Automake files named <file>Makefile.am</file>, and changes them into almost-Makefiles named <file>Makefile.in</file>.
+These alomst-Makefiles are then transformed into real <file>Makefile</file>s when you run <cmd>configure</cmd>.</p>
+
+<section>
+<title>Creating a <file>Makefile.am</file></title>
+
+<p>To get started, copy your <file>app-skeleton1</file> directory to a new <file>app-skeleton2</file> directory, or just rename it if you like.
+For now, just put one line in <file>Makefile.am</file>:</p>
+
+<!--{{{app-skeleton2/Makefile.am:1%automake}}}-->
+
+<p>The special <code>SUBDIRS</code> variable tells Automake to look for another <file>Makefile.am</file> in the <file>src</file> subdirectory as well.
+The resulting <file>Makefile</file> will also look for <file>src/Makefile</file> and call it recursively as well.</p>
+
+<note>
+  <title>Recursive Make</title>
+  <p>A famous paper by Peter Miller has a title that speaks volumes about what some people think about writing your <file>Makefile</file>s recursively:
+  <link href="http://miller.emu.id.au/pmiller/books/rmch/">Recursive Make Considered Harmful</link>.
+  Read it and follow its advice if you like; it's not more or less difficult than the approach shown here.
+  In practice, however, most projects use recursive make, so it's important to be familiar with it at least.</p>
+</note>
+
+<p>Since we are telling Automake to go into the <file>src</file> directory, we should also put something there for it to find.
+We need a <file>Makefile.am</file>, but perhaps more importantly, we need some source code.
+We are going to be writing our own application starting in the next section, but until then we need some "placeholder" source code.
+We will use the "Hello World" example from the GTK tutorial.
+Instead of retyping it or copying and pasting it from the browser, we will fetch it the way real hackers do it: the lazy way!
+Create a <file>src</file> directory, <cmd>cd</cmd> to it, and type in your terminal:</p>
+
+<screen>
+<input>wget http://git.gnome.org/browse/gtk+/plain/examples/hello-world.c</input>
+</screen>
+
+<p>Now we can create a <file>Makefile.am</file> to compile this source code.
+Write in <file>src/Makefile.am</file> (be careful to get the right file, don't use the one in the parent directory):</p>
+
+<!--{{{app-skeleton2/src/Makefile.am:2-3%automake}}}-->
+
+<p>Automake works mostly by setting variables.
+<code>SUBDIRS</code> was an example of one.
+Many other Automake variables have names consisting of two parts.
+For example, a variable named <code><var>something</var>_PROGRAMS</code> is a list of executable programs for Automake to build.
+The <var>something</var> part tells where to install the programs when you run <cmd>make install</cmd>.
+So <code>bin_PROGRAMS = hello</code> means that Automake should generate a <file>Makefile</file> that builds a program named <file>hello</file> and installs it in <file>/usr/local/bin</file>.
+(Unless you decide it should be called something else and installed somewhere else; Automake's <file>Makefile</file>s are highly customizable using <cmd>configure</cmd>, but I will leave explaining that to one of the Autotools tutorials I mentioned <link xref="real-life-app">previously</link>.)</p>
+
+<p>By the same tack, <code>hello_SOURCES = hello-world.c</code> means that the program named <file>hello</file> should be built from the source file <file>hello-world.c</file>, which we just downloaded.</p>
+
+<p>We must now instruct <cmd>configure</cmd> to generate our newly-written <file>Makefile</file>.
+Replace the <code>AC_CONFIG_FILES</code> call in <file>configure.ac</file> with this:</p>
+
+<!--{{{app-skeleton2/configure.ac:27-30%autoconf}}}-->
+
+<p>Finally, we also need to tell <cmd>configure</cmd> to look for a suitable C compiler.
+Add the single command <code>AC_PROG_CC</code> after the <code>AM_INIT_AUTOMAKE</code> line.
+(CC stands for C Compiler.)</p>
+
+<p>Then, run <cmd>autoreconf</cmd> and <cmd>./configure</cmd>.
+The output from <cmd>configure</cmd> is a little longer (you can see that it is checking for a C compiler) and more files have appeared when it is done.
+So far, so good.
+But when we run <cmd>make</cmd>, we get a screen full of errors: all of the GTK functions used in the file are undefined, and the compiler cannot find the <file>gtk/gtk.h</file> header.</p>
+
+</section>
+
+<section>
+<title>Defining our libraries</title>
+
+<p>We need to define what libraries the program will use.
+This is done in <file>configure.ac</file>, so that <cmd>configure</cmd> can look for these libraries and put their locations into the <file>Makefile</file>.
+We will also take this opportunity to organize <file>configure.ac</file> and introduce a few more Autoconf macros.</p>
+
+<p>Divide the <file>configure.ac</file> file into four sections:</p>
+<list>
+  <item><p><em>Initialization</em>, in which we do preparations for initializing the build system;</p></item>
+  <item><p><em>Shopping list</em>, in which we tell Autoconf what tools we would like to use. 
+  The resulting <cmd>configure</cmd> script will go look for those tools and complain if they are not installed;</p></item>
+  <item><p><em>Libraries</em>, in which we list what libraries we are using.
+  Again, <cmd>configure</cmd> will complain if these libraries are not installed;</p></item>
+  <item><p>and <em>Output</em>, where we output all the results of these checks so that Make can use them.</p></item>
+</list>
+
+<note>
+  <title>Comments</title>
+  <p>You can use comments, which start with the <code>#</code> character, to divide up the file.
+  Autoconf comments can also be started by the letters <code>dnl</code> (which stands for Delete until New Line.)
+  The difference between the two is that <code>dnl</code> comments are ignored completely by Autoconf, whereas <code>#</code> comments are copied into the generated <file>configure</file> file.
+  This can be useful if there is an error in <file>configure</file> and you want to find out which section of <file>configure.ac</file> is causing it.</p>
+</note>
+
+<p>In the Initialization section, write:</p>
+
+<!--{{{app-skeleton2/configure.ac:4-7%autoconf}}}-->
+
+<p>We have changed the version number to 2 here. There are also two new macros:</p>
+
+<terms>
+  <item>
+    <title><code>AC_CONFIG_SRCDIR</code></title>
+    <p>This is a safety check to make sure the source tree actually contains the source code that it should.
+    As an argument, put the name of a unique source file in your program; here we put our only source file.</p>
+  </item>
+  <item>
+    <title><code>AM_SILENT_RULES</code></title>
+    <p>The generated <file>Makefile</file>s use very long compiler command lines.
+    Normally, you don't need to see these, and large swathes of garbage scrolling across your terminal can actually obscure error and warning messages.
+    <code>AM_SILENT_RULES</code> adds the capability to your <file>Makefile</file>s to suppress the build commands, instead printing just a short summary.
+    The <code>yes</code> argument turns this behavior on by default.
+    A <em>Real Programmer</em> might write <code>AM_SILENT_RULES([no])</code> and then lesser mortals could run <cmd>./configure --enable-silent-rules</cmd> to get the quiet building behavior.</p>
+    <p>If you have silent rules turned on, and you want to examine the command lines after all, perhaps to track down an error, you can run <cmd>make V=1</cmd> to get the command lines back temporarily.
+    (<code>V</code> stands for Verbose.)</p>
+  </item>
+</terms>
+
+<p>In the Shopping List section, write:</p>
+
+<!--{{{app-skeleton2/configure.ac:12-13%autoconf}}}-->
+
+<p>The new macro here is <code>PKG_PROG_PKG_CONFIG</code>.
+It adds the <cmd>pkg-config</cmd> program to our shopping list of tools.
+This macro doesn't start with <code>AC_</code> or <code>AM_</code>, so it doesn't originate from Autoconf or Automake.
+Instead, the prefix <code>PKG_</code> identifies it as belonging to the macros that <cmd>pkg-config</cmd> provides when you install it.</p>
+
+<p>The Libraries section is where we use <cmd>pkg-config</cmd>:</p>
+
+<!--{{{app-skeleton2/configure.ac:18-21%autoconf}}}-->
+
+<p>The <code>PKG_CHECK_MODULES</code> macro takes a program name, in this case <code>APP_SKELETON</code> as its first argument, and a list of <cmd>pkg-config</cmd> <em>modules</em> as its second.
+A module is the name of a library as it is known to <cmd>pkg-config</cmd>.
+This macro uses <cmd>pkg-config</cmd> to look for these libraries, and creates two variables:
+<code>APP_SKELETON_CFLAGS</code> which contains the C compiler flags required for compiling with these libraries, 
+and <code>APP_SKELETON_LIBS</code> which contains the linker flags.
+These variables are available from inside the <file>Makefile</file>s.</p>
+
+<p>These module names specify that we are using the 2.0 series of the GLib and GTK+ libraries.
+If you don't know the module name of a library, you can always look in <file>/usr/share/pkgconfig</file> and <file>/usr/lib/pkgconfig</file> to see if there is a <file>.pc</file> that corresponds to the library name.
+Some libraries aren't configurable by <cmd>pkg-config</cmd>; there are other ways to check for libraries, but I won't describe them here.</p>
+
+<p>Finally, the Output section is the same as before:</p>
+
+<!--{{{app-skeleton2/configure.ac:27-31%autoconf}}}-->
+
+<p>After that, we need to use the <code>APP_SKELETON_CFLAGS</code> and <code>APP_SKELETON_LIBS</code> variables in our <file>Makefile.am</file>.
+Edit <file>src/Makefile.am</file> so that it looks like this:</p>
+
+<!--{{{app-skeleton2/src/Makefile.am:1-4%automake}}}-->
+
+<p>The <code>AM_CFLAGS</code> variable contains the compiler flags to be added to all compilations defined in this <file>Makefile.am</file>.
+Conversely, the <code>hello_LDADD</code> variable tells Automake the linker flags to use when linking the <file>hello</file> program.</p>
+
+<p>Now when we rebuild, everything should work fine.
+Note that we only have to type <cmd>make</cmd> to rebuild; the magic of the generated <file>Makefile</file> (now a whopping 22 kilobytes) makes sure that <file>configure</file> is regenerated and rerun, which also regenerates the <file>Makefile</file>.</p>
+
+<p>You can run the executable <file>hello</file> to verify that it does what it should:
+shows a window with a <gui>Hello World</gui> button which, when pressed, prints <output>Hello World</output> to the terminal and exits.</p>
+
+<p>Now that we have a build system in place, we can go on to writing the actual program.</p>
+
+</section>
 
 </page>

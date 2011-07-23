@@ -14,6 +14,8 @@ PAGES = \
 
 autoconf-project.page: app-skeleton1/configure.ac
 
+automake-project.page: app-skeleton2/configure.ac app-skeleton2/Makefile.am app-skeleton2/src/Makefile.am
+
 all: $(PAGES)
 
 html: all
