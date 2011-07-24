@@ -59,7 +59,7 @@ We will go through these macros one by one:
     <p>Here, we tell Autoconf that we would like to transform <file>Makefile.in</file> into <file>Makefile</file>.
     Where is <file>Makefile.in</file>?
     When we run Automake, it creates <file>Makefile.in</file> from <file>Makefile.am</file>.
-    We will do this in the next step.</p>
+    We will do this in the <link type="next" xref="automake-project">next step</link>.</p>
   </item>
 
   <item>
