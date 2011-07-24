@@ -16,7 +16,7 @@ The contents of a <file>Makefile</file> depend upon the compiler you use, the sy
 <p>This is where Automake comes in.
 Automake allows you to write the Make code in a more abstract, platform-independent way.
 Automake looks for Automake files named <file>Makefile.am</file>, and changes them into almost-Makefiles named <file>Makefile.in</file>.
-These alomst-Makefiles are then transformed into real <file>Makefile</file>s when you run <cmd>configure</cmd>.</p>
+These almost-Makefiles are then transformed into real <file>Makefile</file>s when you run <cmd>configure</cmd>.</p>
 
 <section>
 <title>Creating a <file>Makefile.am</file></title>
