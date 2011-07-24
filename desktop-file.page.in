@@ -1,0 +1,79 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="gettext-project">
+<title>Installing your program onto the user's desktop</title>
+
+<p>Most users who can use a terminal are also familiar with the time-tested routine of <cmd>./configure</cmd>, <cmd>make</cmd> and <cmd>make install</cmd>.
+However, as the Linux desktop gains more and more ground, package managers are on the rise.
+Users expect to be able to install a package and then find a new entry in their Applications menu.
+The <file>Makefile.am</file> may install our executable file into <file>/usr/local/bin</file>, but nowadays we can't expect users to open a terminal every time they want to run it.
+We can put an entry into the menu by means of a <em>desktop file</em>.</p>
+
+<section>
+<title>Adding an icon to the program</title>
+
+<p>Copy the <file>app-skeleton2</file> project to <file>app-skeleton3</file>, or just rename it.
+First we will appropriate an icon from the GNOME icon theme for our program.
+Again, we will do this the lazy way, by downloading all available sizes directly from the GNOME git repository.
+In the <file>app-skeleton3</file> directory, type:</p>
+
+<screen>
+<input>for size in 16 22 24 32 48; do
+mkdir -p pixmaps/${size}x${size}/apps
+wget -O pixmaps/${size}x${size}/apps/app-skeleton.png http://git.gnome.org/browse/gnome-icon-theme/plain/gnome/${size}x${size}/status/weather-showers-scattered.png
+done</input>
+</screen>
+
+<media type="image" src="../app-skeleton3/pixmaps/48x48/apps/app-skeleton.png">
+  <p>An icon of a raincloud from the GNOME icon theme</p>
+</media>
+
+<p>There is a reason why we are creating this particular directory structure.
+It is explained in the Free Desktop <link href="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html">Icon Theme Specification</link> and <link href="http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html">Icon Naming Specification</link>.</p>
+
+<p>The new <file>pixmaps</file> directory needs a <file>Makefile.am</file> too.
+Create one there and put in it:</p>
+
+<!--{{{app-skeleton3/pixmaps/Makefile.am:1-21%automake}}}-->
+
+<p>The Automake variable <code>nobase_dist_icons_DATA</code> has four parts.
+The prefix <code>nobase</code> means to install the files with the same directory structure into the destination directory.
+Another prefix, <code>dist</code> means to include the files in the tarball produced when you type <cmd>make dist</cmd>.
+(By default, data files are not included.)</p>
+
+<p>The third segment, <code>icons</code>, functions like <code>bin</code> did in <code>bin_PROGRAMS</code>: it tells where to install the files.
+The difference is that <code>bin</code> is predefined and <code>icons</code> is not.
+Automake will install the files in the location stored in the variable <code>iconsdir</code>, which we define above.
+Why it is called <file>hicolor</file>, you can read in the <link href="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html">Icon Theme Specification</link>.</p>
+
+<p>Finally, the <code>DATA</code> directive tells Automake that these are data files; they do not need to be compiled.</p>
+
+</section>
+<section>
+<title>The desktop file</title>
+
+<p>Now to create our desktop file.
+Create a file <file>app-skeleton.desktop</file> in the <file>app-skeleton3</file> directory and write in it:</p>
+
+<!--{{{app-skeleton3/app-skeleton.desktop:1-9%desktop}}}-->
+
+<p>A full explanation of this file can be found in two other Free Desktop specifications, the <link href="http://standards.freedesktop.org/desktop-entry-spec/latest/">Desktop Entry Specification</link> and the <link href="http://standards.freedesktop.org/menu-spec/latest/">Desktop Menu Specification</link>.</p>
+
+<p>Finally, we need to update our top-level <file>Makefile.am</file>:</p>
+
+<!--{{{app-skeleton3/Makefile.am:1-4%automake}}}-->
+
+<p>We add the <file>pixmaps</file> subdirectory to our <code>SUBDIRS</code> variable, and instruct Automake to install the desktop file in the proper place so the desktop environment can find it.</p>
+
+<p>Lastly, we add <code>pixmaps/Makefile</code> to the <code>AC_CONFIG_FILES</code> call in <file>configure.ac</file>.
+With that, we are ready to go.
+Try <cmd>make</cmd> followed by <cmd>make install</cmd>.
+A new entry should show up in your desktop's applications chooser!</p>
+
+<p>But what if the user speaks another language?
+They will not be able to understand the name of the program and the description we have put in the desktop file.
+Solving this problem is what the next section is about.</p>
+
+</section>
+
+</page>

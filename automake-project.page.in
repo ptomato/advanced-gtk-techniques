@@ -1,6 +1,9 @@
 <page xmlns="http://projectmallard.org/1.0/"
       type="topic"
       id="automake-project">
+<info>
+  <link type="next" xref="gettext-project"/>
+</info>
 <title>Generating Makefiles with Automake</title>
 
 <p>Now to move on to Automake, the other major component of our build system.
@@ -167,7 +170,7 @@ Note that we only have to type <cmd>make</cmd> to rebuild; the magic of the gene
 <p>You can run the executable <file>hello</file> to verify that it does what it should:
 shows a window with a <gui>Hello World</gui> button which, when pressed, prints <output>Hello World</output> to the terminal and exits.</p>
 
-<p>Now that we have a build system in place, we can go on to writing the actual program.</p>
+<p>Now that we have a build system in place, there are a few more bits of infrastructure we need to examine: installation and internationalization.</p>
 
 </section>
 
