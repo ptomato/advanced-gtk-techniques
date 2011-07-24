@@ -8,7 +8,8 @@ PAGES = \
 	real-life-app.page \
 	autoconf-project.page \
 	automake-project.page \
-	desktop-file.page
+	desktop-file.page \
+	gettext-project.page
 
 all: $(PAGES)
 

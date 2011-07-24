@@ -1,6 +1,9 @@
 <page xmlns="http://projectmallard.org/1.0/"
       type="topic"
-      id="gettext-project">
+      id="desktop-file">
+<info>
+  <link type="next" xref="gettext-project"/>
+</info>
 <title>Installing your program onto the user's desktop</title>
 
 <p>Most users who can use a terminal are also familiar with the time-tested routine of <cmd>./configure</cmd>, <cmd>make</cmd> and <cmd>make install</cmd>.

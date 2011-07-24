@@ -2,7 +2,7 @@
       type="topic"
       id="automake-project">
 <info>
-  <link type="next" xref="gettext-project"/>
+  <link type="next" xref="desktop-file"/>
 </info>
 <title>Generating Makefiles with Automake</title>
 
