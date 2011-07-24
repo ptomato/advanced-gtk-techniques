@@ -27,9 +27,8 @@ wget -O pixmaps/${size}x${size}/apps/app-skeleton.png http://git.gnome.org/brows
 done</input>
 </screen>
 
-<media type="image" src="../app-skeleton3/pixmaps/48x48/apps/app-skeleton.png">
-  <p>An icon of a raincloud from the GNOME icon theme</p>
-</media>
+<p>This is the icon we have just downloaded, in five different sizes: 
+<media type="image" src="../app-skeleton3/pixmaps/48x48/apps/app-skeleton.png">[An icon of a raincloud from the GNOME icon theme]</media></p>
 
 <p>There is a reason why we are creating this particular directory structure.
 It is explained in the Free Desktop <link href="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html">Icon Theme Specification</link> and <link href="http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html">Icon Naming Specification</link>.</p>
@@ -50,6 +49,12 @@ Automake will install the files in the location stored in the variable <code>ico
 Why it is called <file>hicolor</file>, you can read in the <link href="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html">Icon Theme Specification</link>.</p>
 
 <p>Finally, the <code>DATA</code> directive tells Automake that these are data files; they do not need to be compiled.</p>
+
+<p>The rest of the file calls the <cmd>gtk-update-icon-cache</cmd> utility whenever the program is installed or uninstalled.
+This is necessary so that the new icons can be found in the icon theme.
+The test may look a little confusing at first; testing whether the <code>DESTDIR</code> is empty means testing whether we are really installing the program into the file system, or doing a <em>staged install</em>.
+In the latter case, the icon files are not really being installed into the icon theme directory, so it makes no sense to update the icon cache.
+In that case, the makefile prints a message to remind the user to update the icon cache when the program is really installed.</p>
 
 </section>
 <section>
