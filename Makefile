@@ -9,14 +9,14 @@ PAGES = \
 	autoconf-project.page \
 	automake-project.page
 
+all: $(PAGES)
+
 %.page: %.page.in add-listings.py
 	./add-listings.py $< >$@
 
 autoconf-project.page: app-skeleton1/configure.ac
 
 automake-project.page: app-skeleton2/configure.ac app-skeleton2/Makefile.am app-skeleton2/src/Makefile.am
-
-all: $(PAGES)
 
 html: all
 	mkdir -p html
