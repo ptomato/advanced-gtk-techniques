@@ -24,6 +24,6 @@ desktop-file.page: app-skeleton3/app-skeleton.desktop app-skeleton3/Makefile.am 
 
 html: all
 	mkdir -p html
-	gnome-doc-tool html -o html --no-figures *.page
+	gnome-doc-tool html -o html --no-figures --custom-xslt=mallard-mathml.xslt *.page
 
 .PHONY: all html

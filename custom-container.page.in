@@ -24,7 +24,7 @@ The container will find an integer <span xmlns:m="http://www.w3.org/1998/Math/Ma
 <!-- TODO: find a better way to do math -->
 <table><tr><td>
   <p><span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow>
-    <m:mi>n</m:mi><m:msup><m:mn>2</m:mn></m:msup>
+    <m:msup><m:mi>n</m:mi><m:mn>2</m:mn></m:msup>
     <m:mo>&#x2265;<!--geq--></m:mo>
     <m:mi>V</m:mi>
   </m:mrow></m:math></span></p>
