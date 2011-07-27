@@ -24,12 +24,17 @@ for line in fileinput.input():
 
 		lines = lines[start:end]
 
+		# Some of these mimetypes are iffy...
 		if m.group('lang') is None:
 			mimetype = 'x-csrc'
 		elif m.group('lang') == 'c':
 			mimetype = 'x-csrc'
 		elif m.group('lang') == 'autoconf':
 			mimetype = 'm4'
+		elif m.group('lang') == 'automake':
+			mimetype = 'x-automake'
+		elif m.group('lang') == 'desktop':
+			mimetype = 'x-desktop'
 		else:
 			mimetype = 'plain'
 
@@ -38,7 +43,10 @@ for line in fileinput.input():
 			or all([l.startswith('\t') for l in lines if l != '\n']):
 			lines = [l[1:] for l in lines if l != '\n']
 
+		print '<listing>'
+		print '<title><file>{0}</file></title>'.format(m.group('file'))
 		print '<code mime="text/{0}"><![CDATA['.format(mimetype)
 		for l in lines:
 			print l,
 		print ']]></code>'
+		print '</listing>'
