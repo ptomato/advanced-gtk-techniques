@@ -56,6 +56,14 @@ The test may look a little confusing at first; testing whether the <code>DESTDIR
 In the latter case, the icon files are not really being installed into the icon theme directory, so it makes no sense to update the icon cache.
 In that case, the makefile prints a message to remind the user to update the icon cache when the program is really installed.</p>
 
+<p>As a last bit of icing on the cake, let us use the icon as our program's icon (in the corner of the title bar in some desktop themes, or in the application switcher.)
+Since we have already installed the icon into the icon theme, having the program use it is quite simple.
+Add the following line to the <code>main()</code> function of <file>hello-world.c</file>, for example as line 47:</p>
+
+<!--{{{app-skeleton3/src/hello-world.c:47}}}-->
+
+<p>When an icon is present in the icon theme, it can be used like this as a <em>named icon</em>.</p>
+
 </section>
 <section>
 <title>The desktop file</title>
@@ -65,7 +73,12 @@ Create a file <file>app-skeleton.desktop</file> in the <file>app-skeleton3</file
 
 <!--{{{app-skeleton3/app-skeleton.desktop:1-9%desktop}}}-->
 
-<p>A full explanation of this file can be found in two other Free Desktop specifications, the <link href="http://standards.freedesktop.org/desktop-entry-spec/latest/">Desktop Entry Specification</link> and the <link href="http://standards.freedesktop.org/menu-spec/latest/">Desktop Menu Specification</link>.</p>
+<p>In short, <code>Name</code> is the program name that will appear in the menu, <code>Icon</code> is the named icon to use for the program in the menu, and <code>Comment</code> is the tooltip to use when the user hovers their mouse over the program name.
+The <code>Terminal=false</code> line tells the desktop environment not to start the program in a terminal.
+The <code>Categories</code> fiels is a hint to the desktop environment about what category it should put the program launcher into.
+(Some desktops, like Gnome Shell, don't use categories.)</p>
+
+<p>A full list of fields and categories for use in this file, along with explanations of what they are for, can be found in two other Free Desktop specifications, the <link href="http://standards.freedesktop.org/desktop-entry-spec/latest/">Desktop Entry Specification</link> and the <link href="http://standards.freedesktop.org/menu-spec/latest/">Desktop Menu Specification</link>.</p>
 
 <p>Finally, we need to update our top-level <file>Makefile.am</file>:</p>
 

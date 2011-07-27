@@ -44,6 +44,7 @@ main (int   argc,
   /* create a new window, and set its title */
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (window), "Hello");
+  gtk_window_set_icon_name (GTK_WINDOW (window), "app-skeleton");
 
   /* When the window emits the "delete-event" signal (which is emitted
    * by GTK+ in response to an event coming from the window manager,
