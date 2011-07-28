@@ -23,7 +23,8 @@ In the <file>app-skeleton3</file> directory, type:</p>
 <screen>
 <input>for size in 16 22 24 32 48; do
 mkdir -p pixmaps/${size}x${size}/apps
-wget -O pixmaps/${size}x${size}/apps/app-skeleton.png http://git.gnome.org/browse/gnome-icon-theme/plain/gnome/${size}x${size}/status/weather-showers-scattered.png
+wget -O pixmaps/${size}x${size}/apps/app-skeleton.png \
+  http://git.gnome.org/browse/gnome-icon-theme/plain/gnome/${size}x${size}/status/weather-showers-scattered.png
 done</input>
 </screen>
 
