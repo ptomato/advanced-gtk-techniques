@@ -58,10 +58,11 @@ Write in <file>src/Makefile.am</file> (be careful to get the right file, don't u
 Many other Automake variables have names consisting of two parts.
 For example, a variable named <code><var>something</var>_PROGRAMS</code> is a list of executable programs for Automake to build.
 The <var>something</var> part tells where to install the programs when you run <cmd>make install</cmd>.
-So <code>bin_PROGRAMS = hello</code> means that Automake should generate a <file>Makefile</file> that builds a program named <file>hello</file> and installs it in <file>/usr/local/bin</file>.
+So <code>bin_PROGRAMS = app-skeleton</code> means that Automake should generate a <file>Makefile</file> that builds a program named <file>app-skeleton</file> and installs it in <file>/usr/local/bin</file>.
 (Unless you decide it should be called something else and installed somewhere else; Automake's <file>Makefile</file>s are highly customizable using <cmd>configure</cmd>, but I will leave explaining that to one of the Autotools tutorials I mentioned <link xref="real-life-app">previously</link>.)</p>
 
-<p>By the same tack, <code>hello_SOURCES = hello-world.c</code> means that the program named <file>hello</file> should be built from the source file <file>hello-world.c</file>, which we just downloaded.</p>
+<p>By the same tack, <code>app_skeleton_SOURCES = hello-world.c</code> means that the program named <file>app-skeleton</file> should be built from the source file <file>hello-world.c</file>, which we just downloaded.
+(If the name of the program contains characters that are not legal in a variable name, Automake replaces them with underscores.)</p>
 
 <p>We must now instruct <cmd>configure</cmd> to generate our newly-written <file>Makefile</file>.
 Replace the <code>AC_CONFIG_FILES</code> call in <file>configure.ac</file> with this:</p>
@@ -162,12 +163,12 @@ Edit <file>src/Makefile.am</file> so that it looks like this:</p>
 <!--{{{app-skeleton2/src/Makefile.am:1-4%automake}}}-->
 
 <p>The <code>AM_CFLAGS</code> variable contains the compiler flags to be added to all compilations defined in this <file>Makefile.am</file>.
-Conversely, the <code>hello_LDADD</code> variable tells Automake the linker flags to use when linking the <file>hello</file> program.</p>
+Conversely, the <code>app_skeleton_LDADD</code> variable tells Automake the linker flags to use when linking the <file>app-skeleton</file> program.</p>
 
 <p>Now when we rebuild, everything should work fine.
 Note that we only have to type <cmd>make</cmd> to rebuild; the magic of the generated <file>Makefile</file> (now a whopping 22 kilobytes) makes sure that <file>configure</file> is regenerated and rerun, which also regenerates the <file>Makefile</file>.</p>
 
-<p>You can run the executable <file>hello</file> to verify that it does what it should:
+<p>You can run the executable <file>app-skeleton</file> to verify that it does what it should:
 shows a window with a <gui>Hello World</gui> button which, when pressed, prints <output>Hello World</output> to the terminal and exits.</p>
 
 <p>Now that we have a build system in place, there are a few more bits of infrastructure we need to examine: installation and internationalization.</p>
