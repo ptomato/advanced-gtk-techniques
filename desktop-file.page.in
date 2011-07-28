@@ -63,7 +63,8 @@ Add the following line to the <code>main()</code> function of <file>hello-world.
 
 <!--{{{app-skeleton3/src/hello-world.c:47}}}-->
 
-<p>When an icon is present in the icon theme, it can be used like this as a <em>named icon</em>.</p>
+<p>When an icon is present in the icon theme, it can be used like this as a <em>named icon</em>.
+(Remember that you have to run <cmd>make install</cmd> before it will work, though.)</p>
 
 </section>
 <section>
