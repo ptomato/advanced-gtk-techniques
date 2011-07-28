@@ -77,7 +77,7 @@ Create a file <file>app-skeleton.desktop</file> in the <file>app-skeleton3</file
 
 <p>In short, <code>Name</code> is the program name that will appear in the menu, <code>Icon</code> is the named icon to use for the program in the menu, and <code>Comment</code> is the tooltip to use when the user hovers their mouse over the program name.
 The <code>Terminal=false</code> line tells the desktop environment not to start the program in a terminal.
-The <code>Categories</code> fiels is a hint to the desktop environment about what category it should put the program launcher into.
+The <code>Categories</code> field is a hint to the desktop environment about what category it should put the program launcher into.
 (Some desktops, like Gnome Shell, don't use categories.)</p>
 
 <p>A full list of fields and categories for use in this file, along with explanations of what they are for, can be found in two other Free Desktop specifications, the <link href="http://standards.freedesktop.org/desktop-entry-spec/latest/">Desktop Entry Specification</link> and the <link href="http://standards.freedesktop.org/menu-spec/latest/">Desktop Menu Specification</link>.</p>
