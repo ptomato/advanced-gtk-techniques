@@ -16,6 +16,7 @@ We can put an entry into the menu by means of a <em>desktop file</em>.</p>
 <title>Adding an icon to the program</title>
 
 <p>Copy the <file>app-skeleton2</file> project to <file>app-skeleton3</file>, or just rename it.
+(Change the version number in the <code>AC_INIT</code> call in <file>configure.ac</file> to 3 as well, if you like.)
 First we will appropriate an icon from the GNOME icon theme for our program.
 Again, we will do this the lazy way, by downloading all available sizes directly from the GNOME git repository.
 In the <file>app-skeleton3</file> directory, type:</p>

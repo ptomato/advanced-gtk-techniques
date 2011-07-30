@@ -1,7 +1,7 @@
 ### INITIALIZATION #############################################################
 # In this section we do preparations for initializing our build system.
 
-AC_INIT([App Skeleton], [2], [philip.chimento@gmail.com])
+AC_INIT([App Skeleton], [3], [philip.chimento@gmail.com])
 AC_CONFIG_SRCDIR([src/hello-world.c])
 AM_INIT_AUTOMAKE([-Wall foreign])
 AM_SILENT_RULES([yes])
