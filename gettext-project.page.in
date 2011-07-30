@@ -105,6 +105,37 @@ This is the template that translators can base their translations on.</p>
 <section>
 <title>Translating the program</title>
 
+<p>Now, we will translate the program into another language and test it.
+If you speak another language than English, why not try translating it into that language?
+As an example, I will use Dutch (language code <code>nl</code>) here.</p>
+
+<p>The first thing to do is to create a <file>.po</file> file for your chosen language.
+Change to the <file>po</file> directory and type:</p>
+
+<screen><input>msginit -l nl</input></screen>
+
+<p>This will create a file named <file>nl.po</file>, based on the translation template.
+You can edit it with your favorite text editor, although for bigger projects you might want to use a dedicated translation editor such as <link href="http://www.google.com">Virtaal</link> or <link href="http://www.google.com">Poedit</link>.
+Translate the messages as you see fit, or use my translations:</p>
+
+<!--{{{app-skeleton4/po/nl.po:20-34%gettext}}}-->
+
+<p>After translating, add the language code to the <file>LINGUAS</file> file:</p>
+
+<!--{{{app-skeleton4/po/LINGUAS:1%plain}}}-->
+
+<p>Then change to the <file>po</file> directory and run <cmd>make update-po</cmd> again.
+It is important to do this whenever a translator gives you an updated <file>.po</file> file, otherwise the new translations will not get installed.
+Then install the program once again using <cmd>make install</cmd>.</p>
+
+<p>You should now be able to run the program in Dutch (or whatever language you chose.)
+If your system locale is set to Dutch, then simply running the program should work.
+If you have your system in English or a different locale, you can test the translation by running the program with the <code>LANG</code> environment variable set to <code>nl</code>.
+(Just type <code>LANG=nl</code> before the program name on the command line.)</p>
+
+</section>
+<section>
+<title>Translating non-source code</title>
 
 </section>
 
