@@ -1,0 +1,5 @@
+Makefile
+Makefile.in
+app-skeleton
+*.o
+.deps
