@@ -1,0 +1,94 @@
+# Dutch translations for Info App package.
+# Copyright (C) 2011 Philip Chimento
+# This file is distributed under the same license as the Info App package.
+# Philip Chimento <philip.chimento@gmail.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Info App 1\n"
+"Report-Msgid-Bugs-To: philip.chimento@gmail.com\n"
+"POT-Creation-Date: 2011-07-31 20:53+0200\n"
+"PO-Revision-Date: 2011-07-31 20:47+0200\n"
+"Last-Translator: Philip Chimento <philip.chimento@gmail.com>\n"
+"Language-Team: Dutch\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../data/info-app.ui.h:1
+msgid "<b>Choose a file</b>"
+msgstr "<b>Kies een bestand</b>"
+
+#: ../data/info-app.ui.h:2
+msgid "Close the application"
+msgstr "Het programma afsluiten"
+
+#: ../data/info-app.ui.h:3
+msgid "Customize the application"
+msgstr "Voorkeuren aanpassen"
+
+#: ../data/info-app.ui.h:4
+msgid "File _Info"
+msgstr "Bestands_info"
+
+#: ../data/info-app.ui.h:5
+msgid "More information about the application"
+msgstr "Meer informatie over het programma"
+
+#: ../data/info-app.ui.h:6
+msgid "Open a file to examine"
+msgstr "Bestand openen om te bekijken"
+
+#: ../data/info-app.ui.h:7
+msgid "View information about the file"
+msgstr "Bekijk informatie over het bestand"
+
+#: ../data/info-app.ui.h:8
+msgid "_About"
+msgstr "Meer _Info"
+
+#: ../data/info-app.ui.h:9
+msgid "_About..."
+msgstr "Meer _Info..."
+
+#: ../data/info-app.ui.h:10
+msgid "_File"
+msgstr "_Bestand"
+
+#: ../data/info-app.ui.h:11
+msgid "_Help"
+msgstr "_Hulp"
+
+#: ../data/info-app.ui.h:12
+msgid "_Open"
+msgstr "_Openen"
+
+#: ../data/info-app.ui.h:13
+msgid "_Open..."
+msgstr "_Openen..."
+
+#: ../data/info-app.ui.h:14
+msgid "_Preferences"
+msgstr "_Voorkeruren"
+
+#: ../data/info-app.ui.h:15
+msgid "_Preferences..."
+msgstr "_Voorkeuren..."
+
+#: ../data/info-app.ui.h:16
+msgid "_Quit"
+msgstr "_Afsluiten"
+
+#: ../data/info-app.ui.h:17
+msgid "_View"
+msgstr "Be_kijken"
+
+#: ../info-app.desktop.in.h:1
+msgid "A sample application from the Advanced GTK+ Techniques tutorial"
+msgstr "Een voorbeeldapplicatie uit de cursus Gevorderde GTK+ Technieken"
+
+#: ../info-app.desktop.in.h:2
+msgid "Info App"
+msgstr "Info-applicatie"

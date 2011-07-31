@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+_Name=Info App
+Exec=info-app
+_Comment=A sample application from the Advanced GTK+ Techniques tutorial
+Icon=info-app
+Terminal=false
+Categories=Utility;Viewer;GTK;
+

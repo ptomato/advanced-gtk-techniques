@@ -1,0 +1,4 @@
+# List of source files containing translatable strings.
+# Please keep this file sorted alphabetically.
+[type: gettext/glade]data/info-app.ui
+info-app.desktop.in

@@ -95,7 +95,7 @@
             <property name="visible">True</property>
             <property name="related_action">action-open</property>
             <property name="use_action_appearance">True</property>
-            <property name="label" translatable="yes">toolbutton1</property>
+            <property name="label" translatable="no">toolbutton1</property>
             <property name="use_underline">True</property>
           </object>
           <packing>
@@ -108,7 +108,7 @@
             <property name="visible">True</property>
             <property name="related_action">action-info</property>
             <property name="use_action_appearance">True</property>
-            <property name="label" translatable="yes">toolbutton1</property>
+            <property name="label" translatable="no">toolbutton1</property>
             <property name="use_underline">True</property>
           </object>
           <packing>
@@ -145,7 +145,7 @@
             <child>
               <object class="GtkLabel" id="display-area">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">label</property>
+                <property name="label" translatable="no">label</property>
                 <property name="selectable">True</property>
               </object>
               <packing>
@@ -199,37 +199,37 @@
   </object>
   <object class="GtkActionGroup" id="app-actions"/>
   <object class="GtkAction" id="action-quit">
-    <property name="label">_Quit</property>
-    <property name="short_label">_Quit</property>
-    <property name="tooltip">Close the application</property>
+    <property name="label" translatable="yes">_Quit</property>
+    <property name="short_label" translatable="yes">_Quit</property>
+    <property name="tooltip" translatable="yes">Close the application</property>
     <property name="stock_id">gtk-quit</property>
     <signal name="activate" handler="action_quit"/>
   </object>
   <object class="GtkAction" id="action-preferences">
-    <property name="label">_Preferences...</property>
-    <property name="short_label">_Preferences</property>
-    <property name="tooltip">Customize the application</property>
+    <property name="label" translatable="yes">_Preferences...</property>
+    <property name="short_label" translatable="yes">_Preferences</property>
+    <property name="tooltip" translatable="yes">Customize the application</property>
     <property name="stock_id">gtk-preferences</property>
     <signal name="activate" handler="action_preferences"/>
   </object>
   <object class="GtkActionGroup" id="file-actions"/>
   <object class="GtkAction" id="action-open">
-    <property name="label">_Open...</property>
-    <property name="short_label">_Open</property>
-    <property name="tooltip">Open a file to examine</property>
+    <property name="label" translatable="yes">_Open...</property>
+    <property name="short_label" translatable="yes">_Open</property>
+    <property name="tooltip" translatable="yes">Open a file to examine</property>
     <property name="stock_id">gtk-open</property>
     <signal name="activate" handler="action_open"/>
   </object>
   <object class="GtkAction" id="action-about">
-    <property name="label">_About...</property>
-    <property name="short_label">_About</property>
-    <property name="tooltip">More information about the application</property>
+    <property name="label" translatable="yes">_About...</property>
+    <property name="short_label" translatable="yes">_About</property>
+    <property name="tooltip" translatable="yes">More information about the application</property>
     <property name="stock_id">gtk-about</property>
     <signal name="activate" handler="action_about"/>
   </object>
   <object class="GtkAction" id="action-info">
-    <property name="label">File _Info</property>
-    <property name="tooltip">View information about the file</property>
+    <property name="label" translatable="yes">File _Info</property>
+    <property name="tooltip" translatable="yes">View information about the file</property>
     <property name="stock_id">gtk-properties</property>
     <property name="is_important">True</property>
     <signal name="activate" handler="action_info"/>

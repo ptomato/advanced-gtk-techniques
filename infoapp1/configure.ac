@@ -7,7 +7,7 @@
 #  - version of the package
 #  - address for bug reports
 #  - tarball name
-AC_INIT([App Skeleton], [0], [philip.chimento@gmail.com])
+AC_INIT([Info App], [1], [philip.chimento@gmail.com])
 
 # Sanity check to make sure we are running autoconf from the right directory
 AC_CONFIG_SRCDIR([src/main.c])
@@ -28,14 +28,29 @@ AC_PROG_CC
 # use, and for discovering their compiler and linker flags
 PKG_PROG_PKG_CONFIG
 
+# We use 'gettext' for internationalizing the program source code...
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.18.1])
+
+# ...and 'intltool' for internationalizing the data files.
+IT_PROG_INTLTOOL([0.40])
+
 ### LIBRARIES ##################################################################
 # In this section we use pkg-config to configure the libraries we are using.
 
-PKG_CHECK_MODULES([APP_SKELETON], [
+PKG_CHECK_MODULES([INFO_APP], [
 	glib-2.0
 	gio-2.0 >= 2.28
 	gtk+-2.0 >= 2.12
 ])
+
+### VARIABLES ##################################################################
+# Here, we deal with optional packages and substitution variables.
+
+# The GETTEXT_PACKAGE variable is needed by intltool. We set it to the package's
+# 'tarball name'.
+GETTEXT_PACKAGE=${PACKAGE_TARNAME}
+AC_SUBST([GETTEXT_PACKAGE])
 
 ### OUTPUT #####################################################################
 # After checking all this stuff, we must output our results to the rest of the
@@ -50,6 +65,8 @@ AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
 	data/Makefile
+	pixmaps/Makefile
+	po/Makefile.in
 ])
 
 # Do all the output we have requested
