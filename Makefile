@@ -26,4 +26,6 @@ html: all
 	mkdir -p html
 	gnome-doc-tool html -o html --no-figures --custom-xslt=mallard-mathml.xslt *.page
 
-.PHONY: all html
+hmtl: html
+
+.PHONY: all html hmtl
