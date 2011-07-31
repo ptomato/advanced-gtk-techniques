@@ -1,11 +1,11 @@
 <page xmlns="http://projectmallard.org/1.0/"
       type="topic"
-      id="real-life-app">
+      id="real-life-app-setup">
 <info>
   <link type="guide" xref="index"/>
   <link type="next" xref="autoconf-project"/>
 </info>
-<title>A real-life GTK application</title>
+<title>Setting up a real-life GTK application</title>
 
 <p>Learning to write a GTK program using a tutorial is all well and good.
 At some point, though, you will have gone through enough beginners' tutorials that you won't learn any more from them.
@@ -13,8 +13,7 @@ How do you make the step from simple tutorial program to whole application?</p>
 
 <p>This section will show you how to set up an application that does the simple job of displaying information about a file.
 You will learn how to set up your build system using GNU Autotools, something that most tutorials don't cover, because using Autotools for a one-file sample program is overkill.
-For larger programs, however, you cannot do without Autotools, or another automated build system.
-You will also learn how to write an application based on <code>GtkApplication</code>, an extensible application class, and how to write a multi-document interface with one window for each document.</p>
+For larger programs, however, you cannot do without Autotools, or another automated build system.</p>
 
 <note>
   <title>Why Autotools?</title>
@@ -34,5 +33,7 @@ You will also learn how to write an application based on <code>GtkApplication</c
   The other is Alexandre Duret-Lutz' <em href="http://www.lrde.epita.fr/~adl/autotools.html">Autotools Tutorial</em>, available online.
   In its form of presentation slides, it is a little difficult to read like a book, but its diagrams and code examples are very helpful.</p>
 </note>
+
+<p>After that, in the <link xref="real-life-app-writing">next tutorial</link>, you will also learn how to write an application based on <code>GtkApplication</code>, an extensible application class, and how to write a multi-document interface with one window for each document.</p>
 
 </page>

@@ -5,11 +5,12 @@ PAGES = \
 	introduction.page \
 	dynamic-actions.page \
 	custom-container.page \
-	real-life-app.page \
+	real-life-app-setup.page \
 	autoconf-project.page \
 	automake-project.page \
 	desktop-file.page \
-	gettext-project.page
+	gettext-project.page \
+	real-life-app-writing.page
 
 all: $(PAGES)
 

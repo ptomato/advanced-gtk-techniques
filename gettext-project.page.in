@@ -206,7 +206,8 @@ You can look inside the generated <file>app-skeleton.desktop</file> file to asce
 If you now run <cmd>make install</cmd>, the translated file will be installed.</p>
 
 <p>With this, all our build infrastructure is in place.
-Now we can begin writing some real code.</p>
+Now we can begin writing some real code.
+You are ready to start on the next tutorial, <link xref="real-life-app-writing">Writing a real-life GTK application</link>.</p>
 
 </section>
 

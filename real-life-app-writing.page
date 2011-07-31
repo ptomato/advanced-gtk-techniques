@@ -1,0 +1,20 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic"
+      id="real-life-app-writing">
+<info>
+  <link type="guide" xref="index"/>
+</info>
+<title>Writing a real-life GTK application</title>
+
+<p>This tutorial will teach you how to write a real-life application in GTK.
+Although the application may be simple, it will take into account some of the considerations of developing, testing, and packaging a full-size desktop application with a multi-document interface.</p>
+
+<p>We will write an application that shows information about files in the file system, with the excellent name of <app>Info App</app>.</p>
+
+<p>At this point, you should either be familiar with the Autotools, or have done the <link xref="real-life-app-setup">Setting up a real-life GTK application</link> tutorial.</p>
+
+<p>To get started, set up a source code directory called <file>infoapp1</file>, and initialize an Autotools build system in it, as described in the previous tutorial.
+It's up to you whether you want all the bells and whistles such as an icon, a desktop file, and internationalization; add them if you like.
+When you are ready to start writing code, go to the next page.</p>
+
+</page>
