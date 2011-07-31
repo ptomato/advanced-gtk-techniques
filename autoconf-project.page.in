@@ -84,7 +84,7 @@ configure.ac:2: installing `./missing'</output>
 If you look inside the directory, however, those won't be the only files that have appeared.
 <file>Makefile.in</file>, <file>aclocal.m4</file>, <file>configure</file>, and a directory <file>autom4te.cache</file> will also have been created.</p>
 
-<note>
+<note id="note:bootstrapping">
   <title>Bootstrapping</title>
   <p>It is worth noting here that anybody who wants to build your program from this point onwards doesn't need Autoconf or Automake, only a shell and Make.
   Distributions of source code usually include all the files that are in the directory right now, so that users who want to compile the software from source don't have to bother with Autotools.

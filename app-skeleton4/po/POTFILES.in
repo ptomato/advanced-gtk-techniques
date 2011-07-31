@@ -1,1 +1,3 @@
 src/hello-world.c
+# files added by intltool-prepare
+app-skeleton.desktop.in

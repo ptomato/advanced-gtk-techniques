@@ -118,7 +118,27 @@ Change to the <file>po</file> directory and type:</p>
 You can edit it with your favorite text editor, although for bigger projects you might want to use a dedicated translation editor such as <link href="http://www.google.com">Virtaal</link> or <link href="http://www.google.com">Poedit</link>.
 Translate the messages as you see fit, or use my translations:</p>
 
-<!--{{{app-skeleton4/po/nl.po:20-34%gettext}}}-->
+<!-- gettext and intltool format their .po files a little differently -->
+<listing>
+  <title><file>app-skeleton4/po/nl.po</file></title>
+  <code mime="text/x-gettext"><![CDATA[
+#: src/hello-world.c:11
+msgid "Hello World\n"
+msgstr "Hallo Wereld\n"
+
+#: src/hello-world.c:27
+msgid "delete event occurred\n"
+msgstr "delete event heeft plaatsgevonden\n"
+
+#: src/hello-world.c:52
+msgid "Hello"
+msgstr "Hallo"
+
+#: src/hello-world.c:76
+msgid "Hello World"
+msgstr "Hallo Wereld"
+]]></code>
+</listing>
 
 <p>After translating, add the language code to the <file>LINGUAS</file> file:</p>
 
@@ -136,6 +156,57 @@ If you have your system in English or a different locale, you can test the trans
 </section>
 <section>
 <title>Translating non-source code</title>
+
+<p>The <cmd>gettext</cmd> program has one shortcoming:
+it only works in program code, where it can call the <code>gettext()</code> function to fetch its translations.
+Data files, such as a GUI definition in XML, or the <link xref="desktop-file">desktop file</link>, don't get translated.
+This is why <cmd>intltool</cmd> was invented.
+It takes translatable strings from these files and adds them to the translation template.
+Then, when they have been translated, it merges the strings back into the data files.
+We will now add <cmd>intltool</cmd> to our program and use it to translate the desktop file.</p>
+
+<p>First of all, <cmd>intltool</cmd> has its own bootstrapping program, called <cmd>intltoolize</cmd>.
+It needs to be run after <cmd>autoreconf</cmd>.
+Since using <cmd>intltool</cmd> means we can't bootstrap the build system simply by using <cmd>autoreconf -i</cmd> anymore, we will make a <link xref="autoconf-project#note:bootstrapping">bootstrap script</link>.
+Create a file in called <file>autogen.sh</file>, make it executable, and write in it:</p>
+
+<!--{{{app-skeleton4/autogen.sh:1-7%shell}}}-->
+
+<p>We need the <cmd>--force</cmd> options because <cmd>autoreconf</cmd> and <cmd>intltoolize</cmd> overwrite each other's <file>po/Makefile.in.in</file> files.
+Go ahead and run the bootstrap script now.</p>
+
+<p>Then, add to the "Shopping List" section in <file>configure.ac</file>:</p>
+
+<!--{{{app-skeleton4/configure.ac:16%autoconf}}}-->
+
+<p>Below the "Libraries" section, add a new section called "Variables."
+To use <cmd>intltool</cmd>, we need to define a variable called <code>GETTEXT_PACKAGE</code> that contains the name of the program as it is known to <cmd>gettext</cmd>:</p>
+
+<!--{{{app-skeleton4/configure.ac:29-31%autoconf}}}-->
+
+<p>The call to <code>AC_SUBST</code> makes sure that any occurrences of <code>@GETTEXT_PACKAGE@</code> in the makefiles are replaced with the contents of the variable. Now run <cmd>make</cmd> again.</p>
+
+<p>Next, we need to tell <cmd>intltool</cmd> which data files contain translatable strings.
+There is actually a script, <cmd>intltool-prepare</cmd> that will automate that for us.
+Change to the project root directory and run <cmd>intltool-prepare</cmd>.
+You will notice that it automatically adds the desktop file to <file>po/POTFILES.in</file> and it changes the install rule for the desktop file in <file>Makefile.am</file>.</p>
+
+<p>It also creates a new file, <file>app-skeleton.desktop.in</file>.
+If you are using a source control system for your project, remove the <file>app-skeleton.desktop</file> from your repository as the script suggests; it is now automatically generated from <file>app-skeleton.desktop.in</file>, which you should add to your repository.
+From now on, when you want to edit the desktop file, edit <file>app-skeleton.desktop.in</file> instead.</p>
+
+<p>To translate the desktop file, go to the <file>po/</file> directory and run <cmd>make update-po</cmd> once more.
+You will see two new untranslated strings added to the <file>.pot</file> and <file>.po</file> files.
+Translate them yourself, or use my Dutch translation:</p>
+
+<!--{{{app-skeleton4/po/nl.po:46-52%gettext}}}-->
+
+<p>Then, run <cmd>make update-po</cmd> once more, then <cmd>make</cmd>.
+You can look inside the generated <file>app-skeleton.desktop</file> file to ascertain that your translations have been merged.
+If you now run <cmd>make install</cmd>, the translated file will be installed.</p>
+
+<p>With this, all our build infrastructure is in place.
+Now we can begin writing some real code.</p>
 
 </section>
 

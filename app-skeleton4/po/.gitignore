@@ -12,3 +12,5 @@ remove-potcdate.sed
 remove-potcdate.sin
 stamp-po
 *.gmo
+.intltool-merge-cache
+stamp-it

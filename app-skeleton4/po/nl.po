@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: app-skeleton 4\n"
-"Report-Msgid-Bugs-To: philip.chimento@gmail.com\n"
-"POT-Creation-Date: 2011-07-30 16:38+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-07-31 18:12+0200\n"
 "PO-Revision-Date: 2011-07-30 16:53+0200\n"
 "Last-Translator: Philip Chimento <philip.chimento@gmail.com>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -17,18 +17,36 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/hello-world.c:11
+#: ../src/hello-world.c:11
+#, c-format
 msgid "Hello World\n"
 msgstr "Hallo Wereld\n"
 
-#: src/hello-world.c:27
+#. If you return FALSE in the "delete_event" signal handler,
+#. * GTK will emit the "destroy" signal. Returning TRUE means
+#. * you don't want the window to be destroyed.
+#. *
+#. * This is useful for popping up 'are you sure you want to quit?'
+#. * type dialogs.
+#.
+#: ../src/hello-world.c:27
+#, c-format
 msgid "delete event occurred\n"
 msgstr "delete event heeft plaatsgevonden\n"
 
-#: src/hello-world.c:52
+#: ../src/hello-world.c:52
 msgid "Hello"
 msgstr "Hallo"
 
-#: src/hello-world.c:76
+#. Creates a new button with the label "Hello World".
+#: ../src/hello-world.c:76
 msgid "Hello World"
 msgstr "Hallo Wereld"
+
+#: ../app-skeleton.desktop.in.h:1
+msgid "A sample application from the Advanced GTK+ Techniques tutorial"
+msgstr "Een voorbeeldapplicatie uit de cursus Gevorderde GTK+ Technieken"
+
+#: ../app-skeleton.desktop.in.h:2
+msgid "App Skeleton"
+msgstr "Skeletapplicatie"

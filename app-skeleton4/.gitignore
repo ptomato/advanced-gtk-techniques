@@ -13,3 +13,8 @@ config.guess
 config.rpath
 config.sub
 m4
+.cvsignore
+intltool-extract.in
+intltool-merge.in
+intltool-update.in
+app-skeleton.desktop

@@ -13,6 +13,7 @@ AC_PROG_CC
 PKG_PROG_PKG_CONFIG
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.18.1])
+IT_PROG_INTLTOOL([0.40])
 
 ### LIBRARIES ##################################################################
 # In this section we use pkg-config to configure the libraries we are using.
@@ -21,6 +22,13 @@ PKG_CHECK_MODULES([APP_SKELETON], [
 	glib-2.0
 	gtk+-2.0
 ])
+
+### VARIABLES ##################################################################
+# Here, we deal with optional packages and substitution variables.
+
+# Needed by intltool
+GETTEXT_PACKAGE=${PACKAGE_TARNAME}
+AC_SUBST([GETTEXT_PACKAGE])
 
 ### OUTPUT #####################################################################
 # After checking all this stuff, we must output our results to the rest of the

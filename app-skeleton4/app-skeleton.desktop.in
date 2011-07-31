@@ -1,9 +1,9 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=App Skeleton
+_Name=App Skeleton
 Exec=app-skeleton
-Comment=A sample application from the Advanced GTK+ Techniques tutorial
+_Comment=A sample application from the Advanced GTK+ Techniques tutorial
 Icon=app-skeleton
 Terminal=false
 Categories=Utility;Viewer;GTK;
