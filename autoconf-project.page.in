@@ -3,8 +3,11 @@
       id="autoconf-project">
 <info>
   <link type="next" xref="automake-project"/>
+  <link type="guide" xref="index"/>
 </info>
 <title>Starting a new project with Autoconf</title>
+
+<note><p>This is the first tutorial in the <em>Setting up a real-life GTK application</em> series.</p></note>
 
 <p>To get started, we will build up an Autotools project from scratch.
 First create a directory called <file>app-skeleton1</file>.
