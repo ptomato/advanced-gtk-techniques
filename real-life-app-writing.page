@@ -7,7 +7,8 @@
 <title>Writing a real-life GTK application</title>
 
 <p>This tutorial will teach you how to write a real-life application in GTK.
-Although the application may be simple, it will take into account some of the considerations of developing, testing, and packaging a full-size desktop application with a multi-document interface.</p>
+Although the application may be simple, it will take into account some of the considerations of developing, testing, and packaging a full-size desktop application with a multi-document interface.
+You will learn how to write an application based on <code>GtkApplication</code>, an extensible application class, and how to write a multi-document interface with one window for each document.</p>
 
 <p>We will write an application that shows information about files in the file system, with the excellent name of <app>Info App</app>.</p>
 
@@ -16,5 +17,11 @@ Although the application may be simple, it will take into account some of the co
 <p>To get started, set up a source code directory called <file>infoapp1</file>, and initialize an Autotools build system in it, as described in the previous tutorial.
 It's up to you whether you want all the bells and whistles such as an icon, a desktop file, and internationalization; add them if you like.
 When you are ready to start writing code, go to the next page.</p>
+
+<note>
+  <p>This tutorial is large and therefore it is divided into several sections.
+  You can go through the whole tutorial in order, or if you like, you can do just one section by copying the code from the previous section and starting from there.
+  Each section has a link to the code that you need to start out with.</p>
+</note>
 
 </page>

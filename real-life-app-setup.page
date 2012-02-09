@@ -11,7 +11,7 @@
 At some point, though, you will have gone through enough beginners' tutorials that you won't learn any more from them.
 How do you make the step from simple tutorial program to whole application?</p>
 
-<p>This section will show you how to set up an application that does the simple job of displaying information about a file.
+<p>This section will show you how to <em>prepare</em> to write an application that does the simple job of displaying information about a file.
 You will learn how to set up your build system using GNU Autotools, something that most tutorials don't cover, because using Autotools for a one-file sample program is overkill.
 For larger programs, however, you cannot do without Autotools, or another automated build system.</p>
 
@@ -34,6 +34,12 @@ For larger programs, however, you cannot do without Autotools, or another automa
   In its form of presentation slides, it is a little difficult to read like a book, but its diagrams and code examples are very helpful.</p>
 </note>
 
-<p>After that, in the <link xref="real-life-app-writing">next tutorial</link>, you will also learn how to write an application based on <code>GtkApplication</code>, an extensible application class, and how to write a multi-document interface with one window for each document.</p>
+<p>Once you have set up the application, you will learn to actually <em>write</em> it in the <link xref="real-life-app-writing">next tutorial</link>.</p>
+
+<note>
+  <p>This tutorial is large and therefore it is divided into several sections.
+  You can go through the whole tutorial in order, or if you like, you can do just one section by copying the code from the previous section and starting from there.
+  Each section has a link to the code that you need to start out with.</p>
+</note>
 
 </page>
