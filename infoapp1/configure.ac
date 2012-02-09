@@ -43,6 +43,14 @@ PKG_CHECK_MODULES([INFO_APP], [
 	gio-2.0 >= 2.28
 	gtk+-2.0 >= 2.12
 ])
+# Check for OS X integration package
+PKG_CHECK_EXISTS([gtk-mac-integration], [
+	PKG_CHECK_MODULES([GTK_MAC_INTEGRATION], [gtk-mac-integration])
+	INFO_APP_CFLAGS="$INFO_APP_CFLAGS $GTK_MAC_INTEGRATION_CFLAGS"
+	INFO_APP_LIBS="$INFO_APP_LIBS $GTK_MAC_INTEGRATION_LIBS"
+	AC_SUBST([INFO_APP_CFLAGS])
+	AC_SUBST([INFO_APP_LIBS])
+])
 
 ### VARIABLES ##################################################################
 # Here, we deal with optional packages and substitution variables.

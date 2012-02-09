@@ -3,6 +3,10 @@
 
 #include <gio/gio.h>
 
+#ifdef MAC_INTEGRATION
+#include <gtkmacintegration/gtkosxapplication.h>
+#endif
+
 G_BEGIN_DECLS
 
 #define P_TYPE_INFO_APP            (p_info_app_get_type())
@@ -13,11 +17,19 @@ G_BEGIN_DECLS
 #define P_INFO_APP_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), P_TYPE_INFO_APP, PInfoAppClass))
 
 typedef struct {
+#ifndef MAC_INTEGRATION
 	GApplication parent_instance;
+#else
+	GtkOSXApplication parent_instance;
+#endif
 } PInfoApp;
 
 typedef struct {
+#ifndef MAC_INTEGRATION
 	GApplicationClass parent_class;
+#else
+	GtkOSXApplicationClass parent_class;
+#endif
 } PInfoAppClass;
 
 PInfoApp *p_info_app_get(void);
