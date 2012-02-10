@@ -7,8 +7,9 @@
 </info>
 <title>Generating Makefiles with Automake</title>
 
-<note><p>This tutorial is part of the <quote>Setting up a real-life GTK application</quote> series.
-If you don't want to follow along with the previous parts, simply copy the <link href="../app-skeleton1"><file>app-skeleton1</file></link> directory from the tutorial's code examples.</p></note>
+<note><p>This tutorial is part of the <em>Setting up a real-life GTK application</em> series.
+If you don't want to follow along with the previous parts, simply copy the <link href="../app-skeleton1"><file>app-skeleton1</file></link> directory from the tutorial's code examples.
+Or, you can start from the <link xref="real-life-app-setup">beginning</link>.</p></note>
 
 <p>Now to move on to Automake, the other major component of our build system.
 After we get Automake set up, we can start writing some source code.</p>
