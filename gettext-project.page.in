@@ -2,9 +2,10 @@
       type="topic"
       id="gettext-project">
 <info>
-  <link type="guide" xref="index"/>
+  <link type="guide" xref="index#app-setup"/>
+  <desc>Allowing your program to be translated into other languages</desc>
 </info>
-<title>Allowing your program to be translated into other languages</title>
+<title>Setting up <app>Gettext</app></title>
 
 <note><p>This tutorial is part of the <em>Setting up a real-life GTK application</em> series.
 If you don't want to follow along with the previous parts, simply copy the <link href="../app-skeleton3"><file>app-skeleton3</file></link> directory from the tutorial's code examples.

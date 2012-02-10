@@ -2,8 +2,9 @@
       type="topic"
       id="real-life-app-setup">
 <info>
-  <link type="guide" xref="index"/>
+  <link type="guide" xref="index#app-setup"/>
   <link type="next" xref="autoconf-project"/>
+  <desc>Introduction</desc>
 </info>
 <title>Setting up a real-life GTK application</title>
 

@@ -3,9 +3,10 @@
       id="desktop-file">
 <info>
   <link type="next" xref="gettext-project"/>
-  <link type="guide" xref="index"/>
+  <link type="guide" xref="index#app-setup"/>
+  <desc>Installing your program onto the user's desktop</desc>
 </info>
-<title>Installing your program onto the user's desktop</title>
+<title>Icons and desktop files</title>
 
 <note><p>This tutorial is part of the <em>Setting up a real-life GTK application</em> series.
 If you don't want to follow along with the previous parts, simply copy the <link href="../app-skeleton2"><file>app-skeleton2</file></link> directory from the tutorial's code examples.

@@ -2,7 +2,8 @@
       type="topic"
       id="real-life-app-writing">
 <info>
-  <link type="guide" xref="index"/>
+  <link type="guide" xref="index#app-writing"/>
+  <desc>Introduction</desc>
 </info>
 <title>Writing a real-life GTK application</title>
 

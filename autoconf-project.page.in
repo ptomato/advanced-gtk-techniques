@@ -3,9 +3,10 @@
       id="autoconf-project">
 <info>
   <link type="next" xref="automake-project"/>
-  <link type="guide" xref="index"/>
+  <link type="guide" xref="index#app-setup"/>
+  <desc>Starting a new project from scratch</desc>
 </info>
-<title>Starting a new project with Autoconf</title>
+<title>Setting up <app>Autoconf</app></title>
 
 <note><p>This is the first tutorial in the <em>Setting up a real-life GTK application</em> series.</p></note>
 
