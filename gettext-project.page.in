@@ -7,9 +7,16 @@
 </info>
 <title>Setting up <app>Gettext</app></title>
 
-<note><p>This tutorial is part of the <em>Setting up a real-life GTK application</em> series.
+<synopsis>
+<p>In this tutorial, you will learn:</p>
+<list>
+  <item><p>How to translate your program's source code using <app>Gettext</app></p></item>
+  <item><p>How to translate other files using <app>Intltool</app></p></item>
+</list>
+<p>This tutorial is part of the <em>Setting up a real-life GTK application</em> series.
 If you don't want to follow along with the previous parts, simply copy the <link href="../app-skeleton3"><file>app-skeleton3</file></link> directory from the tutorial's code examples.
-Or, you can start from the <link xref="real-life-app-setup">beginning</link>.</p></note>
+Or, you can start from the <link xref="real-life-app-setup">beginning</link>.</p>
+</synopsis>
 
 <p>There is one more piece of infrastructure to add before we start writing real code.
 That is allowing the program to be translated into other languages.

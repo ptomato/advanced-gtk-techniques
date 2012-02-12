@@ -8,7 +8,10 @@
 </info>
 <title>Setting up <app>Autoconf</app></title>
 
-<note><p>This is the first tutorial in the <em>Setting up a real-life GTK application</em> series.</p></note>
+<synopsis>
+<p>In this tutorial, you will learn how to set up an empty Autotools build system.</p>
+<p>This is the first tutorial in the <em>Setting up a real-life GTK application</em> series.</p>
+</synopsis>
 
 <p>To get started, we will build up an Autotools project from scratch.
 First create a directory called <file>app-skeleton1</file>.

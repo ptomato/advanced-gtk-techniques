@@ -8,9 +8,16 @@
 </info>
 <title>Setting up <app>Automake</app></title>
 
-<note><p>This tutorial is part of the <em>Setting up a real-life GTK application</em> series.
+<synopsis>
+<p>In this tutorial, you will learn:</p>
+<list>
+  <item><p>How to generate a Makefile saying which files to compile</p></item>
+  <item><p>How to check for the libraries your program needs</p></item>
+</list>
+<p>This tutorial is part of the <em>Setting up a real-life GTK application</em> series.
 If you don't want to follow along with the previous parts, simply copy the <link href="../app-skeleton1"><file>app-skeleton1</file></link> directory from the tutorial's code examples.
-Or, you can start from the <link xref="real-life-app-setup">beginning</link>.</p></note>
+Or, you can start from the <link xref="real-life-app-setup">beginning</link>.</p>
+</synopsis>
 
 <p>Now to move on to Automake, the other major component of our build system.
 After we get Automake set up, we can start writing some source code.</p>

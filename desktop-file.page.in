@@ -8,9 +8,16 @@
 </info>
 <title>Icons and desktop files</title>
 
-<note><p>This tutorial is part of the <em>Setting up a real-life GTK application</em> series.
+<synopsis>
+<p>In this tutorial, you will learn:</p>
+<list>
+  <item><p>How to add an icon to your program</p></item>
+  <item><p>How to add your program to the applications menu</p></item>
+</list>
+<p>This tutorial is part of the <em>Setting up a real-life GTK application</em> series.
 If you don't want to follow along with the previous parts, simply copy the <link href="../app-skeleton2"><file>app-skeleton2</file></link> directory from the tutorial's code examples.
-Or, you can start from the <link xref="real-life-app-setup">beginning</link>.</p></note>
+Or, you can start from the <link xref="real-life-app-setup">beginning</link>.</p>
+</synopsis>
 
 <p>Most users who can use a terminal are also familiar with the time-tested routine of <cmd>./configure</cmd>, <cmd>make</cmd> and <cmd>make install</cmd>.
 However, as the Linux desktop gains more and more ground, package managers are on the rise.
