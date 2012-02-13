@@ -7,6 +7,7 @@ Creates a static HTML page listing the contents of a directory.
 import os
 import os.path
 import codecs
+import zipfile
 
 header = \
 u"""<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
@@ -39,6 +40,9 @@ h1 {{
 p.linkup::before {{
 	content: '\N{black up-pointing triangle} ';
 }}
+p.download::before {{
+	content: '\N{downwards arrow} ';
+}}
 li.dir::before {{
 	content: '\N{black right-pointing triangle} ';
 }}
@@ -50,6 +54,9 @@ ul {{
 <body>
   <h1>Index of {thisdir}</h1>
   {linkup}
+  <p class="download">
+    <a href="{zipfile}">Download all files</a>
+  </p>
   <ul>
 """
 
@@ -75,23 +82,35 @@ def output_html(topdir, subdir=False):
 	dirnames = [n for n in files if os.path.isdir(os.path.join(topdir, n))]
 	filenames = list(set(files) - set(dirnames))
 	dirnames.sort()
+	filenames.remove('index.html')
+	filenames.remove('contents.zip')
 	filenames.sort()
-	
+
 	for dirname in dirnames:
 		output_html(os.path.join(topdir, dirname), subdir=True)
-	
+
 	html_outfile = os.path.join(topdir, 'index.html')
+	zip_outfile = os.path.join(topdir, 'contents.zip')
+
 	with codecs.open(html_outfile, 'w', encoding='utf-8') as fp:
 		linkup_text = linkup.format(updir='../index.html') if subdir else ''
-		fp.write(header.format(thisdir=topdir, linkup=linkup_text))
+		fp.write(header.format(thisdir=topdir, linkup=linkup_text,
+			zipfile='contents.zip'))
 		for name in dirnames:
 			fp.write(item.format(name=name, link=name + '/index.html', 
 				cls="dir"))
 		for name in filenames:
-			if name == 'index.html' or name.startswith('.'):
+			if name.startswith('.'):
 				continue
 			fp.write(item.format(name=name, link=name, cls="file"))
 		fp.write(footer)
+	
+	with zipfile.ZipFile(zip_outfile, 'w') as zp:
+		for root, dirs, files in os.walk(topdir):
+			files.remove('index.html')
+			files.remove('contents.zip')
+			for name in dirs + files:
+				zp.write(os.path.join(root, name))
 
 if __name__ == '__main__':
 	for name in os.listdir('.'):
