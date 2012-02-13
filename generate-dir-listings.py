@@ -49,10 +49,14 @@ ul {{
 </head>
 <body>
   <h1>Index of {thisdir}</h1>
-  <p class="linkup">
+  {linkup}
+  <ul>
+"""
+
+linkup = \
+"""  <p class="linkup">
     <a href="{updir}">Up to higher level directory</a>
   </p>
-  <ul>
 """
 
 item = \
@@ -66,20 +70,28 @@ footer = """
 </body>
 </html>"""
 
-def output_html(topdir):
-	for thisdir, dirnames, filenames in os.walk(topdir):
-		for dirname in dirnames:
-			output_html(os.path.join(thisdir, dirname))
-		
-		html_outfile = os.path.join(thisdir, 'index.html')
-		with codecs.open(html_outfile, 'w', encoding='utf-8') as fp:
-			parent_path = os.path.join(thisdir, '..')
-			fp.write(header.format(thisdir=thisdir, updir=parent_path))
-			for name in dirnames + filenames:
-				filepath = os.path.join(thisdir, name)
-				fp.write(item.format(name=name, link=filepath,
-					cls="file" if name in filenames else "dir"))
-			fp.write(footer)
+def output_html(topdir, subdir=False):
+	files = os.listdir(topdir)
+	dirnames = [n for n in files if os.path.isdir(os.path.join(topdir, n))]
+	filenames = list(set(files) - set(dirnames))
+	dirnames.sort()
+	filenames.sort()
+	
+	for dirname in dirnames:
+		output_html(os.path.join(topdir, dirname), subdir=True)
+	
+	html_outfile = os.path.join(topdir, 'index.html')
+	with codecs.open(html_outfile, 'w', encoding='utf-8') as fp:
+		linkup_text = linkup.format(updir='../index.html') if subdir else ''
+		fp.write(header.format(thisdir=topdir, linkup=linkup_text))
+		for name in dirnames:
+			fp.write(item.format(name=name, link=name + '/index.html', 
+				cls="dir"))
+		for name in filenames:
+			if name == 'index.html' or name.startswith('.'):
+				continue
+			fp.write(item.format(name=name, link=name, cls="file"))
+		fp.write(footer)
 
 if __name__ == '__main__':
 	for name in os.listdir('.'):
