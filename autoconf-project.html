@@ -1,0 +1,478 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:str="http://exslt.org/strings">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Setting up Autoconf</title>
+<style type="text/css">
+html { height: 100%; }
+body {
+  margin: 0px;
+  background-color: #f9f9f6;
+  padding: 12px;
+  min-height: 100%;
+  direction: ltr;
+}
+ul, ol, dl, dd { margin: 0; }
+div, pre, p, li, dt { margin: 1em 0 0 0; padding: 0; }
+.first-child { margin-top: 0; }
+li.condensed { margin-top: 0.2em; }
+a {
+  text-decoration: none;
+  color: #1f609f;
+}
+a:visited {
+  color: #9f1f6f;
+}
+a:hover { text-decoration: underline; }
+
+div.headbar {
+  margin: 0;
+  max-width: 48em;
+}
+div.footbar {
+  margin: 0;
+  max-width: 48em;
+}
+div.body {
+  margin: 0;
+  padding: 1em;
+  max-width: 48em;
+  min-height: 20em;
+  -moz-border-radius: 6px;
+  border: solid 1px #e0e0df;
+  background-color: #ffffff;
+}
+div.navbar {
+  margin: 0;
+  float: right;
+}
+a.navbar-prev::before {
+  content: '◀  ';
+  color: #3f3f3f;
+}
+a.navbar-next::after {
+  content: '  ▶';
+  color: #3f3f3f;
+}
+div.copyrights {
+  text-align: center;
+  color: #3f3f3f;
+}
+div.section { margin-top: 2.4em; clear: both; }
+div.section div.section {
+  margin-top: 1.72em;
+  margin-left: 1.72em;
+}
+div.section div.section div.section { margin-top: 1.44em; }
+div.header {
+  margin: 0;
+  color: #3f3f3f;
+  border-bottom: solid 1px #e0e0df;
+}
+h1 {
+  font-size: 1.44em;
+  margin: 0;
+}
+h2, h3, h4, h5, h6, h7 {
+  font-size: 1.2em;
+  margin: 0;
+}
+table { border-collapse: collapse; }
+
+div.autolinks ul { margin: 0; padding: 0; }
+div.autolinks div.title { margin: 1em 0 0 1em; }
+div.autolinks div.title span {
+  border-bottom: solid 1px #e0e0df;
+}
+li.autolink { margin: 0.5em 0 0 0; padding: 0 0 0 1em; list-style-type: none; }
+
+div.linktrails {
+  margin: 0;
+}
+div.linktrail {
+  font-size: 0.83em;
+  margin: 0 1px 0.2em 1px;
+  padding-left: 1.2em;
+  color: #3f3f3f;
+}
+
+table.twocolumn { width: 100%; }
+td.twocolumnleft { width: 48%; vertical-align: top; padding: 0; margin: 0; }
+td.twocolumnright {
+  width: 52%; vertical-align: top;
+  margin: 0; padding: 0;
+  padding-left: 1em;
+}
+
+div.linkdiv div.title {
+  font-size: 1em;
+  color: inherit;
+}
+div.linkdiv {
+  margin: 0;
+  padding: 0.5em;
+  -moz-border-radius: 6px;
+  border: solid 1px #ffffff;
+}
+div.linkdiv:hover {
+  border-color: #c0c9ff;
+  background-color: #f0f9ff;
+}
+div.linkdivsep {
+  margin: 0.5em;
+  list-style-type: none;
+  max-width: 24em;
+  border-bottom: solid 1px #e0e0df;
+}
+
+div.title {
+  margin: 0 0 0.2em 0;
+  font-weight: bold;
+  color: #3f3f3f;
+}
+div.desc { margin: 0 0 0.2em 0; }
+div.desc-listing, div.desc-synopsis { font-style: italic; }
+div.desc-figure { margin: 0.2em 0 0 0; }
+pre.code {
+  /* FIXME: In RTL locales, we really want to align this left, but the watermark
+   * we have is designed to fit in the top right corner.  Either we need a new
+   * watermark, or we need a separate RTL version.
+   */
+  background: url('watermark-code.png') no-repeat top right;
+  border: solid 2px #e0e0df;
+  padding: 0.5em 1em 0.5em 1em;
+}
+div.example {
+  border-left: solid 4px #e0e0df;
+  padding-left: 1em;
+}
+div.figure {
+  margin-left: 1.72em;
+  padding: 4px;
+  color: #3f3f3f;
+  border: solid 1px #e0e0df;
+  background-color: #f9f9f6;
+}
+div.figure-contents {
+  margin: 0;
+  padding: 0.5em 1em 0.5em 1em;
+  text-align: center;
+  color: #000000;
+  border: solid 1px #e0e0df;
+  background-color: #ffffff;
+}
+div.listing-contents { margin: 0; padding: 0; }
+div.note {
+  padding: 0.5em 6px 0.5em 6px;
+  border-top: solid 1px #ffc0c0;
+  border-bottom: solid 1px #ffc0c0;
+  background-color: #fffff0;
+}
+div.note-inner {
+  margin: 0;
+  padding-left: 60px;
+  background-position: left top;
+  background-repeat: no-repeat;
+  min-height: 48px;
+  background-image: url("admon-note.png");
+}
+div.note-advanced div.note-inner {  }
+div.note-bug div.note-inner { background-image: url("admon-bug.png"); }
+div.note-important div.note-inner { background-image: url("admon-important.png"); }
+div.note-tip div.note-inner { background-image: url("admon-tip.png"); }
+div.note-warning div.note-inner { background-image: url("admon-warning.png"); }
+div.note-contents { margin: 0; padding: 0; }
+div.quote-inner {
+  margin: 0;
+  background-image: url('watermark-blockquote-201C.png');
+  background-repeat: no-repeat;
+  background-position: top left;
+  padding: 0.5em;
+  padding-left: 4em;
+}
+div.title-quote {
+  margin-left: 4em;
+}
+blockquote { margin: 0; padding: 0; }
+div.cite-comment {
+  margin-top: 0.5em;
+  color: #3f3f3f;
+}
+div.cite-quote {
+  margin-top: 0.5em;
+  color: #3f3f3f;
+}
+div.cite-quote::before {
+  
+  content: '― ';
+}
+pre.screen {
+  padding: 0.5em 1em 0.5em 1em;
+  background-color: #f9f9f6;
+  border: solid 2px #e0e0df;
+}
+div.synopsis-contents {
+  margin: 0;
+  padding: 0.5em 1em 0.5em 1em;
+  border-top: solid 2px;
+  border-bottom: solid 2px;
+  border-color: #c0c9ff;
+  background-color: #f9f9f6;
+}
+div.synopsis pre.code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+div.list-contents { margin: 0; padding: 0; }
+div.title-list { margin-bottom: 0.5em; }
+ol.list, ul.list { margin: 0; padding: 0; }
+li.item-list { margin-left: 1.44em; }
+
+div.steps-contents {
+  margin: 0;
+  padding: 0.5em 1em 0.5em 1em;
+  border-top: solid 2px;
+  border-bottom: solid 2px;
+  border-color: #c0c9ff;
+  background-color: #fffff0;
+}
+div.steps-contents div.steps-contents {
+  padding: 0;
+  border: none;
+  background-color: none;
+}
+ol.steps, ul.steps { margin: 0; padding: 0; }
+li.item-steps { margin-left: 1.44em; }
+
+div.terms-contents { margin: 0; }
+dt.item-next { margin-top: 0; }
+dd.item-terms {
+  margin-top: 0.2em;
+  margin-left: 1.44em;
+}
+
+ul.tree {
+  margin: 0; padding: 0;
+  list-style-type: none;
+}
+li.item-tree { margin: 0; padding: 0; }
+div.item-tree { margin: 0; padding: 0; }
+ul.tree ul.tree { margin-left: 1.44em; }
+div.tree-lines ul.tree { margin-left: 0; }
+
+table.table {
+  border-collapse: collapse;
+  border-color: #555753;
+  border-width: 1px;
+}
+table.table td {
+  padding: 0.1em 0.5em 0.1em 0.5em;
+  border-color: #888a85;
+  border-width: 1px;
+  vertical-align: top;
+}
+
+span.app { font-style: italic; }
+span.cmd {
+  font-family: monospace;
+  background-color: #f9f9f6;
+  padding: 0 0.2em 0 0.2em;
+}
+span.code { font-family: monospace; }
+span.em { font-style: italic; }
+span.email { color: red; }
+span.file { font-family: monospace; }
+span.gui, span.guiseq { color: #3f3f3f; }
+span.input { font-family: monospace; }
+span.hi {
+  background-color: #fffff0;
+}
+span.key {
+  color: #3f3f3f;
+  border: solid 1px #e0e0df;
+  padding: 0 0.2em 0 0.2em;
+}
+span.keyseq {
+  color: #3f3f3f;
+}
+span.output { font-family: monospace; }
+pre.screen span.output {
+  color: #3f3f3f;
+}
+pre.screen span.output-error {
+
+  color: #ff0000;
+}
+pre.screen span.output-prompt { font-weight: bold; }
+span.sys { font-family: monospace; }
+span.var { font-style: italic; }
+
+div.version {
+  position: absolute;
+  right: 12px;
+  opacity: 0.2;
+  margin-top: -1em;
+  padding: 0.5em 1em 0.5em 1em;
+  max-width: 24em;
+  -moz-border-radius: 6px;
+  border: solid 1px #e0e0df;
+  background-color: #fffff0;
+}
+div.version:hover { opacity: 0.8; }
+div.version p.version { margin-top: 0.2em; }
+div.linkdiv div.title span.status {
+  font-size: 0.83em;
+  font-weight: normal;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  color: #3f3f3f;
+  border: solid 1px #ffc0c0;
+}
+div.linkdiv div.title span.status-stub { background-color: #fff0f0; }
+div.linkdiv div.title span.status-draft { background-color: #fff0f0; }
+div.linkdiv div.title span.status-incomplete { background-color: #fff0f0; }
+div.linkdiv div.title span.status-review { background-color: #fffff0; }
+div.linkdiv div.desc {
+  margin-top: 0.2em;
+  color: #3f3f3f;
+}
+div.comment {
+  padding: 0.5em;
+  border: solid 2px #ffc0c0;
+  background-color: #fff0f0;
+}
+div.comment div.comment {
+  margin: 1em 1em 0 1em;
+}
+div.comment div.cite {
+  margin: 0 0 0.5em 0;
+  font-style: italic;
+}
+</style>
+</head>
+<body class="">
+<div class="headbar"><div class="linktrails"><div class="linktrail">
+<a class="linktrail" href="index.html">Advanced GTK Techniques</a> › <a class="linktrail" href="index.html#app-setup">Setting up a real-life GTK application</a> » </div></div></div>
+<div class="body">
+<div class="navbar">
+<a class="navbar-prev" href="real-life-app-setup.html">Previous</a>  |  <a class="navbar-next" href="automake-project.html">Next</a>
+</div>
+<div class="header"><h1 class="title">Setting up <span xmlns:e="http://projectmallard.org/experimental/" class=" app">Autoconf</span>
+</h1></div>
+<div class="contents">
+<div class="synopsis"><div class="synopsis-contents">
+<p class="p first-child">In this tutorial, you will learn how to set up an empty Autotools build system.</p>
+<p class="p">This is the first tutorial in the <span xmlns:e="http://projectmallard.org/experimental/" class=" em">Setting up a real-life GTK application</span> series.</p>
+</div></div>
+<p class="p">To get started, we will build up an Autotools project from scratch.
+First create a directory called <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton1</span>.
+In the directory, create an empty file called <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span>.
+(For example, you can type <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">touch Makefile.am</span> in a terminal.)
+This is an Automake file, which is where we put the instructions for transforming source code into programs.
+We will fill it later.
+First, we will use Autoconf to configure our project.</p>
+<p class="p">Open a new file in the directory with your editor and call it <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure.ac</span>.
+This is an Autoconf file, where we put instructions for what tools we would like to use to build our project.
+We also note what capabilities of the system we would like to use, so that Autoconf can check to make sure the system has those capabilities.
+In <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure.ac</span>, write:</p>
+<div class="listing">
+<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton1/configure.ac</span></div>
+<div class="listing-contents"><pre class="code first-child">AC_INIT([App Skeleton], [1], [philip.chimento@gmail.com])
+AM_INIT_AUTOMAKE([-Wall foreign])
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT</pre></div>
+</div>
+<p class="p">This file consists of macros that Autoconf expands into shell scripts.
+Macros beginning with <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_</span> are Autoconf's own macros, and macros that start with <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AM_</span> belong to Automake.
+Notice that the macros' argument lists are enclosed in parentheses, and each argument is enclosed in square brackets.
+The square brackets are <span xmlns:e="http://projectmallard.org/experimental/" class=" em">quotes</span>.
+They are quite complicated and explained in detail in the Autoconf manual, but a good rule of thumb is:
+always quote each argument of a macro.
+We will go through these macros one by one:
+</p>
+<div class="terms"><div class="terms-contents"><dl class="terms">
+<dt class="item-terms first-child"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_INIT</span></dt>
+<dd class="item-terms"><p class="p first-child">This initializes Autoconf, telling it the name and version of the project.
+    The third, optional argument is an e-mail address for reporting bugs in the program.
+    You can replace it with your own e-mail address if you like, but bugs in the tutorial programs should probably still be reported to me.</p></dd>
+<dt class="item-terms"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">AM_INIT_AUTOMAKE</span></dt>
+<dd class="item-terms">
+<p class="p first-child">This tells Autoconf that we will be using Automake (yes, it is possible to use one without the other.)
+    It also initializes Automake and configures it.
+    <span xmlns:e="http://projectmallard.org/experimental/" class=" code">-Wall</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">foreign</span> are Automake options.
+    Note that they are not separate arguments to the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AM_INIT_AUTOMAKE</span> macro; all the options are one space-separated argument.</p>
+<p class="p"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">-Wall</span> tells Automake to have the compiler report all warnings when compiling our program, much like the <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">-Wall</span> option to the C compiler.
+    <span xmlns:e="http://projectmallard.org/experimental/" class=" code">foreign</span> tells Automake that we will not be building a GNU package, so it will not complain about the lack of files such as README.
+    If you are building a real application, you might want to remove the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">foreign</span> option so that you will not forget to provide any files that users might expect.</p>
+</dd>
+<dt class="item-terms"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_CONFIG_FILES</span></dt>
+<dd class="item-terms">
+<p class="p first-child">This is a list of files that we would like to output when configuring our project.
+    If we put a file named <span xmlns:e="http://projectmallard.org/experimental/" class=" file">plerp</span> in this list, then Autoconf will look for a file named <span xmlns:e="http://projectmallard.org/experimental/" class=" file">plerp.in</span> and transform it into <span xmlns:e="http://projectmallard.org/experimental/" class=" file">plerp</span>.
+    It does this by scanning <span xmlns:e="http://projectmallard.org/experimental/" class=" file">plerp.in</span> and replacing any text in the form of <span xmlns:e="http://projectmallard.org/experimental/" class=" code">@VARIABLE@</span> with the contents of the variable <span xmlns:e="http://projectmallard.org/experimental/" class=" code">VARIABLE</span>.
+    We have not defined any of these variables explicitly yet, but they are defined internally by many Autoconf and Automake macros.</p>
+<p class="p">Here, we tell Autoconf that we would like to transform <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.in</span> into <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>.
+    Where is <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.in</span>?
+    When we run Automake, it creates <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.in</span> from <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span>.
+    We will do this in the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="automake-project.html" title="">next step</a></span>.</p>
+</dd>
+<dt class="item-terms"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_OUTPUT</span></dt>
+<dd class="item-terms"><p class="p first-child">This macro takes care of outputting any files we have asked Autoconf to output.</p></dd>
+</dl></div></div>
+<p class="p">We must now <span xmlns:e="http://projectmallard.org/experimental/" class=" em">bootstrap</span> this project (initialize it from this pristine state into a state where the build system is working.)
+The Autoreconf program does this.
+Autoreconf runs Autoconf, Automake, and several other programs in order to get the project ready to be built.
+In a terminal, type:</p>
+<pre class="screen"><span xmlns:e="http://projectmallard.org/experimental/" class=" input">autoreconf -i</span>
+<span xmlns:e="http://projectmallard.org/experimental/" class=" output">configure.ac:2: installing `./install.sh'
+configure.ac:2: installing `./missing'</span></pre>
+<p class="p">You will be notified of files being installed.
+(That is what the <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">-i</span> option does; once the files are there, you can simply run <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">autoreconf</span> without any options.)
+If you look inside the directory, however, those won't be the only files that have appeared.
+<span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.in</span>, <span xmlns:e="http://projectmallard.org/experimental/" class=" file">aclocal.m4</span>, <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure</span>, and a directory <span xmlns:e="http://projectmallard.org/experimental/" class=" file">autom4te.cache</span> will also have been created.</p>
+<div class="note"><div class="note-inner">
+<div class="title title-note">Bootstrapping</div>
+<div class="note-contents"><p class="p first-child">It is worth noting here that anybody who wants to build your program from this point onwards doesn't need Autoconf or Automake, only a shell and Make.
+  Distributions of source code usually include all the files that are in the directory right now, so that users who want to compile the software from source don't have to bother with Autotools.
+  When checking out source code from a repository, however, only the handwritten files are included.
+  The reasoning goes that those who are savvy enough to mess with development snapshots of software can be expected to have various build tools installed.
+  If you check out source code from a repository, bootstrap it using <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">autoreconf -i</span>.
+  Sometimes there is a script called <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">autogen.sh</span> or <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">bootstrap</span> to do this for you, especially if there are other steps needed for bootstrapping.
+  If one of these files exists, use it instead.</p></div>
+</div></div>
+<p class="p">Now the build system is initialized, we can build the source in the usual way.</p>
+<pre class="screen"><span xmlns:e="http://projectmallard.org/experimental/" class=" input">./configure</span>
+<span xmlns:e="http://projectmallard.org/experimental/" class=" output">checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking for a thread-safe mkdir -p... /bin/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+configure: creating ./config.status
+config.status: creating Makefile</span>
+<span xmlns:e="http://projectmallard.org/experimental/" class=" input">make</span>
+<span xmlns:e="http://projectmallard.org/experimental/" class=" output">make: Nothing to be done for `all'.</span></pre>
+<p class="p">Of course there is nothing for <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make</span> to do.
+We have no source files, and our <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span> was empty.
+If you look at the size of the generated <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>, however, it is anything but empty: my system reports it to be 14 kilobytes large.
+Even though we have no project yet, we still have a versatile build system in place.</p>
+<p class="p">For an example of just how versatile, type <span xmlns:e="http://projectmallard.org/experimental/" class=" input">make dist</span>.
+A file named <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton-1.tar.gz</span> will appear in the directory.
+It is a <span xmlns:e="http://projectmallard.org/experimental/" class=" em">tarball</span> (archive) of the project's source code, ready to be distributed.
+It is also worth noting that whoever downloads this tarball can build the project without having Autotools installed:
+all they need are the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span> files, which are included.</p>
+<p class="p">We can do other things, such as clean up our project directory.
+For a full list of standard <span xmlns:e="http://projectmallard.org/experimental/" class=" em">make targets</span>, refer to the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="http://www.gnu.org/s/hello/manual/make/Standard-Targets.html" title="http://www.gnu.org/s/hello/manual/make/Standard-Targets.html">Make manual</a></span>.</p>
+</div>
+<div class="section autolinkssection">
+<div class="header"><h2 class="title">Further Reading</h2></div>
+<div class="autolinks">
+<div class="title"><span>More About</span></div>
+<ul><li class="autolink"><a href="index.html#app-setup">Setting up a real-life GTK application</a></li></ul>
+</div>
+</div>
+</div>
+<div class="footbar"><div class="copyrights"></div></div>
+</body>
+</html>

@@ -1,0 +1,555 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:str="http://exslt.org/strings">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Setting up Automake</title>
+<style type="text/css">
+html { height: 100%; }
+body {
+  margin: 0px;
+  background-color: #f9f9f6;
+  padding: 12px;
+  min-height: 100%;
+  direction: ltr;
+}
+ul, ol, dl, dd { margin: 0; }
+div, pre, p, li, dt { margin: 1em 0 0 0; padding: 0; }
+.first-child { margin-top: 0; }
+li.condensed { margin-top: 0.2em; }
+a {
+  text-decoration: none;
+  color: #1f609f;
+}
+a:visited {
+  color: #9f1f6f;
+}
+a:hover { text-decoration: underline; }
+
+div.headbar {
+  margin: 0;
+  max-width: 48em;
+}
+div.footbar {
+  margin: 0;
+  max-width: 48em;
+}
+div.body {
+  margin: 0;
+  padding: 1em;
+  max-width: 48em;
+  min-height: 20em;
+  -moz-border-radius: 6px;
+  border: solid 1px #e0e0df;
+  background-color: #ffffff;
+}
+div.navbar {
+  margin: 0;
+  float: right;
+}
+a.navbar-prev::before {
+  content: '◀  ';
+  color: #3f3f3f;
+}
+a.navbar-next::after {
+  content: '  ▶';
+  color: #3f3f3f;
+}
+div.copyrights {
+  text-align: center;
+  color: #3f3f3f;
+}
+div.section { margin-top: 2.4em; clear: both; }
+div.section div.section {
+  margin-top: 1.72em;
+  margin-left: 1.72em;
+}
+div.section div.section div.section { margin-top: 1.44em; }
+div.header {
+  margin: 0;
+  color: #3f3f3f;
+  border-bottom: solid 1px #e0e0df;
+}
+h1 {
+  font-size: 1.44em;
+  margin: 0;
+}
+h2, h3, h4, h5, h6, h7 {
+  font-size: 1.2em;
+  margin: 0;
+}
+table { border-collapse: collapse; }
+
+div.autolinks ul { margin: 0; padding: 0; }
+div.autolinks div.title { margin: 1em 0 0 1em; }
+div.autolinks div.title span {
+  border-bottom: solid 1px #e0e0df;
+}
+li.autolink { margin: 0.5em 0 0 0; padding: 0 0 0 1em; list-style-type: none; }
+
+div.linktrails {
+  margin: 0;
+}
+div.linktrail {
+  font-size: 0.83em;
+  margin: 0 1px 0.2em 1px;
+  padding-left: 1.2em;
+  color: #3f3f3f;
+}
+
+table.twocolumn { width: 100%; }
+td.twocolumnleft { width: 48%; vertical-align: top; padding: 0; margin: 0; }
+td.twocolumnright {
+  width: 52%; vertical-align: top;
+  margin: 0; padding: 0;
+  padding-left: 1em;
+}
+
+div.linkdiv div.title {
+  font-size: 1em;
+  color: inherit;
+}
+div.linkdiv {
+  margin: 0;
+  padding: 0.5em;
+  -moz-border-radius: 6px;
+  border: solid 1px #ffffff;
+}
+div.linkdiv:hover {
+  border-color: #c0c9ff;
+  background-color: #f0f9ff;
+}
+div.linkdivsep {
+  margin: 0.5em;
+  list-style-type: none;
+  max-width: 24em;
+  border-bottom: solid 1px #e0e0df;
+}
+
+div.title {
+  margin: 0 0 0.2em 0;
+  font-weight: bold;
+  color: #3f3f3f;
+}
+div.desc { margin: 0 0 0.2em 0; }
+div.desc-listing, div.desc-synopsis { font-style: italic; }
+div.desc-figure { margin: 0.2em 0 0 0; }
+pre.code {
+  /* FIXME: In RTL locales, we really want to align this left, but the watermark
+   * we have is designed to fit in the top right corner.  Either we need a new
+   * watermark, or we need a separate RTL version.
+   */
+  background: url('watermark-code.png') no-repeat top right;
+  border: solid 2px #e0e0df;
+  padding: 0.5em 1em 0.5em 1em;
+}
+div.example {
+  border-left: solid 4px #e0e0df;
+  padding-left: 1em;
+}
+div.figure {
+  margin-left: 1.72em;
+  padding: 4px;
+  color: #3f3f3f;
+  border: solid 1px #e0e0df;
+  background-color: #f9f9f6;
+}
+div.figure-contents {
+  margin: 0;
+  padding: 0.5em 1em 0.5em 1em;
+  text-align: center;
+  color: #000000;
+  border: solid 1px #e0e0df;
+  background-color: #ffffff;
+}
+div.listing-contents { margin: 0; padding: 0; }
+div.note {
+  padding: 0.5em 6px 0.5em 6px;
+  border-top: solid 1px #ffc0c0;
+  border-bottom: solid 1px #ffc0c0;
+  background-color: #fffff0;
+}
+div.note-inner {
+  margin: 0;
+  padding-left: 60px;
+  background-position: left top;
+  background-repeat: no-repeat;
+  min-height: 48px;
+  background-image: url("admon-note.png");
+}
+div.note-advanced div.note-inner {  }
+div.note-bug div.note-inner { background-image: url("admon-bug.png"); }
+div.note-important div.note-inner { background-image: url("admon-important.png"); }
+div.note-tip div.note-inner { background-image: url("admon-tip.png"); }
+div.note-warning div.note-inner { background-image: url("admon-warning.png"); }
+div.note-contents { margin: 0; padding: 0; }
+div.quote-inner {
+  margin: 0;
+  background-image: url('watermark-blockquote-201C.png');
+  background-repeat: no-repeat;
+  background-position: top left;
+  padding: 0.5em;
+  padding-left: 4em;
+}
+div.title-quote {
+  margin-left: 4em;
+}
+blockquote { margin: 0; padding: 0; }
+div.cite-comment {
+  margin-top: 0.5em;
+  color: #3f3f3f;
+}
+div.cite-quote {
+  margin-top: 0.5em;
+  color: #3f3f3f;
+}
+div.cite-quote::before {
+  
+  content: '― ';
+}
+pre.screen {
+  padding: 0.5em 1em 0.5em 1em;
+  background-color: #f9f9f6;
+  border: solid 2px #e0e0df;
+}
+div.synopsis-contents {
+  margin: 0;
+  padding: 0.5em 1em 0.5em 1em;
+  border-top: solid 2px;
+  border-bottom: solid 2px;
+  border-color: #c0c9ff;
+  background-color: #f9f9f6;
+}
+div.synopsis pre.code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+div.list-contents { margin: 0; padding: 0; }
+div.title-list { margin-bottom: 0.5em; }
+ol.list, ul.list { margin: 0; padding: 0; }
+li.item-list { margin-left: 1.44em; }
+
+div.steps-contents {
+  margin: 0;
+  padding: 0.5em 1em 0.5em 1em;
+  border-top: solid 2px;
+  border-bottom: solid 2px;
+  border-color: #c0c9ff;
+  background-color: #fffff0;
+}
+div.steps-contents div.steps-contents {
+  padding: 0;
+  border: none;
+  background-color: none;
+}
+ol.steps, ul.steps { margin: 0; padding: 0; }
+li.item-steps { margin-left: 1.44em; }
+
+div.terms-contents { margin: 0; }
+dt.item-next { margin-top: 0; }
+dd.item-terms {
+  margin-top: 0.2em;
+  margin-left: 1.44em;
+}
+
+ul.tree {
+  margin: 0; padding: 0;
+  list-style-type: none;
+}
+li.item-tree { margin: 0; padding: 0; }
+div.item-tree { margin: 0; padding: 0; }
+ul.tree ul.tree { margin-left: 1.44em; }
+div.tree-lines ul.tree { margin-left: 0; }
+
+table.table {
+  border-collapse: collapse;
+  border-color: #555753;
+  border-width: 1px;
+}
+table.table td {
+  padding: 0.1em 0.5em 0.1em 0.5em;
+  border-color: #888a85;
+  border-width: 1px;
+  vertical-align: top;
+}
+
+span.app { font-style: italic; }
+span.cmd {
+  font-family: monospace;
+  background-color: #f9f9f6;
+  padding: 0 0.2em 0 0.2em;
+}
+span.code { font-family: monospace; }
+span.em { font-style: italic; }
+span.email { color: red; }
+span.file { font-family: monospace; }
+span.gui, span.guiseq { color: #3f3f3f; }
+span.input { font-family: monospace; }
+span.hi {
+  background-color: #fffff0;
+}
+span.key {
+  color: #3f3f3f;
+  border: solid 1px #e0e0df;
+  padding: 0 0.2em 0 0.2em;
+}
+span.keyseq {
+  color: #3f3f3f;
+}
+span.output { font-family: monospace; }
+pre.screen span.output {
+  color: #3f3f3f;
+}
+pre.screen span.output-error {
+
+  color: #ff0000;
+}
+pre.screen span.output-prompt { font-weight: bold; }
+span.sys { font-family: monospace; }
+span.var { font-style: italic; }
+
+div.version {
+  position: absolute;
+  right: 12px;
+  opacity: 0.2;
+  margin-top: -1em;
+  padding: 0.5em 1em 0.5em 1em;
+  max-width: 24em;
+  -moz-border-radius: 6px;
+  border: solid 1px #e0e0df;
+  background-color: #fffff0;
+}
+div.version:hover { opacity: 0.8; }
+div.version p.version { margin-top: 0.2em; }
+div.linkdiv div.title span.status {
+  font-size: 0.83em;
+  font-weight: normal;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  color: #3f3f3f;
+  border: solid 1px #ffc0c0;
+}
+div.linkdiv div.title span.status-stub { background-color: #fff0f0; }
+div.linkdiv div.title span.status-draft { background-color: #fff0f0; }
+div.linkdiv div.title span.status-incomplete { background-color: #fff0f0; }
+div.linkdiv div.title span.status-review { background-color: #fffff0; }
+div.linkdiv div.desc {
+  margin-top: 0.2em;
+  color: #3f3f3f;
+}
+div.comment {
+  padding: 0.5em;
+  border: solid 2px #ffc0c0;
+  background-color: #fff0f0;
+}
+div.comment div.comment {
+  margin: 1em 1em 0 1em;
+}
+div.comment div.cite {
+  margin: 0 0 0.5em 0;
+  font-style: italic;
+}
+</style>
+</head>
+<body class="">
+<div class="headbar"><div class="linktrails"><div class="linktrail">
+<a class="linktrail" href="index.html">Advanced GTK Techniques</a> › <a class="linktrail" href="index.html#app-setup">Setting up a real-life GTK application</a> » </div></div></div>
+<div class="body">
+<div class="navbar">
+<a class="navbar-prev" href="autoconf-project.html">Previous</a>  |  <a class="navbar-next" href="desktop-file.html">Next</a>
+</div>
+<div class="header"><h1 class="title">Setting up <span xmlns:e="http://projectmallard.org/experimental/" class=" app">Automake</span>
+</h1></div>
+<div class="contents">
+<div class="synopsis"><div class="synopsis-contents">
+<p class="p first-child">In this tutorial, you will learn:</p>
+<div class="list"><div class="list-contents"><ul class="list">
+<li class="item-list first-child"><p class="p first-child">How to generate a Makefile saying which files to compile</p></li>
+<li class="item-list"><p class="p first-child">How to check for the libraries your program needs</p></li>
+</ul></div></div>
+<p class="p">This tutorial is part of the <span xmlns:e="http://projectmallard.org/experimental/" class=" em">Setting up a real-life GTK application</span> series.
+If you don't want to follow along with the previous parts, simply copy the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="../app-skeleton1" title="../app-skeleton1"><span class=" file">app-skeleton1</span></a></span> directory from the tutorial's code examples.
+Or, you can start from the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="real-life-app-setup.html" title="">beginning</a></span>.</p>
+</div></div>
+<p class="p">Now to move on to Automake, the other major component of our build system.
+After we get Automake set up, we can start writing some source code.</p>
+<p class="p">Make is a program that reads a file called <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span> that describes how to compile source code into executable code.
+The contents of a <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span> depend upon the compiler you use, the system you are on, and many other things.
+<span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>s can also get quite long if you want to implement all the standard make targets described in the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="autoconf-project.html" title="">previous section</a></span>.</p>
+<p class="p">This is where Automake comes in.
+Automake allows you to write the Make code in a more abstract, platform-independent way.
+Automake looks for Automake files named <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span>, and changes them into almost-Makefiles named <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.in</span>.
+These almost-Makefiles are then transformed into real <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>s when you run <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">configure</span>.</p>
+</div>
+<div class="section" id="">
+<div class="header"><h2 class="title">Creating a <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span>
+</h2></div>
+<div class="contents">
+<p class="p first-child">To get started, copy your <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton1</span> directory to a new <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton2</span> directory, or just rename it if you like.
+For now, just put one line in <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span>:</p>
+<div class="listing">
+<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton2/Makefile.am</span></div>
+<div class="listing-contents"><pre class="code first-child">SUBDIRS = src</pre></div>
+</div>
+<p class="p">The special <span xmlns:e="http://projectmallard.org/experimental/" class=" code">SUBDIRS</span> variable tells Automake to look for another <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span> in the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">src</span> subdirectory as well.
+The resulting <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span> will also look for <span xmlns:e="http://projectmallard.org/experimental/" class=" file">src/Makefile</span> and call it recursively as well.</p>
+<div class="note"><div class="note-inner">
+<div class="title title-note">Recursive Make</div>
+<div class="note-contents"><p class="p first-child">A famous paper by Peter Miller has a title that speaks volumes about what some people think about writing your <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>s recursively:
+  <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="http://miller.emu.id.au/pmiller/books/rmch/" title="http://miller.emu.id.au/pmiller/books/rmch/">Recursive Make Considered Harmful</a></span>.
+  Read it and follow its advice if you like; it's not more or less difficult than the approach shown here.
+  In practice, however, most projects use recursive make, so it's important to be familiar with it at least.</p></div>
+</div></div>
+<p class="p">Since we are telling Automake to go into the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">src</span> directory, we should also put something there for it to find.
+We need a <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span>, but perhaps more importantly, we need some source code.
+We are going to be writing our own application starting in the next section, but until then we need some "placeholder" source code.
+We will use the "Hello World" example from the GTK tutorial.
+Instead of retyping it or copying and pasting it from the browser, we will fetch it the way real hackers do it: the lazy way!
+Create a <span xmlns:e="http://projectmallard.org/experimental/" class=" file">src</span> directory, <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">cd</span> to it, and type in your terminal:</p>
+<pre class="screen"><span xmlns:e="http://projectmallard.org/experimental/" class=" input">wget http://git.gnome.org/browse/gtk+/plain/examples/hello-world.c</span></pre>
+<p class="p">Now we can create a <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span> to compile this source code.
+Write in <span xmlns:e="http://projectmallard.org/experimental/" class=" file">src/Makefile.am</span> (be careful to get the right file, don't use the one in the parent directory):</p>
+<div class="listing">
+<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton2/src/Makefile.am</span></div>
+<div class="listing-contents"><pre class="code first-child">bin_PROGRAMS = app-skeleton
+app_skeleton_SOURCES = hello-world.c</pre></div>
+</div>
+<p class="p">Automake works mostly by setting variables.
+<span xmlns:e="http://projectmallard.org/experimental/" class=" code">SUBDIRS</span> was an example of one.
+Many other Automake variables have names consisting of two parts.
+For example, a variable named <span xmlns:e="http://projectmallard.org/experimental/" class=" code"><span class=" var">something</span>_PROGRAMS</span> is a list of executable programs for Automake to build.
+The <span xmlns:e="http://projectmallard.org/experimental/" class=" var">something</span> part tells where to install the programs when you run <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make install</span>.
+So <span xmlns:e="http://projectmallard.org/experimental/" class=" code">bin_PROGRAMS = app-skeleton</span> means that Automake should generate a <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span> that builds a program named <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton</span> and installs it in <span xmlns:e="http://projectmallard.org/experimental/" class=" file">/usr/local/bin</span>.
+(Unless you decide it should be called something else and installed somewhere else; Automake's <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>s are highly customizable using <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">configure</span>, but I will leave explaining that to one of the Autotools tutorials I mentioned <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="real-life-app.html" title="">previously</a></span>.)</p>
+<p class="p">By the same tack, <span xmlns:e="http://projectmallard.org/experimental/" class=" code">app_skeleton_SOURCES = hello-world.c</span> means that the program named <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton</span> should be built from the source file <span xmlns:e="http://projectmallard.org/experimental/" class=" file">hello-world.c</span>, which we just downloaded.
+(If the name of the program contains characters that are not legal in a variable name, Automake replaces them with underscores.)</p>
+<p class="p">We must now instruct <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">configure</span> to generate our newly-written <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>.
+Replace the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_CONFIG_FILES</span> call in <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure.ac</span> with this:</p>
+<div class="listing">
+<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton2/configure.ac</span></div>
+<div class="listing-contents"><pre class="code first-child">AC_CONFIG_FILES([
+	Makefile
+	src/Makefile
+])</pre></div>
+</div>
+<p class="p">Finally, we also need to tell <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">configure</span> to look for a suitable C compiler.
+Add the single command <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_PROG_CC</span> after the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AM_INIT_AUTOMAKE</span> line.
+(CC stands for C Compiler.)</p>
+<p class="p">Then, run <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">autoreconf</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">./configure</span>.
+The output from <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">configure</span> is a little longer (you can see that it is checking for a C compiler) and more files have appeared when it is done.
+So far, so good.
+But when we run <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make</span>, we get a screen full of errors: all of the GTK functions used in the file are undefined, and the compiler cannot find the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">gtk/gtk.h</span> header.</p>
+</div>
+</div>
+<div class="section" id="">
+<div class="header"><h2 class="title">Defining our libraries</h2></div>
+<div class="contents">
+<p class="p first-child">We need to define what libraries the program will use.
+This is done in <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure.ac</span>, so that <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">configure</span> can look for these libraries and put their locations into the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>.
+We will also take this opportunity to organize <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure.ac</span> and introduce a few more Autoconf macros.</p>
+<p class="p">Divide the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure.ac</span> file into four sections:</p>
+<div class="list"><div class="list-contents"><ul class="list">
+<li class="item-list first-child"><p class="p first-child"><span xmlns:e="http://projectmallard.org/experimental/" class=" em">Initialization</span>, in which we do preparations for initializing the build system;</p></li>
+<li class="item-list"><p class="p first-child"><span xmlns:e="http://projectmallard.org/experimental/" class=" em">Shopping list</span>, in which we tell Autoconf what tools we would like to use. 
+  The resulting <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">configure</span> script will go look for those tools and complain if they are not installed;</p></li>
+<li class="item-list"><p class="p first-child"><span xmlns:e="http://projectmallard.org/experimental/" class=" em">Libraries</span>, in which we list what libraries we are using.
+  Again, <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">configure</span> will complain if these libraries are not installed;</p></li>
+<li class="item-list"><p class="p first-child">and <span xmlns:e="http://projectmallard.org/experimental/" class=" em">Output</span>, where we output all the results of these checks so that Make can use them.</p></li>
+</ul></div></div>
+<div class="note"><div class="note-inner">
+<div class="title title-note">Comments</div>
+<div class="note-contents"><p class="p first-child">You can use comments, which start with the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">#</span> character, to divide up the file.
+  Autoconf comments can also be started by the letters <span xmlns:e="http://projectmallard.org/experimental/" class=" code">dnl</span> (which stands for Delete until New Line.)
+  The difference between the two is that <span xmlns:e="http://projectmallard.org/experimental/" class=" code">dnl</span> comments are ignored completely by Autoconf, whereas <span xmlns:e="http://projectmallard.org/experimental/" class=" code">#</span> comments are copied into the generated <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure</span> file.
+  This can be useful if there is an error in <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure</span> and you want to find out which section of <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure.ac</span> is causing it.</p></div>
+</div></div>
+<p class="p">In the Initialization section, write:</p>
+<div class="listing">
+<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton2/configure.ac</span></div>
+<div class="listing-contents"><pre class="code first-child">AC_INIT([App Skeleton], [2], [philip.chimento@gmail.com])
+AC_CONFIG_SRCDIR([src/hello-world.c])
+AM_INIT_AUTOMAKE([-Wall foreign])
+AM_SILENT_RULES([yes])</pre></div>
+</div>
+<p class="p">We have changed the version number to 2 here. There are also two new macros:</p>
+<div class="terms"><div class="terms-contents"><dl class="terms">
+<dt class="item-terms first-child"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_CONFIG_SRCDIR</span></dt>
+<dd class="item-terms"><p class="p first-child">This is a safety check to make sure the source tree actually contains the source code that it should.
+    As an argument, put the name of a unique source file in your program; here we put our only source file.</p></dd>
+<dt class="item-terms"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">AM_SILENT_RULES</span></dt>
+<dd class="item-terms">
+<p class="p first-child">The generated <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>s use very long compiler command lines.
+    Normally, you don't need to see these, and large swathes of garbage scrolling across your terminal can actually obscure error and warning messages.
+    <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AM_SILENT_RULES</span> adds the capability to your <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>s to suppress the build commands, instead printing just a short summary.
+    The <span xmlns:e="http://projectmallard.org/experimental/" class=" code">yes</span> argument turns this behavior on by default.
+    A <span xmlns:e="http://projectmallard.org/experimental/" class=" em">Real Programmer</span> might write <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AM_SILENT_RULES([no])</span> and then lesser mortals could run <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">./configure --enable-silent-rules</span> to get the quiet building behavior.</p>
+<p class="p">If you have silent rules turned on, and you want to examine the command lines after all, perhaps to track down an error, you can run <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make V=1</span> to get the command lines back temporarily.
+    (<span xmlns:e="http://projectmallard.org/experimental/" class=" code">V</span> stands for Verbose.)</p>
+</dd>
+</dl></div></div>
+<p class="p">In the Shopping List section, write:</p>
+<div class="listing">
+<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton2/configure.ac</span></div>
+<div class="listing-contents"><pre class="code first-child">AC_PROG_CC
+PKG_PROG_PKG_CONFIG</pre></div>
+</div>
+<p class="p">The new macro here is <span xmlns:e="http://projectmallard.org/experimental/" class=" code">PKG_PROG_PKG_CONFIG</span>.
+It adds the <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">pkg-config</span> program to our shopping list of tools.
+This macro doesn't start with <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_</span> or <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AM_</span>, so it doesn't originate from Autoconf or Automake.
+Instead, the prefix <span xmlns:e="http://projectmallard.org/experimental/" class=" code">PKG_</span> identifies it as belonging to the macros that <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">pkg-config</span> provides when you install it.</p>
+<p class="p">The Libraries section is where we use <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">pkg-config</span>:</p>
+<div class="listing">
+<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton2/configure.ac</span></div>
+<div class="listing-contents"><pre class="code first-child">PKG_CHECK_MODULES([APP_SKELETON], [
+	glib-2.0
+	gtk+-2.0
+])</pre></div>
+</div>
+<p class="p">The <span xmlns:e="http://projectmallard.org/experimental/" class=" code">PKG_CHECK_MODULES</span> macro takes a program name, in this case <span xmlns:e="http://projectmallard.org/experimental/" class=" code">APP_SKELETON</span> as its first argument, and a list of <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">pkg-config</span> <span xmlns:e="http://projectmallard.org/experimental/" class=" em">modules</span> as its second.
+A module is the name of a library as it is known to <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">pkg-config</span>.
+This macro uses <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">pkg-config</span> to look for these libraries, and creates two variables:
+<span xmlns:e="http://projectmallard.org/experimental/" class=" code">APP_SKELETON_CFLAGS</span> which contains the C compiler flags required for compiling with these libraries, 
+and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">APP_SKELETON_LIBS</span> which contains the linker flags.
+These variables are available from inside the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>s.</p>
+<p class="p">These module names specify that we are using the 2.0 series of the GLib and GTK+ libraries.
+If you don't know the module name of a library, you can always look in <span xmlns:e="http://projectmallard.org/experimental/" class=" file">/usr/share/pkgconfig</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" file">/usr/lib/pkgconfig</span> to see if there is a <span xmlns:e="http://projectmallard.org/experimental/" class=" file">.pc</span> that corresponds to the library name.
+Some libraries aren't configurable by <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">pkg-config</span>; there are other ways to check for libraries, but I won't describe them here.</p>
+<p class="p">Finally, the Output section is the same as before:</p>
+<div class="listing">
+<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton2/configure.ac</span></div>
+<div class="listing-contents"><pre class="code first-child">AC_CONFIG_FILES([
+	Makefile
+	src/Makefile
+])
+AC_OUTPUT</pre></div>
+</div>
+<p class="p">After that, we need to use the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">APP_SKELETON_CFLAGS</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">APP_SKELETON_LIBS</span> variables in our <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span>.
+Edit <span xmlns:e="http://projectmallard.org/experimental/" class=" file">src/Makefile.am</span> so that it looks like this:</p>
+<div class="listing">
+<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton2/src/Makefile.am</span></div>
+<div class="listing-contents"><pre class="code first-child">AM_CFLAGS = $(APP_SKELETON_CFLAGS)
+bin_PROGRAMS = app-skeleton
+app_skeleton_SOURCES = hello-world.c
+app_skeleton_LDADD = $(APP_SKELETON_LIBS)</pre></div>
+</div>
+<p class="p">The <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AM_CFLAGS</span> variable contains the compiler flags to be added to all compilations defined in this <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span>.
+Conversely, the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">app_skeleton_LDADD</span> variable tells Automake the linker flags to use when linking the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton</span> program.</p>
+<p class="p">Now when we rebuild, everything should work fine.
+Note that we only have to type <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make</span> to rebuild; the magic of the generated <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span> (now a whopping 22 kilobytes) makes sure that <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure</span> is regenerated and rerun, which also regenerates the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>.</p>
+<p class="p">You can run the executable <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton</span> to verify that it does what it should:
+shows a window with a <span xmlns:e="http://projectmallard.org/experimental/" class=" gui">Hello World</span> button which, when pressed, prints <span xmlns:e="http://projectmallard.org/experimental/" class=" output">Hello World</span> to the terminal and exits.</p>
+<p class="p">Now that we have a build system in place, there are a few more bits of infrastructure we need to examine: installation and internationalization.</p>
+</div>
+</div>
+<div class="section autolinkssection">
+<div class="header"><h2 class="title">Further Reading</h2></div>
+<div class="autolinks">
+<div class="title"><span>More About</span></div>
+<ul><li class="autolink"><a href="index.html#app-setup">Setting up a real-life GTK application</a></li></ul>
+</div>
+</div>
+</div>
+<div class="footbar"><div class="copyrights"></div></div>
+</body>
+</html>

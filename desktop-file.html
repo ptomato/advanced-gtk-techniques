@@ -1,0 +1,498 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:str="http://exslt.org/strings">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Icons and desktop files</title>
+<style type="text/css">
+html { height: 100%; }
+body {
+  margin: 0px;
+  background-color: #f9f9f6;
+  padding: 12px;
+  min-height: 100%;
+  direction: ltr;
+}
+ul, ol, dl, dd { margin: 0; }
+div, pre, p, li, dt { margin: 1em 0 0 0; padding: 0; }
+.first-child { margin-top: 0; }
+li.condensed { margin-top: 0.2em; }
+a {
+  text-decoration: none;
+  color: #1f609f;
+}
+a:visited {
+  color: #9f1f6f;
+}
+a:hover { text-decoration: underline; }
+
+div.headbar {
+  margin: 0;
+  max-width: 48em;
+}
+div.footbar {
+  margin: 0;
+  max-width: 48em;
+}
+div.body {
+  margin: 0;
+  padding: 1em;
+  max-width: 48em;
+  min-height: 20em;
+  -moz-border-radius: 6px;
+  border: solid 1px #e0e0df;
+  background-color: #ffffff;
+}
+div.navbar {
+  margin: 0;
+  float: right;
+}
+a.navbar-prev::before {
+  content: '◀  ';
+  color: #3f3f3f;
+}
+a.navbar-next::after {
+  content: '  ▶';
+  color: #3f3f3f;
+}
+div.copyrights {
+  text-align: center;
+  color: #3f3f3f;
+}
+div.section { margin-top: 2.4em; clear: both; }
+div.section div.section {
+  margin-top: 1.72em;
+  margin-left: 1.72em;
+}
+div.section div.section div.section { margin-top: 1.44em; }
+div.header {
+  margin: 0;
+  color: #3f3f3f;
+  border-bottom: solid 1px #e0e0df;
+}
+h1 {
+  font-size: 1.44em;
+  margin: 0;
+}
+h2, h3, h4, h5, h6, h7 {
+  font-size: 1.2em;
+  margin: 0;
+}
+table { border-collapse: collapse; }
+
+div.autolinks ul { margin: 0; padding: 0; }
+div.autolinks div.title { margin: 1em 0 0 1em; }
+div.autolinks div.title span {
+  border-bottom: solid 1px #e0e0df;
+}
+li.autolink { margin: 0.5em 0 0 0; padding: 0 0 0 1em; list-style-type: none; }
+
+div.linktrails {
+  margin: 0;
+}
+div.linktrail {
+  font-size: 0.83em;
+  margin: 0 1px 0.2em 1px;
+  padding-left: 1.2em;
+  color: #3f3f3f;
+}
+
+table.twocolumn { width: 100%; }
+td.twocolumnleft { width: 48%; vertical-align: top; padding: 0; margin: 0; }
+td.twocolumnright {
+  width: 52%; vertical-align: top;
+  margin: 0; padding: 0;
+  padding-left: 1em;
+}
+
+div.linkdiv div.title {
+  font-size: 1em;
+  color: inherit;
+}
+div.linkdiv {
+  margin: 0;
+  padding: 0.5em;
+  -moz-border-radius: 6px;
+  border: solid 1px #ffffff;
+}
+div.linkdiv:hover {
+  border-color: #c0c9ff;
+  background-color: #f0f9ff;
+}
+div.linkdivsep {
+  margin: 0.5em;
+  list-style-type: none;
+  max-width: 24em;
+  border-bottom: solid 1px #e0e0df;
+}
+
+div.title {
+  margin: 0 0 0.2em 0;
+  font-weight: bold;
+  color: #3f3f3f;
+}
+div.desc { margin: 0 0 0.2em 0; }
+div.desc-listing, div.desc-synopsis { font-style: italic; }
+div.desc-figure { margin: 0.2em 0 0 0; }
+pre.code {
+  /* FIXME: In RTL locales, we really want to align this left, but the watermark
+   * we have is designed to fit in the top right corner.  Either we need a new
+   * watermark, or we need a separate RTL version.
+   */
+  background: url('watermark-code.png') no-repeat top right;
+  border: solid 2px #e0e0df;
+  padding: 0.5em 1em 0.5em 1em;
+}
+div.example {
+  border-left: solid 4px #e0e0df;
+  padding-left: 1em;
+}
+div.figure {
+  margin-left: 1.72em;
+  padding: 4px;
+  color: #3f3f3f;
+  border: solid 1px #e0e0df;
+  background-color: #f9f9f6;
+}
+div.figure-contents {
+  margin: 0;
+  padding: 0.5em 1em 0.5em 1em;
+  text-align: center;
+  color: #000000;
+  border: solid 1px #e0e0df;
+  background-color: #ffffff;
+}
+div.listing-contents { margin: 0; padding: 0; }
+div.note {
+  padding: 0.5em 6px 0.5em 6px;
+  border-top: solid 1px #ffc0c0;
+  border-bottom: solid 1px #ffc0c0;
+  background-color: #fffff0;
+}
+div.note-inner {
+  margin: 0;
+  padding-left: 60px;
+  background-position: left top;
+  background-repeat: no-repeat;
+  min-height: 48px;
+  background-image: url("admon-note.png");
+}
+div.note-advanced div.note-inner {  }
+div.note-bug div.note-inner { background-image: url("admon-bug.png"); }
+div.note-important div.note-inner { background-image: url("admon-important.png"); }
+div.note-tip div.note-inner { background-image: url("admon-tip.png"); }
+div.note-warning div.note-inner { background-image: url("admon-warning.png"); }
+div.note-contents { margin: 0; padding: 0; }
+div.quote-inner {
+  margin: 0;
+  background-image: url('watermark-blockquote-201C.png');
+  background-repeat: no-repeat;
+  background-position: top left;
+  padding: 0.5em;
+  padding-left: 4em;
+}
+div.title-quote {
+  margin-left: 4em;
+}
+blockquote { margin: 0; padding: 0; }
+div.cite-comment {
+  margin-top: 0.5em;
+  color: #3f3f3f;
+}
+div.cite-quote {
+  margin-top: 0.5em;
+  color: #3f3f3f;
+}
+div.cite-quote::before {
+  
+  content: '― ';
+}
+pre.screen {
+  padding: 0.5em 1em 0.5em 1em;
+  background-color: #f9f9f6;
+  border: solid 2px #e0e0df;
+}
+div.synopsis-contents {
+  margin: 0;
+  padding: 0.5em 1em 0.5em 1em;
+  border-top: solid 2px;
+  border-bottom: solid 2px;
+  border-color: #c0c9ff;
+  background-color: #f9f9f6;
+}
+div.synopsis pre.code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+div.list-contents { margin: 0; padding: 0; }
+div.title-list { margin-bottom: 0.5em; }
+ol.list, ul.list { margin: 0; padding: 0; }
+li.item-list { margin-left: 1.44em; }
+
+div.steps-contents {
+  margin: 0;
+  padding: 0.5em 1em 0.5em 1em;
+  border-top: solid 2px;
+  border-bottom: solid 2px;
+  border-color: #c0c9ff;
+  background-color: #fffff0;
+}
+div.steps-contents div.steps-contents {
+  padding: 0;
+  border: none;
+  background-color: none;
+}
+ol.steps, ul.steps { margin: 0; padding: 0; }
+li.item-steps { margin-left: 1.44em; }
+
+div.terms-contents { margin: 0; }
+dt.item-next { margin-top: 0; }
+dd.item-terms {
+  margin-top: 0.2em;
+  margin-left: 1.44em;
+}
+
+ul.tree {
+  margin: 0; padding: 0;
+  list-style-type: none;
+}
+li.item-tree { margin: 0; padding: 0; }
+div.item-tree { margin: 0; padding: 0; }
+ul.tree ul.tree { margin-left: 1.44em; }
+div.tree-lines ul.tree { margin-left: 0; }
+
+table.table {
+  border-collapse: collapse;
+  border-color: #555753;
+  border-width: 1px;
+}
+table.table td {
+  padding: 0.1em 0.5em 0.1em 0.5em;
+  border-color: #888a85;
+  border-width: 1px;
+  vertical-align: top;
+}
+
+span.app { font-style: italic; }
+span.cmd {
+  font-family: monospace;
+  background-color: #f9f9f6;
+  padding: 0 0.2em 0 0.2em;
+}
+span.code { font-family: monospace; }
+span.em { font-style: italic; }
+span.email { color: red; }
+span.file { font-family: monospace; }
+span.gui, span.guiseq { color: #3f3f3f; }
+span.input { font-family: monospace; }
+span.hi {
+  background-color: #fffff0;
+}
+span.key {
+  color: #3f3f3f;
+  border: solid 1px #e0e0df;
+  padding: 0 0.2em 0 0.2em;
+}
+span.keyseq {
+  color: #3f3f3f;
+}
+span.output { font-family: monospace; }
+pre.screen span.output {
+  color: #3f3f3f;
+}
+pre.screen span.output-error {
+
+  color: #ff0000;
+}
+pre.screen span.output-prompt { font-weight: bold; }
+span.sys { font-family: monospace; }
+span.var { font-style: italic; }
+
+div.version {
+  position: absolute;
+  right: 12px;
+  opacity: 0.2;
+  margin-top: -1em;
+  padding: 0.5em 1em 0.5em 1em;
+  max-width: 24em;
+  -moz-border-radius: 6px;
+  border: solid 1px #e0e0df;
+  background-color: #fffff0;
+}
+div.version:hover { opacity: 0.8; }
+div.version p.version { margin-top: 0.2em; }
+div.linkdiv div.title span.status {
+  font-size: 0.83em;
+  font-weight: normal;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  color: #3f3f3f;
+  border: solid 1px #ffc0c0;
+}
+div.linkdiv div.title span.status-stub { background-color: #fff0f0; }
+div.linkdiv div.title span.status-draft { background-color: #fff0f0; }
+div.linkdiv div.title span.status-incomplete { background-color: #fff0f0; }
+div.linkdiv div.title span.status-review { background-color: #fffff0; }
+div.linkdiv div.desc {
+  margin-top: 0.2em;
+  color: #3f3f3f;
+}
+div.comment {
+  padding: 0.5em;
+  border: solid 2px #ffc0c0;
+  background-color: #fff0f0;
+}
+div.comment div.comment {
+  margin: 1em 1em 0 1em;
+}
+div.comment div.cite {
+  margin: 0 0 0.5em 0;
+  font-style: italic;
+}
+</style>
+</head>
+<body class="">
+<div class="headbar"><div class="linktrails"><div class="linktrail">
+<a class="linktrail" href="index.html">Advanced GTK Techniques</a> › <a class="linktrail" href="index.html#app-setup">Setting up a real-life GTK application</a> » </div></div></div>
+<div class="body">
+<div class="navbar">
+<a class="navbar-prev" href="automake-project.html">Previous</a>  |  <a class="navbar-next" href="gettext-project.html">Next</a>
+</div>
+<div class="header"><h1 class="title">Icons and desktop files</h1></div>
+<div class="contents">
+<div class="synopsis"><div class="synopsis-contents">
+<p class="p first-child">In this tutorial, you will learn:</p>
+<div class="list"><div class="list-contents"><ul class="list">
+<li class="item-list first-child"><p class="p first-child">How to add an icon to your program</p></li>
+<li class="item-list"><p class="p first-child">How to add your program to the applications menu</p></li>
+</ul></div></div>
+<p class="p">This tutorial is part of the <span xmlns:e="http://projectmallard.org/experimental/" class=" em">Setting up a real-life GTK application</span> series.
+If you don't want to follow along with the previous parts, simply copy the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="../app-skeleton2" title="../app-skeleton2"><span class=" file">app-skeleton2</span></a></span> directory from the tutorial's code examples.
+Or, you can start from the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="real-life-app-setup.html" title="">beginning</a></span>.</p>
+</div></div>
+<p class="p">Most users who can use a terminal are also familiar with the time-tested routine of <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">./configure</span>, <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make install</span>.
+However, as the Linux desktop gains more and more ground, package managers are on the rise.
+Users expect to be able to install a package and then find a new entry in their Applications menu.
+The <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span> may install our executable file into <span xmlns:e="http://projectmallard.org/experimental/" class=" file">/usr/local/bin</span>, but nowadays we can't expect users to open a terminal every time they want to run it.
+We can put an entry into the menu by means of a <span xmlns:e="http://projectmallard.org/experimental/" class=" em">desktop file</span>.</p>
+</div>
+<div class="section" id="">
+<div class="header"><h2 class="title">Adding an icon to the program</h2></div>
+<div class="contents">
+<p class="p first-child">Copy the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton2</span> project to <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3</span>, or just rename it.
+(Change the version number in the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_INIT</span> call in <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure.ac</span> to 3 as well, if you like.)
+First we will appropriate an icon from the GNOME icon theme for our program.
+Again, we will do this the lazy way, by downloading all available sizes directly from the GNOME git repository.
+In the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3</span> directory, type:</p>
+<pre class="screen"><span xmlns:e="http://projectmallard.org/experimental/" class=" input">for size in 16 22 24 32 48; do
+mkdir -p pixmaps/${size}x${size}/apps
+wget -O pixmaps/${size}x${size}/apps/app-skeleton.png \
+  http://git.gnome.org/browse/gnome-icon-theme/plain/gnome/${size}x${size}/status/weather-showers-scattered.png
+done</span></pre>
+<p class="p">This is the icon we have just downloaded, in five different sizes: 
+<span class="media media-image"><img src="../app-skeleton3/pixmaps/48x48/apps/app-skeleton.png" alt="[An icon of a raincloud from the GNOME icon theme]"></span></p>
+<p class="p">There is a reason why we are creating this particular directory structure.
+It is explained in the Free Desktop <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html" title="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html">Icon Theme Specification</a></span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html" title="http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html">Icon Naming Specification</a></span>.</p>
+<p class="p">The new <span xmlns:e="http://projectmallard.org/experimental/" class=" file">pixmaps</span> directory needs a <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span> too.
+Create one there and put in it:</p>
+<div class="listing">
+<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3/pixmaps/Makefile.am</span></div>
+<div class="listing-contents"><pre class="code first-child">iconsdir = $(datadir)/icons/hicolor
+
+nobase_dist_icons_DATA = \
+	16x16/apps/app-skeleton.png \
+	22x22/apps/app-skeleton.png \
+	24x24/apps/app-skeleton.png \
+	32x32/apps/app-skeleton.png \
+	48x48/apps/app-skeleton.png
+
+gtk_update_icon_cache = gtk-update-icon-cache -f -t $(iconsdir)
+
+install-data-hook: update-icon-cache
+uninstall-hook: update-icon-cache
+update-icon-cache:
+	@-if test -z "$(DESTDIR)"; then \
+		echo "Updating GTK icon cache."; \
+		$(gtk_update_icon_cache); \
+	else \
+		echo "*** Icon cache not updated. After (un)install, run this:"; \
+		echo "*** $(gtk_update_icon_cache)"; \
+	fi</pre></div>
+</div>
+<p class="p">The Automake variable <span xmlns:e="http://projectmallard.org/experimental/" class=" code">nobase_dist_icons_DATA</span> has four parts.
+The prefix <span xmlns:e="http://projectmallard.org/experimental/" class=" code">nobase</span> means to install the files with the same directory structure into the destination directory.
+Another prefix, <span xmlns:e="http://projectmallard.org/experimental/" class=" code">dist</span> means to include the files in the tarball produced when you type <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make dist</span>.
+(By default, data files are not included.)</p>
+<p class="p">The third segment, <span xmlns:e="http://projectmallard.org/experimental/" class=" code">icons</span>, functions like <span xmlns:e="http://projectmallard.org/experimental/" class=" code">bin</span> did in <span xmlns:e="http://projectmallard.org/experimental/" class=" code">bin_PROGRAMS</span>: it tells where to install the files.
+The difference is that <span xmlns:e="http://projectmallard.org/experimental/" class=" code">bin</span> is predefined and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">icons</span> is not.
+Automake will install the files in the location stored in the variable <span xmlns:e="http://projectmallard.org/experimental/" class=" code">iconsdir</span>, which we define above.
+Why it is called <span xmlns:e="http://projectmallard.org/experimental/" class=" file">hicolor</span>, you can read in the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html" title="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html">Icon Theme Specification</a></span>.</p>
+<p class="p">Finally, the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">DATA</span> directive tells Automake that these are data files; they do not need to be compiled.</p>
+<p class="p">The rest of the file calls the <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">gtk-update-icon-cache</span> utility whenever the program is installed or uninstalled.
+This is necessary so that the new icons can be found in the icon theme.
+The test may look a little confusing at first; testing whether the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">DESTDIR</span> is empty means testing whether we are really installing the program into the file system, or doing a <span xmlns:e="http://projectmallard.org/experimental/" class=" em">staged install</span>.
+In the latter case, the icon files are not really being installed into the icon theme directory, so it makes no sense to update the icon cache.
+In that case, the makefile prints a message to remind the user to update the icon cache when the program is really installed.</p>
+<p class="p">As a last bit of icing on the cake, let us use the icon as our program's icon (in the corner of the title bar in some desktop themes, or in the application switcher.)
+Since we have already installed the icon into the icon theme, having the program use it is quite simple.
+Add the following line to the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">main()</span> function of <span xmlns:e="http://projectmallard.org/experimental/" class=" file">hello-world.c</span>, for example as line 47:</p>
+<div class="listing">
+<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3/src/hello-world.c</span></div>
+<div class="listing-contents"><pre class="code first-child">gtk_window_set_icon_name (GTK_WINDOW (window), "app-skeleton");</pre></div>
+</div>
+<p class="p">When an icon is present in the icon theme, it can be used like this as a <span xmlns:e="http://projectmallard.org/experimental/" class=" em">named icon</span>.
+(Remember that you have to run <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make install</span> before it will work, though.)</p>
+</div>
+</div>
+<div class="section" id="">
+<div class="header"><h2 class="title">The desktop file</h2></div>
+<div class="contents">
+<p class="p first-child">Now to create our desktop file.
+Create a file <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton.desktop</span> in the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3</span> directory and write in it:</p>
+<div class="listing">
+<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3/app-skeleton.desktop</span></div>
+<div class="listing-contents"><pre class="code first-child">[Desktop Entry]
+Version=1.0
+Type=Application
+Name=App Skeleton
+Exec=app-skeleton
+Comment=A sample application from the Advanced GTK+ Techniques tutorial
+Icon=app-skeleton
+Terminal=false
+Categories=Utility;Viewer;GTK;</pre></div>
+</div>
+<p class="p">In short, <span xmlns:e="http://projectmallard.org/experimental/" class=" code">Name</span> is the program name that will appear in the menu, <span xmlns:e="http://projectmallard.org/experimental/" class=" code">Icon</span> is the named icon to use for the program in the menu, and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">Comment</span> is the tooltip to use when the user hovers their mouse over the program name.
+The <span xmlns:e="http://projectmallard.org/experimental/" class=" code">Terminal=false</span> line tells the desktop environment not to start the program in a terminal.
+The <span xmlns:e="http://projectmallard.org/experimental/" class=" code">Categories</span> field is a hint to the desktop environment about what category it should put the program launcher into.
+(Some desktops, like Gnome Shell, don't use categories.)</p>
+<p class="p">A full list of fields and categories for use in this file, along with explanations of what they are for, can be found in two other Free Desktop specifications, the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="http://standards.freedesktop.org/desktop-entry-spec/latest/" title="http://standards.freedesktop.org/desktop-entry-spec/latest/">Desktop Entry Specification</a></span> and the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="http://standards.freedesktop.org/menu-spec/latest/" title="http://standards.freedesktop.org/menu-spec/latest/">Desktop Menu Specification</a></span>.</p>
+<p class="p">Finally, we need to update our top-level <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span>:</p>
+<div class="listing">
+<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3/Makefile.am</span></div>
+<div class="listing-contents"><pre class="code first-child">SUBDIRS = pixmaps src
+
+desktopdir = $(datadir)/applications
+dist_desktop_DATA = app-skeleton.desktop</pre></div>
+</div>
+<p class="p">We add the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">pixmaps</span> subdirectory to our <span xmlns:e="http://projectmallard.org/experimental/" class=" code">SUBDIRS</span> variable, and instruct Automake to install the desktop file in the proper place so the desktop environment can find it.</p>
+<p class="p">Lastly, we add <span xmlns:e="http://projectmallard.org/experimental/" class=" code">pixmaps/Makefile</span> to the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_CONFIG_FILES</span> call in <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure.ac</span>.
+With that, we are ready to go.
+Try <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make</span> followed by <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make install</span>.
+A new entry should show up in your desktop's applications chooser!</p>
+<p class="p">But what if the user speaks another language?
+They will not be able to understand the name of the program and the description we have put in the desktop file.
+Solving this problem is what the next section is about.</p>
+</div>
+</div>
+<div class="section autolinkssection">
+<div class="header"><h2 class="title">Further Reading</h2></div>
+<div class="autolinks">
+<div class="title"><span>More About</span></div>
+<ul><li class="autolink"><a href="index.html#app-setup">Setting up a real-life GTK application</a></li></ul>
+</div>
+</div>
+</div>
+<div class="footbar"><div class="copyrights"></div></div>
+</body>
+</html>
