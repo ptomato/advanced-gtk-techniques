@@ -2,7 +2,161 @@
 <html>
 <head>
   <title>Advanced GTK Techniques</title>
-  <script>top.location = 'html/index.html';</script>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <style type="text/css">
+
+html {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+body {
+	font-family: "Droid Serif", Cambria, Serif, serif;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+a {
+	text-decoration: none;
+	color: #204a87;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+#container {
+	width: 45em;
+	min-height: 95%;
+	height: auto;
+	margin: 0 auto -3.5em; /* bottom margin is footer height */
+	padding: 0;
+}
+
+#header {
+	margin: 0;
+	padding: 0.5em 0 0 0;
+	height: 5em;
+}
+
+#header h1 {
+    font-family: "Droid Sans", Calibri, Sans, sans-serif;
+    text-align: left;
+    font-style: italic;
+    margin: 1em 0 0 0;
+    padding: 0;
+}
+
+#menu {
+	text-align: center;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+	background-color: #a40000;
+	border: 2px solid #cc0000;
+	border-radius: 10px;
+	margin: 0;
+}
+
+#menu a {
+	font-family: "Droid Sans", Calibri, Sans, sans-serif;
+	font-size: 24pt;
+	color: white;
+	font-weight: bold;
+}
+
+#menu ul {
+	padding: 0;
+	list-style-type: none;
+}
+
+#menu li {
+	padding: 0;
+	margin: 0 0 0 2em;
+	display: inline;
+}
+
+#content {
+	height: 100%;
+	padding: 4em 3em 2em 3em;
+	text-align: justify;
+	margin: 0;
+}
+
+#license {
+	font-size: x-small;
+	font-style: italic;
+	padding: 0 3em 0 3em;
+	margin: 0;
+}
+
+#footer {
+	height: 3.5em;
+	/*width: 45em;*/
+	margin: 0 auto;
+	padding: 0.5em 0 0 0;
+	background: #204a87;
+	border: 2px solid #3465a4; 
+}
+
+#footer p {
+	margin: 0;
+	padding: 0;
+	text-align: center;
+    font-family: "Droid Sans", Calibri, Sans, sans-serif;
+	font-size: small;
+	color: white;
+}
+
+#footer a {
+	color: white;
+	border-bottom: 1px dotted;
+}
+
+#footer a:hover {
+	text-decoration: none;
+}
+
+  </style>
 </head>
-<body/>
+<body>
+  <div id="container">
+  <div id="header">
+    <h1>Advanced GTK Techniques</h1>
+  </div>
+  <div id="menu">
+    <ul>
+      <li><a href="html/index.html">Read the Tutorial</a></li>
+      <li><a href="https://github.com/ptomato/advanced-gtk-techniques">See the Code</a></li>
+    </ul>
+  </div>
+  <div id="content">
+    <p>
+      This is a tutorial for advanced <a href="http://www.gtk.org/">GTK</a> programming.
+      It is written for people who have passed the stage of learning how GTK works and want to know how to program more advanced, real-world applications.
+      Things that will be covered include creating your own widgets and cell renderers, writing dynamic user interfaces, and more.
+    </p>
+    <p>
+      If you need to learn how GTK works, I heartily recommend GNOME's <a href="http://developer.gnome.org/gnome-devel-demos/unstable/">ten-minute tutorials</a>.
+    </p>
+    <p>
+      This tutorial isn't finished yet, I'm working on it.
+      Both the code and the website are hosted on Github.
+      Usually the website is updated when the code is.
+    </p>
+    <p>
+      <a href="html/index.html">&rightarrow; Go to the tutorial</a>
+    </p>
+  </div>
+  </div>
+  <div id="footer">
+    <p>Copyright &copy; 2012 Philip Chimento</p>
+    <div id="license">
+      <p>
+        This work is licensed under a <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.
+      </p>
+    </div>
+  </div>
+</body>
 </html>
