@@ -3,7 +3,6 @@
       id="introduction">
 <info>
   <link type="guide" xref="index"/>
-  <link type="next" xref="dynamic-actions"/>
 </info>
 <title>Introduction</title>
 <p>I decided to write this guide after reading the excellent book <em href="http://gtkbook.com">Foundations of GTK+ Development</em><!-- TODO: Semantic markup to show it's a book --> by Andrew Krause.
