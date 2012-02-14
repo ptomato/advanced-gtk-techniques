@@ -29,4 +29,7 @@ html: all
 
 hmtl: html
 
-.PHONY: all html hmtl
+clean:
+	rm -rf html
+
+.PHONY: all html hmtl clean

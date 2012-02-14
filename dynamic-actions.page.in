@@ -2,8 +2,7 @@
       type="topic"
       id="dynamic-actions">
 <info>
-  <link type="guide" xref="index"/>
-  <link type="next" xref="custom-container"/>
+  <link type="guide" xref="index#advanced"/>
 </info>
 <title>Using dynamic menu and toolbar actions</title>
 

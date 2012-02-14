@@ -2,7 +2,7 @@
       type="topic"
       id="custom-container">
 <info>
-  <link type="guide" xref="index"/>
+  <link type="guide" xref="index#advanced"/>
   <title type="link">Custom container</title>
 </info>
 <title>A container that does its own size allocation</title>
