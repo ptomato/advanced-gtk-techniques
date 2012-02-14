@@ -1,135 +1,36 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
   <title>Advanced GTK Techniques</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <style type="text/css">
-
-html {
-	margin: 0;
-	padding: 0;
-	height: 100%;
-}
-
-body {
-	font-family: "Droid Serif", Cambria, Serif, serif;
-	margin: 0;
-	padding: 0;
-	height: 100%;
-}
-
-a {
-	text-decoration: none;
-	color: #204a87;
-}
-
-a:hover {
-	text-decoration: underline;
-}
-
-#container {
-	width: 45em;
-	min-height: 95%;
-	height: auto;
-	margin: 0 auto -3.5em; /* bottom margin is footer height */
-	padding: 0;
-}
-
-#header {
-	margin: 0;
-	padding: 0.5em 0 0 0;
-	height: 5em;
-}
-
-#header h1 {
-    font-family: "Droid Sans", Calibri, Sans, sans-serif;
-    text-align: left;
-    font-style: italic;
-    margin: 1em 0 0 0;
-    padding: 0;
-}
-
-#menu {
-	text-align: center;
-	padding-top: 0.5em;
-	padding-bottom: 0.5em;
-	background-color: #a40000;
-	border: 2px solid #cc0000;
-	border-radius: 10px;
-	margin: 0;
-}
-
-#menu a {
-	font-family: "Droid Sans", Calibri, Sans, sans-serif;
-	font-size: 24pt;
-	color: white;
-	font-weight: bold;
-}
-
-#menu ul {
-	padding: 0;
-	list-style-type: none;
-}
-
-#menu li {
-	padding: 0;
-	margin: 0 0 0 2em;
-	display: inline;
-}
-
-#content {
-	height: 100%;
-	padding: 4em 3em 2em 3em;
-	text-align: justify;
-	margin: 0;
-}
-
-#license {
-	font-size: x-small;
-	font-style: italic;
-	padding: 0 3em 0 3em;
-	margin: 0;
-}
-
-#footer {
-	height: 3.5em;
-	/*width: 45em;*/
-	margin: 0 auto;
-	padding: 0.5em 0 0 0;
-	background: #204a87;
-	border: 2px solid #3465a4; 
-}
-
-#footer p {
-	margin: 0;
-	padding: 0;
-	text-align: center;
-    font-family: "Droid Sans", Calibri, Sans, sans-serif;
-	font-size: small;
-	color: white;
-}
-
-#footer a {
-	color: white;
-	border-bottom: 1px dotted;
-}
-
-#footer a:hover {
-	text-decoration: none;
-}
-
-  </style>
+  <link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
+  <link type="text/css" href="awesome.css" rel="stylesheet" media="all"/>
 </head>
 <body>
+  <div id="background">
+  <div class="menu" id="main">
+    <p>By Philip Chimento &#x25B6;</p>
+    <ul>
+      <li><a href=".">Home</a></li>
+      <li><a href="http://ptomato.wordpress.com" target="_blank">Blog</a></li>
+      <li><a href="https://github.com/ptomato" target="_blank">Open Source Projects</a></li>
+      <!-- Twitter follow button -->
+      <li><a href="https://twitter.com/therealptomato" class="twitter-follow-button" data-show-count="false">Follow @therealptomato</a>
+<script type="text/javascript">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></li>
+    </ul>
+  </div>
+  <div class="menu">
+    <p>Advanced GTK Techniques &#x25B6;</p>
+    <ul>
+      <li class="current"><a href=".">Intro</a></li>
+      <li><a href="html/index.html">Tutorial</a></li>
+      <li><a href="https://github.com/ptomato/advanced-gtk-techniques">Code</a></li>
+    </ul>
+  </div>
   <div id="container">
   <div id="header">
     <h1>Advanced GTK Techniques</h1>
-  </div>
-  <div id="menu">
-    <ul>
-      <li><a href="html/index.html">Read the Tutorial</a></li>
-      <li><a href="https://github.com/ptomato/advanced-gtk-techniques">See the Code</a></li>
-    </ul>
   </div>
   <div id="content">
     <p>
@@ -145,9 +46,15 @@ a:hover {
       Both the code and the website are hosted on Github.
       Usually the website is updated when the code is.
     </p>
-    <p>
-      <a href="html/index.html">&rightarrow; Go to the tutorial</a>
-    </p>
+  </div>
+  <div id="bigbuttons">
+    <div class="bigbutton">
+      <h2><a href="html/index.html">Read the Tutorial</a></h2>
+    </div>
+    <div class="bigbutton">
+      <h2><a href="https://github.com/ptomato/advanced-gtk-techniques">See the Code</a></h2>
+    </div>
+  </div>
   </div>
   </div>
   <div id="footer">

@@ -1,0 +1,156 @@
+body {
+	margin: 0;
+	font-family: 'PT Sans', 'Droid Sans', verdana, sans-serif;
+	background: #555753;
+}
+
+a {
+	text-decoration: none;
+	color: #204a87;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+h1, h2 {
+	font-family: 'Droid Serif', georgia, times, serif;
+	font-weight: normal;
+	display: inline;
+}
+
+#background {
+	background: #fff;
+}
+
+#header {
+	padding-top: 2em;
+	padding-bottom: 1em;
+	text-align: center;
+}
+
+#header h1 {
+	font-size: 42px;
+	color: #204a87;
+	border-bottom: 3px solid #729fcf;
+}
+
+#main.menu {
+	background-color: #5c3566;
+	border: 0.1px solid #5c3566;
+}
+
+#main.menu p {
+	color: #ad7fa8;
+}
+
+#main.menu li {
+	font-size: 12pt;
+	text-transform: uppercase;
+}
+
+div.menu {
+	text-align: center;
+	background-color: #204a78;
+	border: 1px solid #204a78;
+}
+
+div.menu p {
+	display: inline;
+	color: #729fcf;
+}
+
+div.menu a {
+	color: white;
+}
+
+div.menu ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	display: inline;
+}
+
+div.menu li {
+	font-size: 24pt;
+	display: inline;
+	padding: 0 1em;
+}
+
+div.menu li.current {
+	font-weight: bold;
+}
+
+#container {
+	padding-bottom: 4em;
+	width: 45em;
+	margin: 0 auto;
+}
+
+#content {
+	margin: 3em 2em 0;
+	text-align: justify;
+}
+
+#bigbuttons {
+	margin-top: 20px;
+	text-align: center;
+}
+
+/* This clears the "float" status of the big buttons and makes sure the
+footer doesn't appear to the right of them */
+#bigbuttons:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+div.bigbutton h2 {
+	font-size: 32px;
+}
+
+div.bigbutton h2 a {
+	color: white;
+}
+
+div.bigbutton {
+	float: left;
+	width: 18.2em;
+	padding: 1em;
+	margin: 1em;
+	border-radius: 15px;
+	background: #a40000;
+	border: 1px solid #cc0000;
+}
+
+div.bigbutton p {
+	color: white;
+}
+
+#license {
+	font-size: x-small;
+	font-style: italic;
+	margin: 0;
+}
+
+#footer {
+	border-top: 3px solid #204a87;
+}
+
+#footer p {
+	text-align: center;
+	font-size: small;
+	color: #babdb6;
+}
+
+#footer a {
+	color: #babdb6;
+	border-bottom: 1px dotted;
+}
+
+#footer a:hover {
+	text-decoration: none;
+	border-bottom: 1px solid;
+}
