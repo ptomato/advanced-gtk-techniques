@@ -1,3 +1,5 @@
+/* General */
+
 body {
 	margin: 0;
 	font-family: 'PT Sans', 'Droid Sans', verdana, sans-serif;
@@ -17,7 +19,33 @@ h1, h2 {
 	font-family: 'Droid Serif', georgia, times, serif;
 	font-weight: normal;
 	display: inline;
+	color: #204a87;
+	border-bottom: 3px solid #729fcf;
 }
+
+h2 {
+	font-size: 1.2em;
+}
+
+em {
+	font-weight: bold;
+	font-style: normal;
+}
+
+li {
+	list-style-type: square;
+	margin-bottom: 0.5em;
+}
+
+/* Spans */
+
+span.note {
+	font-style: italic;
+	font-size: 80%;
+	color: #888a85;
+}
+
+/* Specific divs on the page */
 
 #background {
 	background: #fff;
@@ -31,8 +59,6 @@ h1, h2 {
 
 #header h1 {
 	font-size: 42px;
-	color: #204a87;
-	border-bottom: 3px solid #729fcf;
 }
 
 #main.menu {
