@@ -44,7 +44,7 @@ for line in fileinput.input():
 			lines = [(l[1:] if l != '\n' else l) for l in lines]
 
 		print '<listing>'
-		print '<title><file>{0}</file></title>'.format(m.group('file'))
+		print '<title><file href="../{0}">{0}</file></title>'.format(m.group('file'))
 		print '<code mime="text/{0}"><![CDATA['.format(mimetype)
 		for l in lines:
 			print l,
