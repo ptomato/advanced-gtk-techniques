@@ -1,5 +1,5 @@
-#ifndef __P_SQUARE_H__
-#define __P_SQUARE_H__
+#ifndef P_SQUARE_H
+#define P_SQUARE_H
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
@@ -30,4 +30,4 @@ GtkWidget *p_square_new(void);
 
 G_END_DECLS
 
-#endif /* __P_SQUARE_H__ */
+#endif /* P_SQUARE_H */
