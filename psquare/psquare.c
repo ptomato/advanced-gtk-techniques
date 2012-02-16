@@ -80,7 +80,7 @@ p_square_size_request(GtkWidget *widget, GtkRequisition *requisition)
     
     /* Count the visible children */
     GList *iter;
-    guint n_visible_children = 0;
+    unsigned n_visible_children = 0;
     for(iter = priv->children; iter; iter = g_list_next(iter))
         if(GTK_WIDGET_VISIBLE(iter->data))
             n_visible_children++;
@@ -89,18 +89,18 @@ p_square_size_request(GtkWidget *widget, GtkRequisition *requisition)
         return;
     
     /* Calculate the number of columns (and rows) */
-    gint n_columns = (gint)ceil(sqrt((double)n_visible_children));
+    int n_columns = (int)ceil(sqrt((double)n_visible_children));
     
     /* Allocate arrays for the width of each column 
      * and the height of each row */
-    gint *width = g_new0(gint, n_columns);
-    gint *height = g_new0(gint, n_columns);
+    int *width = g_new0(int, n_columns);
+    int *height = g_new0(int, n_columns);
     
     /* Get each child's size request; set the width of each column
      * to the maximum width of each child in that column,
      * and the height of each row to the maximum height of each
      * child in that row */
-    gint count = 0;
+    int count = 0;
     for(iter = priv->children; iter; iter = g_list_next(iter)) {
         if(!GTK_WIDGET_VISIBLE(iter->data))
             continue;
@@ -140,7 +140,7 @@ p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     
     /* Count the visible children */
     GList *iter;
-    guint n_visible_children = 0;
+    unsigned n_visible_children = 0;
     for(iter = priv->children; iter; iter = g_list_next(iter))
         if(GTK_WIDGET_VISIBLE(iter->data))
             n_visible_children++;
@@ -149,16 +149,16 @@ p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
         return;
     
     /* Calculate the number of columns (and rows) */
-    gint n_columns = (gint)ceil(sqrt((double)n_visible_children));
+    int n_columns = (gint)ceil(sqrt((double)n_visible_children));
     
     /* Allocate arrays for the width of each column 
      * and the height of each row */
-    gint *width = g_new0(gint, n_columns);
-    gint *height = g_new0(gint, n_columns);
+    int *width = g_new0(int, n_columns);
+    int *height = g_new0(int, n_columns);
     
     /* Follow the same procedure as in the size request to get 
      * the ideal sizes of each row and column */
-    gint count = 0;
+    int count = 0;
     for(iter = priv->children; iter; iter = g_list_next(iter)) {
         if(!GTK_WIDGET_VISIBLE(iter->data))
             continue;
@@ -175,9 +175,9 @@ p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     }
     
     /* Calculate the extra space per column and row (can be negative) */
-    gint extra_width = 
+    int extra_width = 
         (allocation->width - widget->requisition.width) / n_columns;
-    gint extra_height = 
+    int extra_height = 
         (allocation->height - widget->requisition.height) / n_columns;
     
     /* Distribute the surplus or shortage of space
@@ -187,7 +187,7 @@ p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
         /* If this results in a negative width, redistribute
          * pixels from other nonzero-width columns to this one */
         if(width[count] < 0) {
-            gint count2;
+            int count2;
             for(count2 = (count + 1) % n_columns;
                 width[count] < 0;
                 count2++, count2 %= n_columns) 
@@ -201,7 +201,7 @@ p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
         /* Do the same for the rows */
         height[count] += extra_height;
         if(height[count] < 0) {
-            gint count2;
+            int count2;
             for(count2 = (count + 1) % n_columns;
                 height[count] < 0;
                 count2++, count2 %= n_columns)
@@ -216,8 +216,8 @@ p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     
     /* Start positioning the items at the container's origin,
      * less the border width */
-    gint x = allocation->x + GTK_CONTAINER(widget)->border_width;
-    gint y = allocation->y + GTK_CONTAINER(widget)->border_width;
+    int x = allocation->x + GTK_CONTAINER(widget)->border_width;
+    int y = allocation->y + GTK_CONTAINER(widget)->border_width;
 
     count = 0;
     for(iter = priv->children; iter; iter = g_list_next(iter)) {
