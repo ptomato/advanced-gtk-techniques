@@ -179,6 +179,7 @@ div.header h7 {
 }
 
 pre.code {
+	font-family: "Bitstream Vera Mono", "DejaVu Sans Mono", Consolas, monospace;
 	background: url('watermark-code.png') no-repeat top right;
 	border: solid 2px #e0e0df;
 	padding: 0.5em 1em 0.5em 1em;
