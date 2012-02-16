@@ -3,7 +3,8 @@
 #include "psquare.h"
 
 /* Private class member */
-#define P_SQUARE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), P_SQUARE_TYPE, PSquarePrivate))
+#define P_SQUARE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), \
+	P_SQUARE_TYPE, PSquarePrivate))
                                     
 typedef struct _PSquarePrivate PSquarePrivate;
 
@@ -90,11 +91,15 @@ p_square_size_request(GtkWidget *widget, GtkRequisition *requisition)
     /* Calculate the number of columns (and rows) */
     gint n_columns = (gint)ceil(sqrt((double)n_visible_children));
     
-    /* Allocate arrays for the width of each column and the height of each row */
+    /* Allocate arrays for the width of each column 
+     * and the height of each row */
     gint *width = g_new0(gint, n_columns);
     gint *height = g_new0(gint, n_columns);
     
-    /* Get each child's size request; set the width of each column to the maximum width of each child in that column, and the height of each row to the maximum height of each child in that row */
+    /* Get each child's size request; set the width of each column
+     * to the maximum width of each child in that column,
+     * and the height of each row to the maximum height of each
+     * child in that row */
     gint count = 0;
     for(iter = priv->children; iter; iter = g_list_next(iter)) {
         if(!GTK_WIDGET_VISIBLE(iter->data))
@@ -103,13 +108,16 @@ p_square_size_request(GtkWidget *widget, GtkRequisition *requisition)
         GtkRequisition child_requisition;
         gtk_widget_size_request(iter->data, &child_requisition);
         
-        width[count % n_columns] = MAX(child_requisition.width, width[count % n_columns]);
-        height[count / n_columns] = MAX(child_requisition.height, height[count / n_columns]);
+        width[count % n_columns] = 
+            MAX(child_requisition.width, width[count % n_columns]);
+        height[count / n_columns] = 
+            MAX(child_requisition.height, height[count / n_columns]);
         
         count++;
     }    
 
-    /* Add the widths and heights and pass that as the container's size request */
+    /* Add the widths and heights and pass that
+     * as the container's size request */
     for(count = 0; count < n_columns; count++) {
         requisition->width += width[count];
         requisition->height += height[count];
@@ -143,11 +151,13 @@ p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     /* Calculate the number of columns (and rows) */
     gint n_columns = (gint)ceil(sqrt((double)n_visible_children));
     
-    /* Allocate arrays for the width of each column and the height of each row */
+    /* Allocate arrays for the width of each column 
+     * and the height of each row */
     gint *width = g_new0(gint, n_columns);
     gint *height = g_new0(gint, n_columns);
     
-    /* Follow the same procedure as in the size request to get the ideal sizes of each row and column */
+    /* Follow the same procedure as in the size request to get 
+     * the ideal sizes of each row and column */
     gint count = 0;
     for(iter = priv->children; iter; iter = g_list_next(iter)) {
         if(!GTK_WIDGET_VISIBLE(iter->data))
@@ -156,23 +166,32 @@ p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
         GtkRequisition child_requisition;
         gtk_widget_get_child_requisition(iter->data, &child_requisition);
         
-        width[count % n_columns] = MAX(child_requisition.width, width[count % n_columns]);
-        height[count / n_columns] = MAX(child_requisition.height, height[count / n_columns]);
+        width[count % n_columns] = 
+            MAX(child_requisition.width, width[count % n_columns]);
+        height[count / n_columns] =
+            MAX(child_requisition.height, height[count / n_columns]);
         
         count++;
     }
     
     /* Calculate the extra space per column and row (can be negative) */
-    gint extra_width = (allocation->width - widget->requisition.width) / n_columns;
-    gint extra_height = (allocation->height - widget->requisition.height) / n_columns;
+    gint extra_width = 
+        (allocation->width - widget->requisition.width) / n_columns;
+    gint extra_height = 
+        (allocation->height - widget->requisition.height) / n_columns;
     
-    /* Distribute the surplus or shortage of space equally between columns */
+    /* Distribute the surplus or shortage of space
+     * equally between columns */
     for(count = 0; count < n_columns; count++) {
         width[count] += extra_width;
-        /* If this results in a negative width, redistribute pixels from other nonzero-width columns to this one */
+        /* If this results in a negative width, redistribute
+         * pixels from other nonzero-width columns to this one */
         if(width[count] < 0) {
             gint count2;
-            for(count2 = (count + 1) % n_columns; width[count] < 0; count2++, count2 %= n_columns) {
+            for(count2 = (count + 1) % n_columns;
+                width[count] < 0;
+                count2++, count2 %= n_columns) 
+            {
                 if(count2 == count || width[count2] < 0)
                     continue;
                 width[count2]--;
@@ -183,7 +202,10 @@ p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
         height[count] += extra_height;
         if(height[count] < 0) {
             gint count2;
-            for(count2 = (count + 1) % n_columns; height[count] < 0; count2++, count2 %= n_columns) {
+            for(count2 = (count + 1) % n_columns;
+                height[count] < 0;
+                count2++, count2 %= n_columns)
+            {
                 if(count2 == count || height[count2] < 0)
                     continue;
                 height[count2]--;
@@ -191,9 +213,9 @@ p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
             }
         }
     }
-  
     
-    /* Start positioning the items at the container's origin, less the border width */
+    /* Start positioning the items at the container's origin,
+     * less the border width */
     gint x = allocation->x + GTK_CONTAINER(widget)->border_width;
     gint y = allocation->y + GTK_CONTAINER(widget)->border_width;
 
@@ -213,7 +235,8 @@ p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
         /* Advance the x coordinate */
         x += child_allocation.width;
         count++;
-        /* If we've moved to the next row, return the x coordinate to the left, and advance the y coordinate */
+        /* If we've moved to the next row, return the x coordinate 
+         * to the left, and advance the y coordinate */
         if(count % n_columns == 0) {
             x = allocation->x + GTK_CONTAINER(widget)->border_width;
             y += child_allocation.height;
@@ -235,15 +258,14 @@ p_square_child_type(GtkContainer *container)
 static void
 p_square_add(GtkContainer *container, GtkWidget *widget)
 {
-    g_return_if_fail(container);
-    g_return_if_fail(widget);
-    g_return_if_fail(P_IS_SQUARE(container));
-    g_return_if_fail(GTK_IS_WIDGET(widget));
+    g_return_if_fail(container || P_IS_SQUARE(container));
+    g_return_if_fail(widget || GTK_IS_WIDGET(widget));
     g_return_if_fail(widget->parent == NULL);
     
     PSquarePrivate *priv = P_SQUARE_PRIVATE(container);
     
-    /* Add the child to our list of children. All the real work is done in gtk_widget_set_parent(). */
+    /* Add the child to our list of children. 
+     * All the real work is done in gtk_widget_set_parent(). */
     priv->children = g_list_append(priv->children, widget);
     gtk_widget_set_parent(widget, GTK_WIDGET(container));
     
@@ -252,17 +274,17 @@ p_square_add(GtkContainer *container, GtkWidget *widget)
         gtk_widget_queue_resize(GTK_WIDGET(container));
 }
 
+/* Remove a child from the container */
 static void
 p_square_remove(GtkContainer *container, GtkWidget *widget)
 {
-    g_return_if_fail(container);
-    g_return_if_fail(widget);
-    g_return_if_fail(P_IS_SQUARE(container));
-    g_return_if_fail(GTK_IS_WIDGET(widget));
+    g_return_if_fail(container || P_IS_SQUARE(container));
+    g_return_if_fail(widget || GTK_IS_WIDGET(widget));
     
     PSquarePrivate *priv = P_SQUARE_PRIVATE(container);
     
-    /* Remove the child from our list of children. Again, all the real work is done in gtk_widget_unparent(). */
+    /* Remove the child from our list of children. 
+     * Again, all the real work is done in gtk_widget_unparent(). */
     GList *link = g_list_find(priv->children, widget);
     if(link) {
         gboolean was_visible = GTK_WIDGET_VISIBLE(widget);
@@ -276,13 +298,13 @@ p_square_remove(GtkContainer *container, GtkWidget *widget)
     }
 }
 
-/* Call the function for all the container's children. This function ignores the include_internals argument, because there are no "internal" children. */
+/* Call the function for all the container's children. This function
+ * ignores the include_internals argument, because there are no
+ * "internal" children. */
 static void 
-p_square_forall(GtkContainer *container, gboolean include_internals, GtkCallback callback, gpointer callback_data)
+p_square_forall(GtkContainer *container, gboolean include_internals,
+                GtkCallback callback, gpointer callback_data)
 {
     PSquarePrivate *priv = P_SQUARE_PRIVATE(container);
-
-    GList *iter;
-    for(iter = priv->children; iter != NULL; iter = g_list_next(iter))
-        (*callback)(iter->data, callback_data);
+	g_list_foreach(priv->children, (GFunc)callback, callback_data);
 }

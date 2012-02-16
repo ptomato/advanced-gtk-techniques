@@ -5,7 +5,7 @@
   <link type="guide" xref="index"/>
 </info>
 <title>Introduction</title>
-<p>I decided to write this guide after reading the excellent book <em href="http://gtkbook.com">Foundations of GTK+ Development</em><!-- TODO: Semantic markup to show it's a book --> by Andrew Krause.
+<p>I decided to write this guide after reading the excellent book <em href="http://gtkbook.com">Foundations of GTK+ Development</em> by Andrew Krause.
 The book does a wonderful job of describing GTK's most-used widgets and how to use them, and even though I had already had a certain amount of experience with GTK, reading it taught me several tricks I didn't know.
 There is also a section on writing your own widgets, but I found it a little too short to really get into the nitty-gritty.
 So, I thought I'd share some of the stuff that I had to find out through trial and error.</p>
