@@ -40,6 +40,18 @@
     <xsl:call-template name="my-custom-prev-next-links">
       <xsl:with-param name="node" select="$node"/>
     </xsl:call-template>
+
+    <xsl:variable name="copyright-info" select="$node/mal:info/mal:credit[contains(@type,'copyright')]"/>
+    <xsl:if test="$copyright-info">
+      <div class="custom-footer">
+        <p>
+          © Copyright <xsl:value-of select="$copyright-info/mal:years"/>,
+          <xsl:value-of select="$copyright-info/mal:name"/>.
+          Created using
+          <a href="http://projectmallard.org/" target="_blank">Mallard</a>.
+        </p>
+      </div>
+    </xsl:if>
   </xsl:template>
 
   <!-- Template based on mal2html.links.prevnext -->
