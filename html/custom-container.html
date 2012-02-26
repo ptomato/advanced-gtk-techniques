@@ -1,55 +1,67 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html xmlns:str="http://exslt.org/strings">
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>A container that does its own size allocation</title>
-<link rel="stylesheet" type="text/css" href="../index.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Custom container</title>
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="yelp.js"></script><link xmlns:m="http://www.w3.org/1998/Math/MathML" rel="stylesheet" href="../index.css" type="text/css">
+<script xmlns:m="http://www.w3.org/1998/Math/MathML" src="../highlight.pack.js"></script><script xmlns:m="http://www.w3.org/1998/Math/MathML">
+$(document).ready(function() {
+  $('div.code pre').each(function(i, e) {hljs.highlightBlock(e, '    ')});
+});
+    </script><link xmlns:m="http://www.w3.org/1998/Math/MathML" rel="stylesheet" href="http://yandex.st/highlightjs/6.1/styles/github.min.css">
 </head>
-<body class="">
-<div class="headbar"><div class="linktrails"><div class="linktrail">
-<a class="linktrail" href="index.html">Advanced GTK Techniques</a> › <a class="linktrail" href="index.html#advanced">More esoteric techniques</a> » </div></div></div>
+<body>
+<div xmlns:m="http://www.w3.org/1998/Math/MathML" class="banner">
+<h1 class="banner"><a href="#"><span>Advanced GTK Techniques</span></a></h1>
+<h2 class="banner"><span>Custom container</span></h2>
+</div>
+<div class="links nextlinks"><a class="nextlinks-contents" href="index.html" title="Advanced GTK Techniques">Contents</a></div>
+<div class="page">
+<div class="header"><div class="trails"><div class="trail">
+<a class="trail" href="index.html" title="Advanced GTK Techniques">Advanced GTK Techniques</a> » </div></div></div>
 <div class="body">
-<div class="header"><h1 class="title">A container that does its own size allocation</h1></div>
+<div class="hgroup"><h1 class="title"><span class="title">Custom container</span></h1></div>
+<div class="region">
 <div class="contents">
-<p class="p">Size allocation is not a very difficult procedure in GTK; every widget has overridable <span xmlns:e="http://projectmallard.org/experimental/" class=" code">size_request</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">size_allocate</span> methods.
-Sizes are requested from the bottom of the widget tree up, with each container calling <span xmlns:e="http://projectmallard.org/experimental/" class=" code">gtk_widget_size_request()</span> on each of its children and then calculating its own size request using that information.
-Once the total size is known, the available space is calculated and allocated from the top down: each container divides up the space it receives among its children by calling their <span xmlns:e="http://projectmallard.org/experimental/" class=" code">gtk_widget_size_allocate()</span> methods.
-This is covered in chapter 11 of <span xmlns:e="http://projectmallard.org/experimental/" class=" em">Foundations</span>.</p>
-<p class="p">In most cases, such as writing a composite widget or adding functionality to an existing container, you can get away with subclassing a container like <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkVBox</span>.
+<p class="p">Size allocation is not a very difficult procedure in GTK; every widget has overridable <span class=" code">size_request</span> and <span class=" code">size_allocate</span> methods.
+Sizes are requested from the bottom of the widget tree up, with each container calling <span class=" code">gtk_widget_size_request()</span> on each of its children and then calculating its own size request using that information.
+Once the total size is known, the available space is calculated and allocated from the top down: each container divides up the space it receives among its children by calling their <span class=" code">gtk_widget_size_allocate()</span> methods.
+This is covered in chapter 11 of <span class=" em"><a href="http://gtkbook.com" title="http://gtkbook.com">Foundations of GTK Development</a></span>.</p>
+<p class="p">In most cases, such as writing a composite widget or adding functionality to an existing container, you can get away with subclassing a container like <span class=" code">GtkVBox</span>.
 That way, you don't have to deal with size negotiation and other container stuff directly, since it's already implemented in your parent class.
 But what if you want a container that arranges its children differently than all the existing GTK containers?
 Then you'll have to write a new container with its own size request and allocation algorithms.</p>
 <p class="p">It wasn't easy to think of a realistic-yet-simple example, since anytime you really have to do this, you're probably attempting something complicated.
-Therefore, we will write a fairly useless container which arranges all its children in a square, inspired by '80's video clips with cheesy split screen effects, like <span xmlns:e="http://projectmallard.org/experimental/" class=" em">Heat of the Moment</span>.
-The container will find an integer <span xmlns:e="http://projectmallard.org/experimental/" class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>n</mi></mrow></math></span> so that</p>
-<div class="table"><table class="table"><tr><td>
-  <p class="p first-child"><span xmlns:e="http://projectmallard.org/experimental/" class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow>
+Therefore, we will write a fairly useless container which arranges all its children in a square, inspired by '80's video clips with cheesy split screen effects, like <span class=" em">Heat of the Moment</span>.
+The container will find an integer <span class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>n</mi></mrow></math></span> so that</p>
+<div class="table"><div class="inner"><div class="region"><table class="table"><tr><td><p class="p"><span class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow>
     <msup><mi>n</mi><mn>2</mn></msup>
     <mo>≥</mo>
     <mi>V</mi>
-  </mrow></math></span></p>
-</td></tr></table></div>
-<p class="p">where <span xmlns:e="http://projectmallard.org/experimental/" class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>V</mi></mrow></math></span> is the number of visible children of the container. The container will then divide its space into an <span xmlns:e="http://projectmallard.org/experimental/" class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>n</mi><mo>×</mo><mi>n</mi></mrow></math></span> grid, which it will fill from left to right and top to bottom.</p>
+  </mrow></math></span></p></td></tr></table></div></div></div>
+<p class="p">where <span class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>V</mi></mrow></math></span> is the number of visible children of the container. The container will then divide its space into an <span class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>n</mi><mo>×</mo><mi>n</mi></mrow></math></span> grid, which it will fill from left to right and top to bottom.</p>
 </div>
-<div class="section" id="header-file">
-<div class="header"><h2 class="title">Header file</h2></div>
-<div class="contents"><p class="p first-child">We will create a subclass of <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkContainer</span> called <span xmlns:e="http://projectmallard.org/experimental/" class=" code">PSquare</span>. The header file, <span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare.h</span>, is a textbook case if there ever was one, so I won't reprint it here. It exports only two functions, <span xmlns:e="http://projectmallard.org/experimental/" class=" code">p_square_get_type()</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">p_square_new()</span>, since all of the interesting stuff happens in overridden <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkContainer</span> functions.</p></div>
-</div>
-<div class="section" id="class-boilerplate">
-<div class="header"><h2 class="title">Class boilerplate</h2></div>
-<div class="contents">
-<p class="p first-child">We will briefly go over the required GObject stuff in the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare.c</span> file, since <span xmlns:e="http://projectmallard.org/experimental/" class=" em">Foundations</span> doesn't cover the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">G_DEFINE_TYPE</span> macros or the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">g_type_class_add_private()</span> mechanism.</p>
-<p class="p"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">G_DEFINE_TYPE()</span> is a handy macro that saves you a lot of typing.
-It writes your <span xmlns:e="http://projectmallard.org/experimental/" class=" code">p_square_get_type()</span> function for you, which you then export in your header file; it also declares a static <span xmlns:e="http://projectmallard.org/experimental/" class=" code">p_square_parent_class</span> variable, a static <span xmlns:e="http://projectmallard.org/experimental/" class=" code">p_square_class_init()</span> function, and a static <span xmlns:e="http://projectmallard.org/experimental/" class=" code">p_square_init()</span> function.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">G_DEFINE_TYPE(PSquare, p_square, GTK_TYPE_CONTAINER);</pre></div>
-</div>
-<p class="p">The parent class variable is there to avoid a costly call to <span xmlns:e="http://projectmallard.org/experimental/" class=" code">g_type_class_peek_parent()</span> every time you need to chain up to a method in the parent class (often in <span xmlns:e="http://projectmallard.org/experimental/" class=" code">finalize</span>).
+<div id="header-file" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Header file</span></h2></div>
+<div class="region"><div class="contents"><p class="p">We will create a subclass of <span class=" code">GtkContainer</span> called <span class=" code">PSquare</span>. The header file, <span class=" file"><a href="../psquare/psquare.h" title="../psquare/psquare.h">psquare.h</a></span>, is a textbook case if there ever was one, so I won't reprint it here. It exports only two functions, <span class=" code">p_square_get_type()</span> and <span class=" code">p_square_new()</span>, since all of the interesting stuff happens in overridden <span class=" code">GtkContainer</span> functions.</p></div></div>
+</div></div>
+<div id="class-boilerplate" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Class boilerplate</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">We will briefly go over the required GObject stuff in the <span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare.c</a></span> file, since it's good to know about the <span class=" code">G_DEFINE_TYPE</span> macros and the <span class=" code">g_type_class_add_private()</span> mechanism.
+Not all online resources mention them.</p>
+<p class="p"><span class=" code">G_DEFINE_TYPE()</span> is a handy macro that saves you a lot of typing.
+It writes your <span class=" code">p_square_get_type()</span> function for you, which you then export in your header file; it also declares a static <span class=" code">p_square_parent_class</span> variable, a static <span class=" code">p_square_class_init()</span> function, and a static <span class=" code">p_square_init()</span> function.</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">G_DEFINE_TYPE(PSquare, p_square, GTK_TYPE_CONTAINER);</pre></div></div></div>
+</div></div>
+<p class="p">The <span class=" code">parent_class</span> variable is there to avoid a costly call to <span class=" code">g_type_class_peek_parent()</span> every time you need to chain up to a method in the parent class (often in <span class=" code">finalize</span>).
 You need to write the class and instance initialization functions yourself.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">static void
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">static void
 p_square_class_init(PSquareClass *klass)
 {    
     /* Override GtkWidget methods */
@@ -66,35 +78,39 @@ p_square_class_init(PSquareClass *klass)
     
     /* Add private indirection member */
     g_type_class_add_private(klass, sizeof(PSquarePrivate));
-}</pre></div>
-</div>
-<p class="p">The class initialization function <span xmlns:e="http://projectmallard.org/experimental/" class=" code">p_square_class_init</span> overrides several methods in ancestor classes.
+}</pre></div></div></div>
+</div></div>
+<p class="p">The class initialization function <span class=" code">p_square_class_init</span> overrides several methods in ancestor classes.
 If you are not familiar with the GObject way of doing this, then take a good look now.
-Our test program will not use the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">forall</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">child_type</span> methods, but a peek at <span xmlns:e="http://projectmallard.org/experimental/" class=" file">gtkcontainer.c</span> will reveal that they are set to <span xmlns:e="http://projectmallard.org/experimental/" class=" code">NULL</span> in the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkContainer</span> class initializer; in other words, they are pure virtual functions, and are required to be overridden.</p>
-<p class="p">The other thing the class initializer does is register <span xmlns:e="http://projectmallard.org/experimental/" class=" code">PSquare</span>'s private indirection member.
+Our test program will not use the <span class=" code">forall</span> and <span class=" code">child_type</span> methods, but a peek at <span class=" file"><a href="http://git.gnome.org/browse/gtk+/tree/gtk/gtkcontainer.c" title="http://git.gnome.org/browse/gtk+/tree/gtk/gtkcontainer.c">gtkcontainer.c</a></span> will reveal that they are set to <span class=" code">NULL</span> in the <span class=" code">GtkContainer</span> class initializer; in other words, they are pure virtual functions, and are required to be overridden.</p>
+<div class="note" title="Note"><div class="inner"><div class="region"><div class="contents"><p class="p">To find out what methods there are to override in the parent class, you have to look at the source code of <span class=" code">GtkContainer</span>.
+  There isn't really a good way to tell from the API documentation, which is unfortunate.
+  </p></div></div></div></div>
+<p class="p">The other thing the class initializer does is register <span class=" code">PSquare</span>'s private indirection member.
 This is probably the most effective way of hiding your implementation details when you write a class.
-This is achieved by defining a private member structure and telling GObject to allocate space for it in each instance of that class, using <span xmlns:e="http://projectmallard.org/experimental/" class=" code">g_type_class_add_private()</span>.
+This is achieved by defining a private member structure and telling GObject to allocate space for it in each instance of that class, using <span class=" code">g_type_class_add_private()</span>.
 That way, each object has private data stored in it, but you can only access that data if the composition of your private structure is exposed.
 The private structure is defined in the following code.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">#define P_SQUARE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), P_SQUARE_TYPE, PSquarePrivate))
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">#define P_SQUARE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), \
+	P_SQUARE_TYPE, PSquarePrivate))
                                     
 typedef struct _PSquarePrivate PSquarePrivate;
 
 struct _PSquarePrivate
 {
     GList *children;
-};</pre></div>
-</div>
-<p class="p">You might prefer to put these lines in a file called something like <span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare-private.h</span>.
-That way, any implementation file that includes it will be able to access the private data, kind of like the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">friend</span> directive in C++.
+};</pre></div></div></div>
+</div></div>
+<p class="p">You might prefer to put these lines in a file called something like <span class=" file">psquare-private.h</span>.
+That way, any implementation file that includes it will be able to access the private data, kind of like the <span class=" code">friend</span> directive in C++.
 It also comes in handy if the implementation of your class is very big and you want to split it over several files.</p>
-<p class="p">The macro <span xmlns:e="http://projectmallard.org/experimental/" class=" code">P_SQUARE_PRIVATE()</span> gives us the private data of a <span xmlns:e="http://projectmallard.org/experimental/" class=" code">PSquare</span>.
+<p class="p">The macro <span class=" code">P_SQUARE_PRIVATE()</span> gives us the private data of a <span class=" code">PSquare</span>.
 Our only private member is the list of our container's children.
-We need to keep track of this list ourselves, since <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkContainer</span> won't do it for us.</p>
-<p class="p">The instance initialization function <span xmlns:e="http://projectmallard.org/experimental/" class=" code">p_square_init()</span> initializes the public and private members of our object:</p>
-<pre class="code">static void
+We need to keep track of this list ourselves, since <span class=" code">GtkContainer</span> won't do it for us.</p>
+<p class="p">The instance initialization function <span class=" code">p_square_init()</span> initializes the public and private members of our object:</p>
+<div class="code"><pre class="contents ">static void
 p_square_init(PSquare *square)
 {
 	GTK_WIDGET_SET_FLAGS(GTK_WIDGET(square), GTK_NO_WINDOW);
@@ -102,76 +118,80 @@ p_square_init(PSquare *square)
 	/* Initialize private members */
 	PSquarePrivate *priv = P_SQUARE_PRIVATE(square);
 	priv-&gt;children = NULL;
-}</pre>
-<p class="p">The <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GTK_NO_WINDOW</span> flag means that <span xmlns:e="http://projectmallard.org/experimental/" class=" code">Psquare</span> doesn't have a <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GdkWindow</span> associated with it; we don't do any drawing ourselves, we just arrange the container's children.
-The private member <span xmlns:e="http://projectmallard.org/experimental/" class=" code">children</span> is initialized to <span xmlns:e="http://projectmallard.org/experimental/" class=" code">NULL</span>, which is an empty <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GList</span>, as you should know.</p>
-<p class="p">You should also know that it is customary to create a widget with a <span xmlns:e="http://projectmallard.org/experimental/" class=" code">p_square_new()</span> function, which returns a new instance of the class, cast to a <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkWidget</span> pointer.
-It's too trivial to reprint here.</p>
-</div>
-</div>
-<div class="section" id="overriding-container">
-<div class="header"><h2 class="title">Overriding <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkContainer</span> methods</h2></div>
-<div class="contents">
-<p class="p first-child">Now for the overridden ancestor methods.
-The <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkContainer</span> ones are fairly trivial, so we'll do them first.
-The <span xmlns:e="http://projectmallard.org/experimental/" class=" code">child_type</span> method, specifying what types of children can be added to the container, simply returns <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GTK_TYPE_WIDGET</span>.
-The <span xmlns:e="http://projectmallard.org/experimental/" class=" code">forall</span> pointer in the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkContainerClass</span> structure doesn't correspond exactly to a <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkContainer</span> method, but <span xmlns:e="http://projectmallard.org/experimental/" class=" code">gtk_container_forall()</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">gtk_container_foreach()</span> are implemented in terms of it, as well as some other functions.
-One iterates over all children including "internal" ones (such as the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkButton</span>s in a dialog), the other doesn't.
-The class <span xmlns:e="http://projectmallard.org/experimental/" class=" code">forall</span> function takes a flag telling whether to include internal children or not.
-<span xmlns:e="http://projectmallard.org/experimental/" class=" code">PSquare</span> doesn't have any internal children, so we just ignore that.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">static void 
-p_square_forall(GtkContainer *container, gboolean include_internals, GtkCallback callback, gpointer callback_data)
+}</pre></div>
+<p class="p">The <span class=" code">GTK_NO_WINDOW</span> flag means that <span class=" code">Psquare</span> doesn't have a <span class=" code">GdkWindow</span> associated with it; we don't do any drawing ourselves, we just arrange the container's children.
+The private member <span class=" code">children</span> is initialized to <span class=" code">NULL</span>, which is an empty <span class=" code">GList</span>, as you should know.</p>
+<p class="p">You should also know that it is customary to create a widget with a <span class=" code">p_square_new()</span> function, which returns a new instance of the class, cast to a <span class=" code">GtkWidget</span> pointer.
+Here it is:</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">GtkWidget *
+p_square_new()
+{
+    return GTK_WIDGET(g_object_new(p_square_get_type(), NULL));
+}</pre></div></div></div>
+</div></div>
+</div></div>
+</div></div>
+<div id="overriding-container" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Overriding <span class=" code">GtkContainer</span> methods</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">Now for the overridden ancestor methods.
+The <span class=" code">GtkContainer</span> ones are fairly trivial, so we'll do them first.
+The <span class=" code">child_type</span> method, specifying what types of children can be added to the container, simply returns <span class=" code">GTK_TYPE_WIDGET</span>.
+The <span class=" code">forall</span> pointer in the <span class=" code">GtkContainerClass</span> structure doesn't correspond exactly to a <span class=" code">GtkContainer</span> method, but <span class=" code">gtk_container_forall()</span> and <span class=" code">gtk_container_foreach()</span> are implemented in terms of it, as well as some other functions.
+One iterates over all children including "internal" ones (such as the <span class=" code">GtkButton</span>s in a dialog), the other doesn't.
+The class <span class=" code">forall</span> function takes a flag telling whether to include internal children or not.
+<span class=" code">PSquare</span> doesn't have any internal children, so we just ignore that.</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">static void 
+p_square_forall(GtkContainer *container, gboolean include_internals,
+                GtkCallback callback, gpointer callback_data)
 {
     PSquarePrivate *priv = P_SQUARE_PRIVATE(container);
-
-    GList *iter;
-    for(iter = priv-&gt;children; iter != NULL; iter = g_list_next(iter))
-        (*callback)(iter-&gt;data, callback_data);
-}</pre></div>
-</div>
-<p class="p">The next things to implement are the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">add</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">remove</span> methods.
-Note that you don't have to have them if, for example, your container has a different mechanism for adding widgets; the default <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkContainer</span> implementations do nothing, and print a warning message saying that the method is not implemented.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">static void
+	g_list_foreach(priv-&gt;children, (GFunc)callback, callback_data);
+}</pre></div></div></div>
+</div></div>
+<p class="p">The next things to implement are the <span class=" code">add</span> and <span class=" code">remove</span> methods.
+Note that you don't have to have them if, for example, your container has a different mechanism for adding widgets; the default <span class=" code">GtkContainer</span> implementations do nothing, and print a warning message saying that the method is not implemented.</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">static void
 p_square_add(GtkContainer *container, GtkWidget *widget)
 {
-    g_return_if_fail(container);
-    g_return_if_fail(widget);
-    g_return_if_fail(P_IS_SQUARE(container));
-    g_return_if_fail(GTK_IS_WIDGET(widget));
+    g_return_if_fail(container || P_IS_SQUARE(container));
+    g_return_if_fail(widget || GTK_IS_WIDGET(widget));
     g_return_if_fail(widget-&gt;parent == NULL);
     
     PSquarePrivate *priv = P_SQUARE_PRIVATE(container);
     
-    /* Add the child to our list of children. All the real work is done in gtk_widget_set_parent(). */
+    /* Add the child to our list of children. 
+     * All the real work is done in gtk_widget_set_parent(). */
     priv-&gt;children = g_list_append(priv-&gt;children, widget);
     gtk_widget_set_parent(widget, GTK_WIDGET(container));
     
     /* Queue redraw */
     if(GTK_WIDGET_VISIBLE(widget))
         gtk_widget_queue_resize(GTK_WIDGET(container));
-}</pre></div>
-</div>
+}</pre></div></div></div>
+</div></div>
 <p class="p">It may surprise you that this function is not longer.
-However, as the comment says, all the real work is done in <span xmlns:e="http://projectmallard.org/experimental/" class=" code">gtk_widget_set_parent()</span>: sinking the child's floating reference, redrawing the child, emitting the appropriate signals, etc.
+However, as the comment says, all the real work is done in <span class=" code">gtk_widget_set_parent()</span>: sinking the child's floating reference, redrawing the child, emitting the appropriate signals, etc.
 We still have to redraw the container ourselves.
-The corresponding method to remove a child is much the same, with all the real work being done in <span xmlns:e="http://projectmallard.org/experimental/" class=" code">gtk_widget_unparent()</span>.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">static void
+The corresponding method to remove a child is much the same, with all the real work being done in <span class=" code">gtk_widget_unparent()</span>.</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">static void
 p_square_remove(GtkContainer *container, GtkWidget *widget)
 {
-    g_return_if_fail(container);
-    g_return_if_fail(widget);
-    g_return_if_fail(P_IS_SQUARE(container));
-    g_return_if_fail(GTK_IS_WIDGET(widget));
+    g_return_if_fail(container || P_IS_SQUARE(container));
+    g_return_if_fail(widget || GTK_IS_WIDGET(widget));
     
     PSquarePrivate *priv = P_SQUARE_PRIVATE(container);
     
-    /* Remove the child from our list of children. Again, all the real work is done in gtk_widget_unparent(). */
+    /* Remove the child from our list of children. 
+     * Again, all the real work is done in gtk_widget_unparent(). */
     GList *link = g_list_find(priv-&gt;children, widget);
     if(link) {
         gboolean was_visible = GTK_WIDGET_VISIBLE(widget);
@@ -183,58 +203,63 @@ p_square_remove(GtkContainer *container, GtkWidget *widget)
         if(was_visible)
             gtk_widget_queue_resize(GTK_WIDGET(container));
     }
-}</pre></div>
-</div>
-<p class="p">Note that we don't have to write <span xmlns:e="http://projectmallard.org/experimental/" class=" code">p_square_destroy()</span> or <span xmlns:e="http://projectmallard.org/experimental/" class=" code">p_square_finalize()</span> methods to unref the child widgets, since the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkContainer</span> code already does that when the container is destroyed.</p>
-</div>
-</div>
-<div class="section" id="size-negotiation">
-<div class="header"><h2 class="title">Size negotiation</h2></div>
-<div class="contents">
-<p class="p first-child">Now that we have all that out of the way, we can get to the meat of this section.
+}</pre></div></div></div>
+</div></div>
+<p class="p">Note that we don't have to write <span class=" code">p_square_destroy()</span> or <span class=" code">p_square_finalize()</span> methods to unref the child widgets, since the <span class=" code">GtkContainer</span> code already does that when the container is destroyed.</p>
+</div></div>
+</div></div>
+<div id="size-negotiation" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Size negotiation</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">Now that we have all that out of the way, we can get to the meat of this section.
 We will determine how much width our container needs by adding up the width of each column.
 The width of a column will be equal to the width of the widest widget in that column.
 The container height will be determined likewise.
-We will also respect the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">border_width</span> property of <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkContainer</span>.</p>
-<p class="p">The <span xmlns:e="http://projectmallard.org/experimental/" class=" code">size_request</span> method is passed a pointer to a <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkRequisition</span> structure, which it must fill with its requested size.</p>
-<pre class="code">static void p_square_size_request(GtkWidget *widget, GtkRequisition *requisition);</pre>
-<p class="p">We start by setting the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">width</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">height</span> fields of the size requisition to their minimum value, twice the border width.
+We will also respect the <span class=" code">border_width</span> property of <span class=" code">GtkContainer</span>.</p>
+<p class="p">The <span class=" code">size_request</span> method is passed a pointer to a <span class=" code">GtkRequisition</span> structure, which it must fill with its requested size.</p>
+<div class="code"><pre class="contents ">static void p_square_size_request(GtkWidget *widget,
+                                  GtkRequisition *requisition);</pre></div>
+<p class="p">We start by setting the <span class=" code">width</span> and <span class=" code">height</span> fields of the size requisition to their minimum value, twice the border width.
 Then we compute the number of visible children, and if that is zero, our work is done; we don't layout unshown widgets.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">/* Start with the container's border width */
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">/* Start with the container's border width */
 requisition-&gt;width = GTK_CONTAINER(widget)-&gt;border_width * 2;
 requisition-&gt;height = GTK_CONTAINER(widget)-&gt;border_width * 2;
 
 /* Count the visible children */
 GList *iter;
-guint n_visible_children = 0;
+unsigned n_visible_children = 0;
 for(iter = priv-&gt;children; iter; iter = g_list_next(iter))
     if(GTK_WIDGET_VISIBLE(iter-&gt;data))
         n_visible_children++;
 
 if(n_visible_children == 0)
-    return;</pre></div>
-</div>
+    return;</pre></div></div></div>
+</div></div>
 <p class="p">Then, we compute the size of the side of our square, and allocate arrays to store that number of column widths and row heights.
 When we get all the size requests of the container's children, we will store a running maximum for each row and column in those arrays, then add them up.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">/* Calculate the number of columns (and rows) */
-gint n_columns = (gint)ceil(sqrt((double)n_visible_children));
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">/* Calculate the number of columns (and rows) */
+int n_columns = (int)ceil(sqrt((double)n_visible_children));
 
-/* Allocate arrays for the width of each column and the height of each row */
-gint *width = g_new0(gint, n_columns);
-gint *height = g_new0(gint, n_columns);</pre></div>
-</div>
+/* Allocate arrays for the width of each column 
+ * and the height of each row */
+int *width = g_new0(int, n_columns);
+int *height = g_new0(int, n_columns);</pre></div></div></div>
+</div></div>
 <p class="p">We then iterate over the children again, asking them for their size requests.
-The simplest way is to allocate a <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkRequisition</span> structure on the stack and pass its address to the child's size request function. 
+The simplest way is to allocate a <span class=" code">GtkRequisition</span> structure on the stack and pass its address to the child's size request function. 
 If the child's width is larger than the width we have stored for the column we're in, we replace the stored width by the child's width, and likewise for the height. 
 Then we add the widths and heights to our own requisition.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">/* Get each child's size request; set the width of each column to the maximum width of each child in that column, and the height of each row to the maximum height of each child in that row */
-gint count = 0;
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">/* Get each child's size request; set the width of each column
+ * to the maximum width of each child in that column,
+ * and the height of each row to the maximum height of each
+ * child in that row */
+int count = 0;
 for(iter = priv-&gt;children; iter; iter = g_list_next(iter)) {
     if(!GTK_WIDGET_VISIBLE(iter-&gt;data))
         continue;
@@ -242,31 +267,36 @@ for(iter = priv-&gt;children; iter; iter = g_list_next(iter)) {
     GtkRequisition child_requisition;
     gtk_widget_size_request(iter-&gt;data, &amp;child_requisition);
     
-    width[count % n_columns] = MAX(child_requisition.width, width[count % n_columns]);
-    height[count / n_columns] = MAX(child_requisition.height, height[count / n_columns]);
+    width[count % n_columns] = 
+        MAX(child_requisition.width, width[count % n_columns]);
+    height[count / n_columns] = 
+        MAX(child_requisition.height, height[count / n_columns]);
     
     count++;
 }    
-/* Add the widths and heights and pass that as the container's size request */
+
+/* Add the widths and heights and pass that
+ * as the container's size request */
 for(count = 0; count &lt; n_columns; count++) {
     requisition-&gt;width += width[count];
     requisition-&gt;height += height[count];
-}</pre></div>
-</div>
-<p class="p">The <span xmlns:e="http://projectmallard.org/experimental/" class=" code">size_allocate</span> method is similar. 
-It receives a pointer to a <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkAllocation</span> structure, which contains the size that the widget will have to deal with.</p>
-<pre class="code">static void p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation);</pre>
+}</pre></div></div></div>
+</div></div>
+<p class="p">The <span class=" code">size_allocate</span> method is similar. 
+It receives a pointer to a <span class=" code">GtkAllocation</span> structure, which contains the size that the widget will have to deal with.</p>
+<div class="code"><pre class="contents ">static void p_square_size_allocate(GtkWidget *widget,
+                                   GtkAllocation *allocation);</pre></div>
 <p class="p">The first thing it must do is store the allocation in the widget structure.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">widget-&gt;allocation = *allocation;</pre></div>
-</div>
-<p class="p">The next section is very similar to the code in the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">size_request</span> method.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">/* Count the visible children */
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">widget-&gt;allocation = *allocation;</pre></div></div></div>
+</div></div>
+<p class="p">The next section is very similar to the code in the <span class=" code">size_request</span> method.</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">/* Count the visible children */
 GList *iter;
-guint n_visible_children = 0;
+unsigned n_visible_children = 0;
 for(iter = priv-&gt;children; iter; iter = g_list_next(iter))
     if(GTK_WIDGET_VISIBLE(iter-&gt;data))
         n_visible_children++;
@@ -275,14 +305,16 @@ if(n_visible_children == 0)
     return;
 
 /* Calculate the number of columns (and rows) */
-gint n_columns = (gint)ceil(sqrt((double)n_visible_children));
+int n_columns = (gint)ceil(sqrt((double)n_visible_children));
 
-/* Allocate arrays for the width of each column and the height of each row */
-gint *width = g_new0(gint, n_columns);
-gint *height = g_new0(gint, n_columns);
+/* Allocate arrays for the width of each column 
+ * and the height of each row */
+int *width = g_new0(int, n_columns);
+int *height = g_new0(int, n_columns);
 
-/* Follow the same procedure as in the size request to get the ideal sizes of each row and column */
-gint count = 0;
+/* Follow the same procedure as in the size request to get 
+ * the ideal sizes of each row and column */
+int count = 0;
 for(iter = priv-&gt;children; iter; iter = g_list_next(iter)) {
     if(!GTK_WIDGET_VISIBLE(iter-&gt;data))
         continue;
@@ -290,35 +322,44 @@ for(iter = priv-&gt;children; iter; iter = g_list_next(iter)) {
     GtkRequisition child_requisition;
     gtk_widget_get_child_requisition(iter-&gt;data, &amp;child_requisition);
     
-    width[count % n_columns] = MAX(child_requisition.width, width[count % n_columns]);
-    height[count / n_columns] = MAX(child_requisition.height, height[count / n_columns]);
+    width[count % n_columns] = 
+        MAX(child_requisition.width, width[count % n_columns]);
+    height[count / n_columns] =
+        MAX(child_requisition.height, height[count / n_columns]);
     
     count++;
-}</pre></div>
-</div>
-<p class="p">The only thing different here is that instead of calling <span xmlns:e="http://projectmallard.org/experimental/" class=" code">gtk_widget_size_request()</span> on each child, we call <span xmlns:e="http://projectmallard.org/experimental/" class=" code">gtk_widget_get_size_requisition()</span> instead.
-The latter function does not ask the child to calculate a size request, but instead retrieves the last known size request, which is either the size set in the child's size request method, or from program code calling <span xmlns:e="http://projectmallard.org/experimental/" class=" code">gtk_widget_set_size_request()</span> on the widget.
+}</pre></div></div></div>
+</div></div>
+<p class="p">The only thing different here is that instead of calling <span class=" code">gtk_widget_size_request()</span> on each child, we call <span class=" code">gtk_widget_get_size_requisition()</span> instead.
+The latter function does not ask the child to calculate a size request, but instead retrieves the last known size request, which is either the size set in the child's size request method, or from program code calling <span class=" code">gtk_widget_set_size_request()</span> on the widget.
 The GTK documentation says it should only be used when you know that the widget's size request is up to date, and in this case, we do.</p>
 <p class="p">Now we have to distribute the container's allocated space to the children.
 Our policy will be to divide any extra width equally among the columns, and any extra height equally among the rows.
 If there is too little space, it will be taken equally from each column or row.
 First we calculate the space surplus or deficit per column and row.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">gint extra_width = (allocation-&gt;width - widget-&gt;requisition.width) / n_columns;
-gint extra_height = (allocation-&gt;height - widget-&gt;requisition.height) / n_columns;</pre></div>
-</div>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">int extra_width = 
+    (allocation-&gt;width - widget-&gt;requisition.width) / n_columns;
+int extra_height = 
+    (allocation-&gt;height - widget-&gt;requisition.height) / n_columns;</pre></div></div></div>
+</div></div>
 <p class="p">Then we calculate the actual space to allocate to each column and row, by adding the extra space (which can be negative) to each column.
 We have to watch out that we don't allocate less than zero space to any widget, so if any space is less than zero, we borrow pixels one by one from any other nonzero columns until the space is zero.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">/* Distribute the surplus or shortage of space equally between columns */
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">/* Distribute the surplus or shortage of space
+ * equally between columns */
 for(count = 0; count &lt; n_columns; count++) {
     width[count] += extra_width;
-    /* If this results in a negative width, redistribute pixels from other nonzero-width columns to this one */
+    /* If this results in a negative width, redistribute
+     * pixels from other nonzero-width columns to this one */
     if(width[count] &lt; 0) {
-        gint count2;
-        for(count2 = (count + 1) % n_columns; width[count] &lt; 0; count2++, count2 %= n_columns) {
+        int count2;
+        for(count2 = (count + 1) % n_columns;
+            width[count] &lt; 0;
+            count2++, count2 %= n_columns) 
+        {
             if(count2 == count || width[count2] &lt; 0)
                 continue;
             width[count2]--;
@@ -328,30 +369,34 @@ for(count = 0; count &lt; n_columns; count++) {
     /* Do the same for the rows */
     height[count] += extra_height;
     if(height[count] &lt; 0) {
-        gint count2;
-        for(count2 = (count + 1) % n_columns; height[count] &lt; 0; count2++, count2 %= n_columns) {
+        int count2;
+        for(count2 = (count + 1) % n_columns;
+            height[count] &lt; 0;
+            count2++, count2 %= n_columns)
+        {
             if(count2 == count || height[count2] &lt; 0)
                 continue;
             height[count2]--;
             height[count]++;
         }
     }
-}</pre></div>
-</div>
-<p class="p">We will keep track of the <span xmlns:e="http://projectmallard.org/experimental/" class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo></mrow></math></span> coordinates at which we will place the top left corner of our next child widget.
-Note that the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">x</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">y</span> members of the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkAllocation</span> structure contain (I think) screen coordinates, not offsets from the top left of the containing widget, so you always need to start from those values.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">/* Start positioning the items at the container's origin, less the border width */
-gint x = allocation-&gt;x + GTK_CONTAINER(widget)-&gt;border_width;
-gint y = allocation-&gt;y + GTK_CONTAINER(widget)-&gt;border_width;</pre></div>
-</div>
+}</pre></div></div></div>
+</div></div>
+<p class="p">We will keep track of the <span class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo></mrow></math></span> coordinates at which we will place the top left corner of our next child widget.
+Note that the <span class=" code">x</span> and <span class=" code">y</span> members of the <span class=" code">GtkAllocation</span> structure contain (I think) screen coordinates, not offsets from the top left of the containing widget, so you always need to start from those values.</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">/* Start positioning the items at the container's origin,
+ * less the border width */
+int x = allocation-&gt;x + GTK_CONTAINER(widget)-&gt;border_width;
+int y = allocation-&gt;y + GTK_CONTAINER(widget)-&gt;border_width;</pre></div></div></div>
+</div></div>
 <p class="p">Then we iterate once more over the visible children.
-For each child, we allocate a <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkAllocation</span> structure on the stack, fill it with the correct <span xmlns:e="http://projectmallard.org/experimental/" class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo></mrow></math></span> coordinates and size, and notify the child by calling <span xmlns:e="http://projectmallard.org/experimental/" class=" code">gtk_widget_size_allocate()</span>.
-Then we update our <span xmlns:e="http://projectmallard.org/experimental/" class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math></span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>y</mi></mrow></math></span> coordinates appropriately for the next child, moving down a row and returning to the left edge of the container when we reach the end of a row.</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">psquare/psquare.c</span></div>
-<div class="listing-contents"><pre class="code first-child">count = 0;
+For each child, we allocate a <span class=" code">GtkAllocation</span> structure on the stack, fill it with the correct <span class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo></mrow></math></span> coordinates and size, and notify the child by calling <span class=" code">gtk_widget_size_allocate()</span>.
+Then we update our <span class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math></span> and <span class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>y</mi></mrow></math></span> coordinates appropriately for the next child, moving down a row and returning to the left edge of the container when we reach the end of a row.</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">count = 0;
 for(iter = priv-&gt;children; iter; iter = g_list_next(iter)) {
     if(!GTK_WIDGET_VISIBLE(iter-&gt;data))
         continue;
@@ -367,46 +412,68 @@ for(iter = priv-&gt;children; iter; iter = g_list_next(iter)) {
     /* Advance the x coordinate */
     x += child_allocation.width;
     count++;
-    /* If we've moved to the next row, return the x coordinate to the left, and advance the y coordinate */
+    /* If we've moved to the next row, return the x coordinate 
+     * to the left, and advance the y coordinate */
     if(count % n_columns == 0) {
         x = allocation-&gt;x + GTK_CONTAINER(widget)-&gt;border_width;
         y += child_allocation.height;
     }
-}</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="example">
-<div class="header"><h2 class="title">Example application</h2></div>
-<div class="contents">
-<p class="p first-child">We will create a simple example application to showcase our new container.
-You will find <span xmlns:e="http://projectmallard.org/experimental/" class=" file">test-psquare.c</span> in the code distribution, along with a simple <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>. 
-We create a toplevel window and require it to be a specific size (although you can resize it to be larger while the program is running), using <span xmlns:e="http://projectmallard.org/experimental/" class=" code">gtk_widget_set_size_request()</span>. 
+}</pre></div></div></div>
+</div></div>
+</div></div>
+</div></div>
+<div id="example" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Example application</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">We will create a simple example application to showcase our new container.
+You will find <span class=" file"><a href="../psquare/test-psquare.c" title="../psquare/test-psquare.c">test-psquare.c</a></span> in the code distribution, along with a simple <span class=" file"><a href="../psquare/Makefile" title="../psquare/Makefile">Makefile</a></span>. 
+We create a toplevel window and require it to be a specific size (although you can resize it to be larger while the program is running), using <span class=" code">gtk_widget_set_size_request()</span>. 
 Since the window will stay the same size, then the widgets in the container will have more than enough space if there are only a few, but as more and more widgets are added, they will have to start squeezing themselves into spaces smaller than their size requests.</p>
-<p class="p">We will add a toolbar to the window with add and remove buttons, to add a random widget to the container (using <span xmlns:e="http://projectmallard.org/experimental/" class=" code">gtk_container_add()</span>) or remove the last one added (with <span xmlns:e="http://projectmallard.org/experimental/" class=" code">gtk_container_remove()</span>).</p>
+<p class="p">We will add a toolbar to the window with add and remove buttons, to add a random widget to the container (using <span class=" code">gtk_container_add()</span>) or remove the last one added (with <span class=" code">gtk_container_remove()</span>).</p>
 <p class="p">If you compile the example application and run it, try adding lots of widgets to the container.
-You'll notice that a <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkEntry</span> requests a lot of width, and so columns with <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkEntry</span>s in them tend to crowd out other columns when horizontal space gets tight.
+You'll notice that a <span class=" code">GtkEntry</span> requests a lot of width, and so columns with <span class=" code">GtkEntry</span>s in them tend to crowd out other columns when horizontal space gets tight.
 You shouldn't get any warnings about negative size allocations, however.</p>
-</div>
-</div>
-<div class="section" id="exercises">
-<div class="header"><h2 class="title">Exercises</h2></div>
-<div class="contents"><div class="list first-child"><div class="list-contents"><ul class="list">
-<li class="item-list first-child"><p class="p first-child">Change <span xmlns:e="http://projectmallard.org/experimental/" class=" code">p_square_size_allocate()</span> so that it allocates any extra space according to the proportion of the total space that the column or row takes up. 
+</div></div>
+</div></div>
+<div id="exercises" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Exercises</span></h2></div>
+<div class="region"><div class="contents"><div class="list"><div class="inner"><div class="region"><ul class="list">
+<li class="list"><p class="p">Change <span class=" code">p_square_size_allocate()</span> so that it allocates any extra space according to the proportion of the total space that the column or row takes up. 
     Likewise, if there is not enough space, then narrow columns and short rows lose less space, and wide columns and tall rows lose more.</p></li>
-<li class="item-list"><p class="p first-child">Change <span xmlns:e="http://projectmallard.org/experimental/" class=" code">PSquare</span> so that instead of filling its cells from left to right and top to bottom, it fills them in a clockwise spiral starting at the top left.</p></li>
-<li class="item-list"><p class="p first-child">Implement child properties for <span xmlns:e="http://projectmallard.org/experimental/" class=" code">PSquare</span> children: for example, <span xmlns:e="http://projectmallard.org/experimental/" class=" code">fill-horizontal</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">fill-vertical</span> properties, which control whether the child widget fills all of its allocated space or sticks to its own request; and a property that controls how the child aligns itself if it does not fill the entire cell.
-    You could implement this last one as two properties, for horizontal and vertical alignment, or you could use one value of type <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkAnchorType</span>.</p></li>
-</ul></div></div></div>
+<li class="list"><p class="p">Change <span class=" code">PSquare</span> so that instead of filling its cells from left to right and top to bottom, it fills them in a clockwise spiral starting at the top left.</p></li>
+<li class="list"><p class="p">Implement child properties for <span class=" code">PSquare</span> children: for example, <span class=" code">fill-horizontal</span> and <span class=" code">fill-vertical</span> properties, which control whether the child widget fills all of its allocated space or sticks to its own request; and a property that controls how the child aligns itself if it does not fill the entire cell.
+    You could implement this last one as two properties, for horizontal and vertical alignment, or you could use one value of type <span class=" code">GtkAnchorType</span>.</p></li>
+</ul></div></div></div></div></div>
+</div></div>
+<div class="sect sect-links">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul><li class="links"><a href="index.html" title="Advanced GTK Techniques">Advanced GTK Techniques</a></li></ul></div>
+</div></div></div>
 </div>
-<div class="section autolinkssection">
-<div class="header"><h2 class="title">Further Reading</h2></div>
-<div class="autolinks">
-<div class="title"><span>More About</span></div>
-<ul><li class="autolink"><a href="index.html#advanced">More esoteric techniques</a></li></ul>
 </div>
+<div class="clear"></div>
 </div>
+<div class="footer"><div class="sect about">
+<div class="hgroup"><h2>About</h2></div>
+<div class="region"><div class="contents">
+<div class="copyrights"><div class="copyright">© 2008-2012 Philip Chimento</div></div>
+<div class="aboutblurb authors">
+<div class="title"><span class="title">Written By</span></div>
+<ul class="credits"><li>Philip Chimento</li></ul>
 </div>
-<div class="footbar"><div class="copyrights"></div></div>
+<div class="aboutblurb maintainers">
+<div class="title"><span class="title">Maintained By</span></div>
+<ul class="credits"><li>Philip Chimento</li></ul>
+</div>
+<div class="aboutblurb license">
+<div class="title"><span class="title">Creative Commons</span></div>
+<div class="contents"><p class="p">This work is licensed under a <span class=" link"><a href="http://creativecommons.org/licenses/by-nc-sa/3.0/" title="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a></span>.</p></div>
+</div>
+</div></div>
+</div></div>
+</div>
+<div class="links nextlinks"><a class="nextlinks-contents" href="index.html" title="Advanced GTK Techniques">Contents</a></div>
 </body>
 </html>

@@ -1,57 +1,67 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html xmlns:str="http://exslt.org/strings">
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>Icons and desktop files</title>
-<link rel="stylesheet" type="text/css" href="../index.css">
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="yelp.js"></script><link xmlns:m="http://www.w3.org/1998/Math/MathML" rel="stylesheet" href="../index.css" type="text/css">
+<script xmlns:m="http://www.w3.org/1998/Math/MathML" src="../highlight.pack.js"></script><script xmlns:m="http://www.w3.org/1998/Math/MathML">
+$(document).ready(function() {
+  $('div.code pre').each(function(i, e) {hljs.highlightBlock(e, '    ')});
+});
+    </script><link xmlns:m="http://www.w3.org/1998/Math/MathML" rel="stylesheet" href="http://yandex.st/highlightjs/6.1/styles/github.min.css">
 </head>
-<body class="">
-<div class="headbar"><div class="linktrails"><div class="linktrail">
-<a class="linktrail" href="index.html">Advanced GTK Techniques</a> › <a class="linktrail" href="index.html#app-setup">Setting up a real-life GTK application</a> » </div></div></div>
-<div class="body">
-<div class="navbar">
-<a class="navbar-prev" href="automake-project.html">Previous</a>  |  <a class="navbar-next" href="gettext-project.html">Next</a>
+<body>
+<div xmlns:m="http://www.w3.org/1998/Math/MathML" class="banner">
+<h1 class="banner"><a href="#"><span>Advanced GTK Techniques</span></a></h1>
+<h2 class="banner"><span>Icons and desktop files</span></h2>
 </div>
-<div class="header"><h1 class="title">Icons and desktop files</h1></div>
+<div class="links nextlinks">« <a class="nextlinks-prev" href="automake-project.html" title="Setting up Automake">Setting up <span class=" app">Automake</span></a> :: <a class="nextlinks-contents" href="real-life-app-setup.html" title="Setting up a real-life GTK application">Contents</a> :: <a class="nextlinks-next" href="gettext-project.html" title="Setting up Gettext">Setting up <span class=" app">Gettext</span></a> »</div>
+<div class="page">
+<div class="header"><div class="trails"><div class="trail">
+<a class="trail" href="index.html" title="Advanced GTK Techniques">Advanced GTK Techniques</a> » <a class="trail" href="real-life-app-setup.html" title="Setting up a real-life GTK application">Setting up a real-life GTK application</a> » </div></div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">Icons and desktop files</span></h1></div>
+<div class="region">
 <div class="contents">
-<div class="synopsis"><div class="synopsis-contents">
-<p class="p first-child">In this tutorial, you will learn:</p>
-<div class="list"><div class="list-contents"><ul class="list">
-<li class="item-list first-child"><p class="p first-child">How to add an icon to your program</p></li>
-<li class="item-list"><p class="p first-child">How to add your program to the applications menu</p></li>
-</ul></div></div>
-<p class="p">This tutorial is part of the <span xmlns:e="http://projectmallard.org/experimental/" class=" em">Setting up a real-life GTK application</span> series.
-If you don't want to follow along with the previous parts, simply copy the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="../app-skeleton2" title="../app-skeleton2"><span class=" file">app-skeleton2</span></a></span> directory from the tutorial's code examples.
-Or, you can start from the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="real-life-app-setup.html" title="">beginning</a></span>.</p>
-</div></div>
-<p class="p">Most users who can use a terminal are also familiar with the time-tested routine of <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">./configure</span>, <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make install</span>.
+<div class="synopsis"><div class="inner"><div class="region"><div class="contents">
+<p class="p">In this tutorial, you will learn:</p>
+<div class="list"><div class="inner"><div class="region"><ul class="list">
+<li class="list"><p class="p">How to add an icon to your program</p></li>
+<li class="list"><p class="p">How to add your program to the applications menu</p></li>
+</ul></div></div></div>
+<p class="p">This tutorial is part of the <span class=" em">Setting up a real-life GTK application</span> series.
+If you don't want to follow along with the previous parts, simply copy the <span class=" link"><a href="../app-skeleton2" title="../app-skeleton2"><span class=" file">app-skeleton2</span></a></span> directory from the tutorial's code examples.
+Or, you can start from the <span class=" link"><a href="real-life-app-setup.html" title="Setting up a real-life GTK application">beginning</a></span>.</p>
+</div></div></div></div>
+<p class="p">Most users who can use a terminal are also familiar with the time-tested routine of <span class=" cmd">./configure</span>, <span class=" cmd">make</span> and <span class=" cmd">make install</span>.
 However, as the Linux desktop gains more and more ground, package managers are on the rise.
 Users expect to be able to install a package and then find a new entry in their Applications menu.
-The <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span> may install our executable file into <span xmlns:e="http://projectmallard.org/experimental/" class=" file">/usr/local/bin</span>, but nowadays we can't expect users to open a terminal every time they want to run it.
-We can put an entry into the menu by means of a <span xmlns:e="http://projectmallard.org/experimental/" class=" em">desktop file</span>.</p>
+The <span class=" file">Makefile.am</span> may install our executable file into <span class=" file">/usr/local/bin</span>, but nowadays we can't expect users to open a terminal every time they want to run it.
+We can put an entry into the menu by means of a <span class=" em">desktop file</span>.</p>
 </div>
-<div class="section" id="">
-<div class="header"><h2 class="title">Adding an icon to the program</h2></div>
-<div class="contents">
-<p class="p first-child">Copy the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton2</span> project to <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3</span>, or just rename it.
-(Change the version number in the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_INIT</span> call in <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure.ac</span> to 3 as well, if you like.)
+<div id="" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Adding an icon to the program</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">Copy the <span class=" file">app-skeleton2</span> project to <span class=" file">app-skeleton3</span>, or just rename it.
+(Change the version number in the <span class=" code">AC_INIT</span> call in <span class=" file">configure.ac</span> to 3 as well, if you like.)
 First we will appropriate an icon from the GNOME icon theme for our program.
 Again, we will do this the lazy way, by downloading all available sizes directly from the GNOME git repository.
-In the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3</span> directory, type:</p>
-<pre class="screen"><span xmlns:e="http://projectmallard.org/experimental/" class=" input">for size in 16 22 24 32 48; do
+In the <span class=" file">app-skeleton3</span> directory, type:</p>
+<div class="screen"><pre class="contents "><span class=" input">for size in 16 22 24 32 48; do
 mkdir -p pixmaps/${size}x${size}/apps
 wget -O pixmaps/${size}x${size}/apps/app-skeleton.png \
   http://git.gnome.org/browse/gnome-icon-theme/plain/gnome/${size}x${size}/status/weather-showers-scattered.png
-done</span></pre>
+done</span></pre></div>
 <p class="p">This is the icon we have just downloaded, in five different sizes: 
-<span class="media media-image"><img src="../app-skeleton3/pixmaps/48x48/apps/app-skeleton.png" alt="[An icon of a raincloud from the GNOME icon theme]"></span></p>
+<span class="media media-image"><img src="app-skeleton3/pixmaps/48x48/apps/app-skeleton.png" alt="[An icon of a raincloud from the GNOME icon theme]"></span></p>
 <p class="p">There is a reason why we are creating this particular directory structure.
-It is explained in the Free Desktop <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html" title="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html">Icon Theme Specification</a></span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html" title="http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html">Icon Naming Specification</a></span>.</p>
-<p class="p">The new <span xmlns:e="http://projectmallard.org/experimental/" class=" file">pixmaps</span> directory needs a <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span> too.
+It is explained in the Free Desktop <span class=" link"><a href="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html" title="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html">Icon Theme Specification</a></span> and <span class=" link"><a href="http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html" title="http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html">Icon Naming Specification</a></span>.</p>
+<p class="p">The new <span class=" file">pixmaps</span> directory needs a <span class=" file">Makefile.am</span> too.
 Create one there and put in it:</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3/pixmaps/Makefile.am</span></div>
-<div class="listing-contents"><pre class="code first-child">iconsdir = $(datadir)/icons/hicolor
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../app-skeleton3/pixmaps/Makefile.am" title="../app-skeleton3/pixmaps/Makefile.am">app-skeleton3/pixmaps/Makefile.am</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">iconsdir = $(datadir)/icons/hicolor
 
 nobase_dist_icons_DATA = \
 	16x16/apps/app-skeleton.png \
@@ -71,41 +81,41 @@ update-icon-cache:
 	else \
 		echo "*** Icon cache not updated. After (un)install, run this:"; \
 		echo "*** $(gtk_update_icon_cache)"; \
-	fi</pre></div>
-</div>
-<p class="p">The Automake variable <span xmlns:e="http://projectmallard.org/experimental/" class=" code">nobase_dist_icons_DATA</span> has four parts.
-The prefix <span xmlns:e="http://projectmallard.org/experimental/" class=" code">nobase</span> means to install the files with the same directory structure into the destination directory.
-Another prefix, <span xmlns:e="http://projectmallard.org/experimental/" class=" code">dist</span> means to include the files in the tarball produced when you type <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make dist</span>.
+	fi</pre></div></div></div>
+</div></div>
+<p class="p">The Automake variable <span class=" code">nobase_dist_icons_DATA</span> has four parts.
+The prefix <span class=" code">nobase</span> means to install the files with the same directory structure into the destination directory.
+Another prefix, <span class=" code">dist</span> means to include the files in the tarball produced when you type <span class=" cmd">make dist</span>.
 (By default, data files are not included.)</p>
-<p class="p">The third segment, <span xmlns:e="http://projectmallard.org/experimental/" class=" code">icons</span>, functions like <span xmlns:e="http://projectmallard.org/experimental/" class=" code">bin</span> did in <span xmlns:e="http://projectmallard.org/experimental/" class=" code">bin_PROGRAMS</span>: it tells where to install the files.
-The difference is that <span xmlns:e="http://projectmallard.org/experimental/" class=" code">bin</span> is predefined and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">icons</span> is not.
-Automake will install the files in the location stored in the variable <span xmlns:e="http://projectmallard.org/experimental/" class=" code">iconsdir</span>, which we define above.
-Why it is called <span xmlns:e="http://projectmallard.org/experimental/" class=" file">hicolor</span>, you can read in the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html" title="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html">Icon Theme Specification</a></span>.</p>
-<p class="p">Finally, the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">DATA</span> directive tells Automake that these are data files; they do not need to be compiled.</p>
-<p class="p">The rest of the file calls the <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">gtk-update-icon-cache</span> utility whenever the program is installed or uninstalled.
+<p class="p">The third segment, <span class=" code">icons</span>, functions like <span class=" code">bin</span> did in <span class=" code">bin_PROGRAMS</span>: it tells where to install the files.
+The difference is that <span class=" code">bin</span> is predefined and <span class=" code">icons</span> is not.
+Automake will install the files in the location stored in the variable <span class=" code">iconsdir</span>, which we define above.
+Why it is called <span class=" file">hicolor</span>, you can read in the <span class=" link"><a href="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html" title="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html">Icon Theme Specification</a></span>.</p>
+<p class="p">Finally, the <span class=" code">DATA</span> directive tells Automake that these are data files; they do not need to be compiled.</p>
+<p class="p">The rest of the file calls the <span class=" cmd">gtk-update-icon-cache</span> utility whenever the program is installed or uninstalled.
 This is necessary so that the new icons can be found in the icon theme.
-The test may look a little confusing at first; testing whether the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">DESTDIR</span> is empty means testing whether we are really installing the program into the file system, or doing a <span xmlns:e="http://projectmallard.org/experimental/" class=" em">staged install</span>.
+The test may look a little confusing at first; testing whether the <span class=" code">DESTDIR</span> is empty means testing whether we are really installing the program into the file system, or doing a <span class=" em">staged install</span>.
 In the latter case, the icon files are not really being installed into the icon theme directory, so it makes no sense to update the icon cache.
 In that case, the makefile prints a message to remind the user to update the icon cache when the program is really installed.</p>
 <p class="p">As a last bit of icing on the cake, let us use the icon as our program's icon (in the corner of the title bar in some desktop themes, or in the application switcher.)
 Since we have already installed the icon into the icon theme, having the program use it is quite simple.
-Add the following line to the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">main()</span> function of <span xmlns:e="http://projectmallard.org/experimental/" class=" file">hello-world.c</span>, for example as line 47:</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3/src/hello-world.c</span></div>
-<div class="listing-contents"><pre class="code first-child">gtk_window_set_icon_name (GTK_WINDOW (window), "app-skeleton");</pre></div>
-</div>
-<p class="p">When an icon is present in the icon theme, it can be used like this as a <span xmlns:e="http://projectmallard.org/experimental/" class=" em">named icon</span>.
-(Remember that you have to run <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make install</span> before it will work, though.)</p>
-</div>
-</div>
-<div class="section" id="">
-<div class="header"><h2 class="title">The desktop file</h2></div>
-<div class="contents">
-<p class="p first-child">Now to create our desktop file.
-Create a file <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton.desktop</span> in the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3</span> directory and write in it:</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3/app-skeleton.desktop</span></div>
-<div class="listing-contents"><pre class="code first-child">[Desktop Entry]
+Add the following line to the <span class=" code">main()</span> function of <span class=" file">hello-world.c</span>, for example as line 47:</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../app-skeleton3/src/hello-world.c" title="../app-skeleton3/src/hello-world.c">app-skeleton3/src/hello-world.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">gtk_window_set_icon_name (GTK_WINDOW (window), "app-skeleton");</pre></div></div></div>
+</div></div>
+<p class="p">When an icon is present in the icon theme, it can be used like this as a <span class=" em">named icon</span>.
+(Remember that you have to run <span class=" cmd">make install</span> before it will work, though.)</p>
+</div></div>
+</div></div>
+<div id="" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">The desktop file</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">Now to create our desktop file.
+Create a file <span class=" file">app-skeleton.desktop</span> in the <span class=" file">app-skeleton3</span> directory and write in it:</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../app-skeleton3/app-skeleton.desktop" title="../app-skeleton3/app-skeleton.desktop">app-skeleton3/app-skeleton.desktop</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">[Desktop Entry]
 Version=1.0
 Type=Application
 Name=App Skeleton
@@ -113,39 +123,62 @@ Exec=app-skeleton
 Comment=A sample application from the Advanced GTK+ Techniques tutorial
 Icon=app-skeleton
 Terminal=false
-Categories=Utility;Viewer;GTK;</pre></div>
-</div>
-<p class="p">In short, <span xmlns:e="http://projectmallard.org/experimental/" class=" code">Name</span> is the program name that will appear in the menu, <span xmlns:e="http://projectmallard.org/experimental/" class=" code">Icon</span> is the named icon to use for the program in the menu, and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">Comment</span> is the tooltip to use when the user hovers their mouse over the program name.
-The <span xmlns:e="http://projectmallard.org/experimental/" class=" code">Terminal=false</span> line tells the desktop environment not to start the program in a terminal.
-The <span xmlns:e="http://projectmallard.org/experimental/" class=" code">Categories</span> field is a hint to the desktop environment about what category it should put the program launcher into.
+Categories=Utility;Viewer;GTK;</pre></div></div></div>
+</div></div>
+<p class="p">In short, <span class=" code">Name</span> is the program name that will appear in the menu, <span class=" code">Icon</span> is the named icon to use for the program in the menu, and <span class=" code">Comment</span> is the tooltip to use when the user hovers their mouse over the program name.
+The <span class=" code">Terminal=false</span> line tells the desktop environment not to start the program in a terminal.
+The <span class=" code">Categories</span> field is a hint to the desktop environment about what category it should put the program launcher into.
 (Some desktops, like Gnome Shell, don't use categories.)</p>
-<p class="p">A full list of fields and categories for use in this file, along with explanations of what they are for, can be found in two other Free Desktop specifications, the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="http://standards.freedesktop.org/desktop-entry-spec/latest/" title="http://standards.freedesktop.org/desktop-entry-spec/latest/">Desktop Entry Specification</a></span> and the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="http://standards.freedesktop.org/menu-spec/latest/" title="http://standards.freedesktop.org/menu-spec/latest/">Desktop Menu Specification</a></span>.</p>
-<p class="p">Finally, we need to update our top-level <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span>:</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton3/Makefile.am</span></div>
-<div class="listing-contents"><pre class="code first-child">SUBDIRS = pixmaps src
+<p class="p">A full list of fields and categories for use in this file, along with explanations of what they are for, can be found in two other Free Desktop specifications, the <span class=" link"><a href="http://standards.freedesktop.org/desktop-entry-spec/latest/" title="http://standards.freedesktop.org/desktop-entry-spec/latest/">Desktop Entry Specification</a></span> and the <span class=" link"><a href="http://standards.freedesktop.org/menu-spec/latest/" title="http://standards.freedesktop.org/menu-spec/latest/">Desktop Menu Specification</a></span>.</p>
+<p class="p">Finally, we need to update our top-level <span class=" file">Makefile.am</span>:</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../app-skeleton3/Makefile.am" title="../app-skeleton3/Makefile.am">app-skeleton3/Makefile.am</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">SUBDIRS = pixmaps src
 
 desktopdir = $(datadir)/applications
-dist_desktop_DATA = app-skeleton.desktop</pre></div>
-</div>
-<p class="p">We add the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">pixmaps</span> subdirectory to our <span xmlns:e="http://projectmallard.org/experimental/" class=" code">SUBDIRS</span> variable, and instruct Automake to install the desktop file in the proper place so the desktop environment can find it.</p>
-<p class="p">Lastly, we add <span xmlns:e="http://projectmallard.org/experimental/" class=" code">pixmaps/Makefile</span> to the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_CONFIG_FILES</span> call in <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure.ac</span>.
+dist_desktop_DATA = app-skeleton.desktop</pre></div></div></div>
+</div></div>
+<p class="p">We add the <span class=" file">pixmaps</span> subdirectory to our <span class=" code">SUBDIRS</span> variable, and instruct Automake to install the desktop file in the proper place so the desktop environment can find it.</p>
+<p class="p">Lastly, we add <span class=" code">pixmaps/Makefile</span> to the <span class=" code">AC_CONFIG_FILES</span> call in <span class=" file">configure.ac</span>.
 With that, we are ready to go.
-Try <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make</span> followed by <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make install</span>.
+Try <span class=" cmd">make</span> followed by <span class=" cmd">make install</span>.
 A new entry should show up in your desktop's applications chooser!</p>
 <p class="p">But what if the user speaks another language?
 They will not be able to understand the name of the program and the description we have put in the desktop file.
 Solving this problem is what the next section is about.</p>
+</div></div>
+</div></div>
+<div class="sect sect-links">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul><li class="links">
+<a href="real-life-app-setup.html" title="Setting up a real-life GTK application">Setting up a real-life GTK application</a><span class="desc"> — Putting together the build infrastructure for an application</span>
+</li></ul></div>
+</div></div></div>
 </div>
 </div>
-<div class="section autolinkssection">
-<div class="header"><h2 class="title">Further Reading</h2></div>
-<div class="autolinks">
-<div class="title"><span>More About</span></div>
-<ul><li class="autolink"><a href="index.html#app-setup">Setting up a real-life GTK application</a></li></ul>
+<div class="clear"></div>
 </div>
+<div class="footer"><div class="sect about">
+<div class="hgroup"><h2>About</h2></div>
+<div class="region"><div class="contents">
+<div class="copyrights"><div class="copyright">© 2008-2012 Philip Chimento</div></div>
+<div class="aboutblurb authors">
+<div class="title"><span class="title">Written By</span></div>
+<ul class="credits"><li>Philip Chimento</li></ul>
 </div>
+<div class="aboutblurb maintainers">
+<div class="title"><span class="title">Maintained By</span></div>
+<ul class="credits"><li>Philip Chimento</li></ul>
 </div>
-<div class="footbar"><div class="copyrights"></div></div>
+<div class="aboutblurb license">
+<div class="title"><span class="title">Creative Commons</span></div>
+<div class="contents"><p class="p">This work is licensed under a <span class=" link"><a href="http://creativecommons.org/licenses/by-nc-sa/3.0/" title="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a></span>.</p></div>
+</div>
+</div></div>
+</div></div>
+</div>
+<div class="links nextlinks">« <a class="nextlinks-prev" href="automake-project.html" title="Setting up Automake">Setting up <span class=" app">Automake</span></a> :: <a class="nextlinks-contents" href="real-life-app-setup.html" title="Setting up a real-life GTK application">Contents</a> :: <a class="nextlinks-next" href="gettext-project.html" title="Setting up Gettext">Setting up <span class=" app">Gettext</span></a> »</div>
 </body>
 </html>

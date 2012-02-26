@@ -1,53 +1,54 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html xmlns:str="http://exslt.org/strings">
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>Advanced GTK Techniques</title>
-<link rel="stylesheet" type="text/css" href="../index.css">
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="yelp.js"></script><link xmlns:m="http://www.w3.org/1998/Math/MathML" rel="stylesheet" href="../index.css" type="text/css">
+<script xmlns:m="http://www.w3.org/1998/Math/MathML" src="../highlight.pack.js"></script><script xmlns:m="http://www.w3.org/1998/Math/MathML">
+$(document).ready(function() {
+  $('div.code pre').each(function(i, e) {hljs.highlightBlock(e, '    ')});
+});
+    </script><link xmlns:m="http://www.w3.org/1998/Math/MathML" rel="stylesheet" href="http://yandex.st/highlightjs/6.1/styles/github.min.css">
 </head>
-<body class="">
-<div class="headbar"></div>
+<body>
+<div xmlns:m="http://www.w3.org/1998/Math/MathML" class="banner">
+<h1 class="banner"><a href="#"><span>Advanced GTK Techniques</span></a></h1>
+<h2 class="banner"><span>Advanced GTK Techniques</span></h2>
+</div>
+<div class="links nextlinks"><a class="nextlinks-contents" href="" title="">Contents</a></div>
+<div class="page">
+<div class="header"></div>
 <div class="body">
-<div class="header"><h1 class="title">Advanced GTK Techniques</h1></div>
-<div class="contents"><div class="topiclinks"><a href="introduction.html"><div class="linkdiv"><div class="title">Introduction</div></div></a></div></div>
-<div class="section" id="app-setup">
-<div class="header"><h2 class="title">Setting up a real-life GTK application</h2></div>
-<div class="contents"><div class="topiclinks">
-<a href="desktop-file.html"><div class="linkdiv">
-<div class="title">Icons and desktop files</div>
-<div class="desc">Installing your program onto the user's desktop</div>
-</div></a><a href="autoconf-project.html"><div class="linkdiv">
-<div class="title">Setting up <span xmlns:e="http://projectmallard.org/experimental/" class=" app">Autoconf</span>
+<div class="hgroup"><h1 class="title"><span class="title">Advanced GTK Techniques</span></h1></div>
+<div class="region"><div class="contents"><div class="links topiclinks"><div class="inner"><div class="region">
+<div class="linkdiv"><a class=" linkdiv" href="introduction.html" title="Introduction"><span class="title">Introduction</span></a></div>
+<div class="linkdiv"><a class=" linkdiv" href="custom-container.html" title="Custom container"><span class="title">Custom container</span><span class="linkdiv-dash"> — </span><span class="desc">A container that does its own size allocation</span></a></div>
+<div class="linkdiv"><a class=" linkdiv" href="real-life-app-setup.html" title="Setting up a real-life GTK application"><span class="title">Setting up a real-life GTK application</span><span class="linkdiv-dash"> — </span><span class="desc">Putting together the build infrastructure for an application</span></a></div>
+<div class="linkdiv"><a class=" linkdiv" href="dynamic-actions.html" title="Using dynamic menu and toolbar actions"><span class="title">Using dynamic menu and toolbar actions</span><span class="linkdiv-dash"> — </span><span class="desc">Changing menus, shortcuts, and toolbars while the application is running</span></a></div>
+<div class="linkdiv"><a class=" linkdiv" href="real-life-app-writing.html" title="Writing a real-life GTK application"><span class="title">Writing a real-life GTK application</span><span class="linkdiv-dash"> — </span><span class="desc">A sample application with useful features that appear in real apps</span></a></div>
+</div></div></div></div></div>
+<div class="clear"></div>
 </div>
-<div class="desc">Starting a new project from scratch</div>
-</div></a><a href="automake-project.html"><div class="linkdiv">
-<div class="title">Setting up <span xmlns:e="http://projectmallard.org/experimental/" class=" app">Automake</span>
+<div class="footer"><div class="sect about">
+<div class="hgroup"><h2>About</h2></div>
+<div class="region"><div class="contents">
+<div class="copyrights"><div class="copyright">© 2008-2012 Philip Chimento</div></div>
+<div class="aboutblurb authors">
+<div class="title"><span class="title">Written By</span></div>
+<ul class="credits"><li>Philip Chimento</li></ul>
 </div>
-<div class="desc">Generating your Makefiles automatically</div>
-</div></a><a href="gettext-project.html"><div class="linkdiv">
-<div class="title">Setting up <span xmlns:e="http://projectmallard.org/experimental/" class=" app">Gettext</span>
+<div class="aboutblurb maintainers">
+<div class="title"><span class="title">Maintained By</span></div>
+<ul class="credits"><li>Philip Chimento</li></ul>
 </div>
-<div class="desc">Allowing your program to be translated into other languages</div>
-</div></a><a href="real-life-app-setup.html"><div class="linkdiv">
-<div class="title">Setting up a real-life GTK application</div>
-<div class="desc">Introduction</div>
-</div></a>
+<div class="aboutblurb license">
+<div class="title"><span class="title">Creative Commons</span></div>
+<div class="contents"><p class="p">This work is licensed under a <span class=" link"><a href="http://creativecommons.org/licenses/by-nc-sa/3.0/" title="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a></span>.</p></div>
+</div>
+</div></div>
 </div></div>
 </div>
-<div class="section" id="app-writing">
-<div class="header"><h2 class="title">Writing a real-life GTK application</h2></div>
-<div class="contents"><div class="topiclinks"><a href="real-life-app-writing.html"><div class="linkdiv">
-<div class="title">Writing a real-life GTK application</div>
-<div class="desc">Introduction</div>
-</div></a></div></div>
-</div>
-<div class="section" id="advanced">
-<div class="header"><h2 class="title">More esoteric techniques</h2></div>
-<div class="contents"><div class="topiclinks">
-<a href="custom-container.html"><div class="linkdiv"><div class="title">Custom container</div></div></a><a href="dynamic-actions.html"><div class="linkdiv"><div class="title">Using dynamic menu and toolbar actions</div></div></a>
-</div></div>
-</div>
-</div>
-<div class="footbar"><div class="copyrights"><div class="copyright">© 2008-2012 Philip Chimento</div></div></div>
+<div class="links nextlinks"><a class="nextlinks-contents" href="" title="">Contents</a></div>
 </body>
 </html>

@@ -1,64 +1,98 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html xmlns:str="http://exslt.org/strings">
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>Using dynamic menu and toolbar actions</title>
-<link rel="stylesheet" type="text/css" href="../index.css">
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="yelp.js"></script><link xmlns:m="http://www.w3.org/1998/Math/MathML" rel="stylesheet" href="../index.css" type="text/css">
+<script xmlns:m="http://www.w3.org/1998/Math/MathML" src="../highlight.pack.js"></script><script xmlns:m="http://www.w3.org/1998/Math/MathML">
+$(document).ready(function() {
+  $('div.code pre').each(function(i, e) {hljs.highlightBlock(e, '    ')});
+});
+    </script><link xmlns:m="http://www.w3.org/1998/Math/MathML" rel="stylesheet" href="http://yandex.st/highlightjs/6.1/styles/github.min.css">
 </head>
-<body class="">
-<div class="headbar"><div class="linktrails"><div class="linktrail">
-<a class="linktrail" href="index.html">Advanced GTK Techniques</a> › <a class="linktrail" href="index.html#advanced">More esoteric techniques</a> » </div></div></div>
+<body>
+<div xmlns:m="http://www.w3.org/1998/Math/MathML" class="banner">
+<h1 class="banner"><a href="#"><span>Advanced GTK Techniques</span></a></h1>
+<h2 class="banner"><span>Using dynamic menu and toolbar actions</span></h2>
+</div>
+<div class="links nextlinks"><a class="nextlinks-contents" href="index.html" title="Advanced GTK Techniques">Contents</a></div>
+<div class="page">
+<div class="header"><div class="trails"><div class="trail">
+<a class="trail" href="index.html" title="Advanced GTK Techniques">Advanced GTK Techniques</a> » </div></div></div>
 <div class="body">
-<div class="header"><h1 class="title">Using dynamic menu and toolbar actions</h1></div>
+<div class="hgroup"><h1 class="title"><span class="title">Using dynamic menu and toolbar actions</span></h1></div>
+<div class="region">
 <div class="contents">
 <p class="p">There are several ways to design and build the graphical interface for your GTK program.
 Glade 3 is by far the best if your interface has any degree of complication at all.
 However, the menu editor in Glade does not take advantage of the advanced features for menus and toolbars added in GTK 2.4, such as action groups and accelerator maps.
-These features are explained in <span xmlns:e="http://projectmallard.org/experimental/" class=" em">Foundations</span>, but not how to use them in combination with Glade.
+These features are explained in <span class=" em">Foundations</span>, but not how to use them in combination with Glade.
 A serious application, big enough to require Glade for its design, will often want to do things like:</p>
-<div class="list"><div class="list-contents"><ul class="list">
-<li class="item-list first-child"><p class="p first-child">Change the "sensitive" status of some actions like Cut and Copy, depending on whether there is text selected in the application;</p></li>
-<li class="item-list"><p class="p first-child">Programmatically change the contents of menus;</p></li>
-<li class="item-list"><p class="p first-child">Have customizable toolbars and keyboard shortcuts.</p></li>
-</ul></div></div>
+<div class="list"><div class="inner"><div class="region"><ul class="list">
+<li class="list"><p class="p">Change the "sensitive" status of some actions like Cut and Copy, depending on whether there is text selected in the application;</p></li>
+<li class="list"><p class="p">Programmatically change the contents of menus;</p></li>
+<li class="list"><p class="p">Have customizable toolbars and keyboard shortcuts.</p></li>
+</ul></div></div></div>
 <p class="p">The latter facility, for example, is easily enabled in Mac OS X applications designed with Apple's Interface Builder for Cocoa.
 The infrastructure for it is there in GTK, just not as easily accessible.
-Glade's menu and toolbar editor doesn't build its menus using <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkAction</span>s, even though <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkBuilder</span> is capable of constructing them from XML files.
-This functionality will appear in the future, when Glade is able to write <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkBuilder</span> XML files.</p>
+Glade's menu and toolbar editor doesn't build its menus using <span class=" code">GtkAction</span>s, even though <span class=" code">GtkBuilder</span> is capable of constructing them from XML files.
+This functionality will appear in the future, when Glade is able to write <span class=" code">GtkBuilder</span> XML files.</p>
 <p class="p">Until then, some trickery is required, and some extra dialogues must be constructed.
-We will build an example application with ridiculous do-nothing actions inspired by the Beatles' <span xmlns:e="http://projectmallard.org/experimental/" class=" em">Ballad of Rocky Raccoon</span>, about a young man who fights a duel to win back his lady love.
+We will build an example application with ridiculous do-nothing actions inspired by the Beatles' <span class=" em">Ballad of Rocky Raccoon</span>, about a young man who fights a duel to win back his lady love.
 Our program will take special note of the fact that</p>
-<div class="quote"><div class="quote-inner"><blockquote class="quote-contents"><p class="p first-child">Her name was Magill / 
+<div class="quote"><div class="inner"><div class="region"><blockquote class="contents"><p class="p">Her name was Magill / 
   and she called herself Lil / 
-  but everyone knew her as Nancy;</p></blockquote></div></div>
-<p class="p"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkAction</span>s can also be known by more than one name.</p>
+  but everyone knew her as Nancy;</p></blockquote></div></div></div>
+<p class="p"><span class=" code">GtkAction</span>s can also be known by more than one name.</p>
 </div>
-<div class="section" id="interface">
-<div class="header"><h2 class="title">Building the interface</h2></div>
-<div class="contents">
-<p class="p first-child">First we will build the interface using Glade 3, and call it <span xmlns:e="http://projectmallard.org/experimental/" class=" file">rocky.ui</span>.
+<div id="interface" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Building the interface</span></h2></div>
+<div class="region"><div class="contents">
+<p class="p">First we will build the interface using Glade 3, and call it <span class=" file">rocky.ui</span>.
 Here is a screenshot of the various windows we built in Glade.</p>
-<div class="media media-image"><img src="rocky-screenshot.png" alt="(Screenshots of the Rocky Raccoon user interface)"></div>
+<div class="media media-image"><div class="inner"><img src="rocky-screenshot.png" alt="(Screenshots of the Rocky Raccoon user interface)"></div></div>
 <p class="p">There is a main application window and an about dialog.
 For details, see the file itself, included in the code distribution, or load the file in Glade.</p>
 <p class="p">You will notice that the main application window does not contain a menu bar or a toolbar. 
 That is because we will automatically generate these from an XML file with the menu structure, which we will write in the next section.
-It is also important to notice that the text view (representing the actual application widget, whatever it may be) and the status bar are end-packed into their containing <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkVBox</span>; that is, they appear below any start-packed widgets.
+It is also important to notice that the text view (representing the actual application widget, whatever it may be) and the status bar are end-packed into their containing <span class=" code">GtkVBox</span>; that is, they appear below any start-packed widgets.
 This is convenient because we can then start-pack the menu bar and toolbar, and not have to worry about where to insert them.</p>
+</div></div>
+</div></div>
+<div id="" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Building the menu structure</span></h2></div>
+<div class="region"><div class="contents"></div></div>
+</div></div>
+<div class="sect sect-links">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul><li class="links"><a href="index.html" title="Advanced GTK Techniques">Advanced GTK Techniques</a></li></ul></div>
+</div></div></div>
 </div>
 </div>
-<div class="section" id="">
-<div class="header"><h2 class="title">Building the menu structure</h2></div>
-<div class="contents"></div>
+<div class="clear"></div>
 </div>
-<div class="section autolinkssection">
-<div class="header"><h2 class="title">Further Reading</h2></div>
-<div class="autolinks">
-<div class="title"><span>More About</span></div>
-<ul><li class="autolink"><a href="index.html#advanced">More esoteric techniques</a></li></ul>
+<div class="footer"><div class="sect about">
+<div class="hgroup"><h2>About</h2></div>
+<div class="region"><div class="contents">
+<div class="copyrights"><div class="copyright">© 2008-2012 Philip Chimento</div></div>
+<div class="aboutblurb authors">
+<div class="title"><span class="title">Written By</span></div>
+<ul class="credits"><li>Philip Chimento</li></ul>
 </div>
+<div class="aboutblurb maintainers">
+<div class="title"><span class="title">Maintained By</span></div>
+<ul class="credits"><li>Philip Chimento</li></ul>
 </div>
+<div class="aboutblurb license">
+<div class="title"><span class="title">Creative Commons</span></div>
+<div class="contents"><p class="p">This work is licensed under a <span class=" link"><a href="http://creativecommons.org/licenses/by-nc-sa/3.0/" title="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a></span>.</p></div>
 </div>
-<div class="footbar"><div class="copyrights"></div></div>
+</div></div>
+</div></div>
+</div>
+<div class="links nextlinks"><a class="nextlinks-contents" href="index.html" title="Advanced GTK Techniques">Contents</a></div>
 </body>
 </html>

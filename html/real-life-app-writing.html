@@ -1,36 +1,70 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html xmlns:str="http://exslt.org/strings">
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>Writing a real-life GTK application</title>
-<link rel="stylesheet" type="text/css" href="../index.css">
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="yelp.js"></script><link xmlns:m="http://www.w3.org/1998/Math/MathML" rel="stylesheet" href="../index.css" type="text/css">
+<script xmlns:m="http://www.w3.org/1998/Math/MathML" src="../highlight.pack.js"></script><script xmlns:m="http://www.w3.org/1998/Math/MathML">
+$(document).ready(function() {
+  $('div.code pre').each(function(i, e) {hljs.highlightBlock(e, '    ')});
+});
+    </script><link xmlns:m="http://www.w3.org/1998/Math/MathML" rel="stylesheet" href="http://yandex.st/highlightjs/6.1/styles/github.min.css">
 </head>
-<body class="">
-<div class="headbar"><div class="linktrails"><div class="linktrail">
-<a class="linktrail" href="index.html">Advanced GTK Techniques</a> › <a class="linktrail" href="index.html#app-writing">Writing a real-life GTK application</a> » </div></div></div>
+<body>
+<div xmlns:m="http://www.w3.org/1998/Math/MathML" class="banner">
+<h1 class="banner"><a href="#"><span>Advanced GTK Techniques</span></a></h1>
+<h2 class="banner"><span>Writing a real-life GTK application</span></h2>
+</div>
+<div class="links nextlinks"><a class="nextlinks-contents" href="index.html" title="Advanced GTK Techniques">Contents</a></div>
+<div class="page">
+<div class="header"><div class="trails"><div class="trail">
+<a class="trail" href="index.html" title="Advanced GTK Techniques">Advanced GTK Techniques</a> » </div></div></div>
 <div class="body">
-<div class="header"><h1 class="title">Writing a real-life GTK application</h1></div>
+<div class="hgroup"><h1 class="title"><span class="title">Writing a real-life GTK application</span></h1></div>
+<div class="region">
 <div class="contents">
 <p class="p">This tutorial will teach you how to write a real-life application in GTK.
 Although the application may be simple, it will take into account some of the considerations of developing, testing, and packaging a full-size desktop application with a multi-document interface.
-You will learn how to write an application based on <span xmlns:e="http://projectmallard.org/experimental/" class=" code">GtkApplication</span>, an extensible application class, and how to write a multi-document interface with one window for each document.</p>
-<p class="p">We will write an application that shows information about files in the file system, with the excellent name of <span xmlns:e="http://projectmallard.org/experimental/" class=" app">Info App</span>.</p>
-<p class="p">At this point, you should either be familiar with the Autotools, or have done the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="real-life-app-setup.html" title="">Setting up a real-life GTK application</a></span> tutorial.</p>
-<p class="p">To get started, set up a source code directory called <span xmlns:e="http://projectmallard.org/experimental/" class=" file">infoapp1</span>, and initialize an Autotools build system in it, as described in the previous tutorial.
+You will learn how to write an application based on <span class=" code">GtkApplication</span>, an extensible application class, and how to write a multi-document interface with one window for each document.</p>
+<p class="p">We will write an application that shows information about files in the file system, with the excellent name of <span class=" app">Info App</span>.</p>
+<p class="p">At this point, you should either be familiar with the Autotools, or have done the <span class=" link"><a href="real-life-app-setup.html" title="Setting up a real-life GTK application">Setting up a real-life GTK application</a></span> tutorial.</p>
+<p class="p">To get started, set up a source code directory called <span class=" file">infoapp1</span>, and initialize an Autotools build system in it, as described in the previous tutorial.
 It's up to you whether you want all the bells and whistles such as an icon, a desktop file, and internationalization; add them if you like.
 When you are ready to start writing code, go to the next page.</p>
-<div class="note"><div class="note-inner"><div class="note-contents"><p class="p first-child">This tutorial is large and therefore it is divided into several sections.
+<div class="note" title="Note"><div class="inner"><div class="region"><div class="contents"><p class="p">This tutorial is large and therefore it is divided into several sections.
   You can go through the whole tutorial in order, or if you like, you can do just one section by copying the code from the previous section and starting from there.
-  Each section has a link to the code that you need to start out with.</p></div></div></div>
+  Each section has a link to the code that you need to start out with.</p></div></div></div></div>
 </div>
-<div class="section autolinkssection">
-<div class="header"><h2 class="title">Further Reading</h2></div>
-<div class="autolinks">
-<div class="title"><span>More About</span></div>
-<ul><li class="autolink"><a href="index.html#app-writing">Writing a real-life GTK application</a></li></ul>
+<div class="sect sect-links">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul><li class="links"><a href="index.html" title="Advanced GTK Techniques">Advanced GTK Techniques</a></li></ul></div>
+</div></div></div>
 </div>
 </div>
+<div class="clear"></div>
 </div>
-<div class="footbar"><div class="copyrights"></div></div>
+<div class="footer"><div class="sect about">
+<div class="hgroup"><h2>About</h2></div>
+<div class="region"><div class="contents">
+<div class="copyrights"><div class="copyright">© 2008-2012 Philip Chimento</div></div>
+<div class="aboutblurb authors">
+<div class="title"><span class="title">Written By</span></div>
+<ul class="credits"><li>Philip Chimento</li></ul>
+</div>
+<div class="aboutblurb maintainers">
+<div class="title"><span class="title">Maintained By</span></div>
+<ul class="credits"><li>Philip Chimento</li></ul>
+</div>
+<div class="aboutblurb license">
+<div class="title"><span class="title">Creative Commons</span></div>
+<div class="contents"><p class="p">This work is licensed under a <span class=" link"><a href="http://creativecommons.org/licenses/by-nc-sa/3.0/" title="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a></span>.</p></div>
+</div>
+</div></div>
+</div></div>
+</div>
+<div class="links nextlinks"><a class="nextlinks-contents" href="index.html" title="Advanced GTK Techniques">Contents</a></div>
 </body>
 </html>

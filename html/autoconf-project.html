@@ -1,131 +1,163 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html xmlns:str="http://exslt.org/strings">
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>Setting up Autoconf</title>
-<link rel="stylesheet" type="text/css" href="../index.css">
+<link rel="stylesheet" type="text/css" href="C.css">
+<script type="text/javascript" src="jquery.js"></script><script type="text/javascript" src="yelp.js"></script><link xmlns:m="http://www.w3.org/1998/Math/MathML" rel="stylesheet" href="../index.css" type="text/css">
+<script xmlns:m="http://www.w3.org/1998/Math/MathML" src="../highlight.pack.js"></script><script xmlns:m="http://www.w3.org/1998/Math/MathML">
+$(document).ready(function() {
+  $('div.code pre').each(function(i, e) {hljs.highlightBlock(e, '    ')});
+});
+    </script><link xmlns:m="http://www.w3.org/1998/Math/MathML" rel="stylesheet" href="http://yandex.st/highlightjs/6.1/styles/github.min.css">
 </head>
-<body class="">
-<div class="headbar"><div class="linktrails"><div class="linktrail">
-<a class="linktrail" href="index.html">Advanced GTK Techniques</a> › <a class="linktrail" href="index.html#app-setup">Setting up a real-life GTK application</a> » </div></div></div>
-<div class="body">
-<div class="navbar">
-<a class="navbar-prev" href="real-life-app-setup.html">Previous</a>  |  <a class="navbar-next" href="automake-project.html">Next</a>
+<body>
+<div xmlns:m="http://www.w3.org/1998/Math/MathML" class="banner">
+<h1 class="banner"><a href="#"><span>Advanced GTK Techniques</span></a></h1>
+<h2 class="banner"><span>Setting up Autoconf</span></h2>
 </div>
-<div class="header"><h1 class="title">Setting up <span xmlns:e="http://projectmallard.org/experimental/" class=" app">Autoconf</span>
-</h1></div>
+<div class="links nextlinks">« <a class="nextlinks-prev" href="real-life-app-setup.html" title="Setting up a real-life GTK application">Setting up a real-life GTK application</a> :: <a class="nextlinks-contents" href="real-life-app-setup.html" title="Setting up a real-life GTK application">Contents</a> :: <a class="nextlinks-next" href="automake-project.html" title="Setting up Automake">Setting up <span class=" app">Automake</span></a> »</div>
+<div class="page">
+<div class="header"><div class="trails"><div class="trail">
+<a class="trail" href="index.html" title="Advanced GTK Techniques">Advanced GTK Techniques</a> » <a class="trail" href="real-life-app-setup.html" title="Setting up a real-life GTK application">Setting up a real-life GTK application</a> » </div></div></div>
+<div class="body">
+<div class="hgroup"><h1 class="title"><span class="title">Setting up <span class=" app">Autoconf</span></span></h1></div>
+<div class="region">
 <div class="contents">
-<div class="synopsis"><div class="synopsis-contents">
-<p class="p first-child">In this tutorial, you will learn how to set up an empty Autotools build system.</p>
-<p class="p">This is the first tutorial in the <span xmlns:e="http://projectmallard.org/experimental/" class=" em">Setting up a real-life GTK application</span> series.</p>
-</div></div>
+<div class="synopsis"><div class="inner"><div class="region"><div class="contents">
+<p class="p">In this tutorial, you will learn how to set up an empty Autotools build system.</p>
+<p class="p">This is the first tutorial in the <span class=" em">Setting up a real-life GTK application</span> series.</p>
+</div></div></div></div>
 <p class="p">To get started, we will build up an Autotools project from scratch.
-First create a directory called <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton1</span>.
-In the directory, create an empty file called <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span>.
-(For example, you can type <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">touch Makefile.am</span> in a terminal.)
+First create a directory called <span class=" file">app-skeleton1</span>.
+In the directory, create an empty file called <span class=" file">Makefile.am</span>.
+(For example, you can type <span class=" cmd">touch Makefile.am</span> in a terminal.)
 This is an Automake file, which is where we put the instructions for transforming source code into programs.
 We will fill it later.
 First, we will use Autoconf to configure our project.</p>
-<p class="p">Open a new file in the directory with your editor and call it <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure.ac</span>.
+<p class="p">Open a new file in the directory with your editor and call it <span class=" file">configure.ac</span>.
 This is an Autoconf file, where we put instructions for what tools we would like to use to build our project.
 We also note what capabilities of the system we would like to use, so that Autoconf can check to make sure the system has those capabilities.
-In <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure.ac</span>, write:</p>
-<div class="listing">
-<div class="title title-listing"><span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton1/configure.ac</span></div>
-<div class="listing-contents"><pre class="code first-child">AC_INIT([App Skeleton], [1], [philip.chimento@gmail.com])
+In <span class=" file">configure.ac</span>, write:</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h2><span class="title"><span class=" file"><a href="../app-skeleton1/configure.ac" title="../app-skeleton1/configure.ac">app-skeleton1/configure.ac</a></span></span></h2></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents ">AC_INIT([App Skeleton], [1], [philip.chimento@gmail.com])
 AM_INIT_AUTOMAKE([-Wall foreign])
 AC_CONFIG_FILES([Makefile])
-AC_OUTPUT</pre></div>
-</div>
+AC_OUTPUT</pre></div></div></div>
+</div></div>
 <p class="p">This file consists of macros that Autoconf expands into shell scripts.
-Macros beginning with <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_</span> are Autoconf's own macros, and macros that start with <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AM_</span> belong to Automake.
+Macros beginning with <span class=" code">AC_</span> are Autoconf's own macros, and macros that start with <span class=" code">AM_</span> belong to Automake.
 Notice that the macros' argument lists are enclosed in parentheses, and each argument is enclosed in square brackets.
-The square brackets are <span xmlns:e="http://projectmallard.org/experimental/" class=" em">quotes</span>.
+The square brackets are <span class=" em">quotes</span>.
 They are quite complicated and explained in detail in the Autoconf manual, but a good rule of thumb is:
 always quote each argument of a macro.
 We will go through these macros one by one:
 </p>
-<div class="terms"><div class="terms-contents"><dl class="terms">
-<dt class="item-terms first-child"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_INIT</span></dt>
-<dd class="item-terms"><p class="p first-child">This initializes Autoconf, telling it the name and version of the project.
+<div class="terms"><div class="inner"><div class="region"><dl class="terms">
+<dt class="terms"><span class=" code">AC_INIT</span></dt>
+<dd class="terms"><p class="p">This initializes Autoconf, telling it the name and version of the project.
     The third, optional argument is an e-mail address for reporting bugs in the program.
     You can replace it with your own e-mail address if you like, but bugs in the tutorial programs should probably still be reported to me.</p></dd>
-<dt class="item-terms"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">AM_INIT_AUTOMAKE</span></dt>
-<dd class="item-terms">
-<p class="p first-child">This tells Autoconf that we will be using Automake (yes, it is possible to use one without the other.)
+<dt class="terms"><span class=" code">AM_INIT_AUTOMAKE</span></dt>
+<dd class="terms">
+<p class="p">This tells Autoconf that we will be using Automake (yes, it is possible to use one without the other.)
     It also initializes Automake and configures it.
-    <span xmlns:e="http://projectmallard.org/experimental/" class=" code">-Wall</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" code">foreign</span> are Automake options.
-    Note that they are not separate arguments to the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">AM_INIT_AUTOMAKE</span> macro; all the options are one space-separated argument.</p>
-<p class="p"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">-Wall</span> tells Automake to have the compiler report all warnings when compiling our program, much like the <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">-Wall</span> option to the C compiler.
-    <span xmlns:e="http://projectmallard.org/experimental/" class=" code">foreign</span> tells Automake that we will not be building a GNU package, so it will not complain about the lack of files such as README.
-    If you are building a real application, you might want to remove the <span xmlns:e="http://projectmallard.org/experimental/" class=" code">foreign</span> option so that you will not forget to provide any files that users might expect.</p>
+    <span class=" code">-Wall</span> and <span class=" code">foreign</span> are Automake options.
+    Note that they are not separate arguments to the <span class=" code">AM_INIT_AUTOMAKE</span> macro; all the options are one space-separated argument.</p>
+<p class="p"><span class=" code">-Wall</span> tells Automake to have the compiler report all warnings when compiling our program, much like the <span class=" cmd">-Wall</span> option to the C compiler.
+    <span class=" code">foreign</span> tells Automake that we will not be building a GNU package, so it will not complain about the lack of files such as README.
+    If you are building a real application, you might want to remove the <span class=" code">foreign</span> option so that you will not forget to provide any files that users might expect.</p>
 </dd>
-<dt class="item-terms"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_CONFIG_FILES</span></dt>
-<dd class="item-terms">
-<p class="p first-child">This is a list of files that we would like to output when configuring our project.
-    If we put a file named <span xmlns:e="http://projectmallard.org/experimental/" class=" file">plerp</span> in this list, then Autoconf will look for a file named <span xmlns:e="http://projectmallard.org/experimental/" class=" file">plerp.in</span> and transform it into <span xmlns:e="http://projectmallard.org/experimental/" class=" file">plerp</span>.
-    It does this by scanning <span xmlns:e="http://projectmallard.org/experimental/" class=" file">plerp.in</span> and replacing any text in the form of <span xmlns:e="http://projectmallard.org/experimental/" class=" code">@VARIABLE@</span> with the contents of the variable <span xmlns:e="http://projectmallard.org/experimental/" class=" code">VARIABLE</span>.
+<dt class="terms"><span class=" code">AC_CONFIG_FILES</span></dt>
+<dd class="terms">
+<p class="p">This is a list of files that we would like to output when configuring our project.
+    If we put a file named <span class=" file">plerp</span> in this list, then Autoconf will look for a file named <span class=" file">plerp.in</span> and transform it into <span class=" file">plerp</span>.
+    It does this by scanning <span class=" file">plerp.in</span> and replacing any text in the form of <span class=" code">@VARIABLE@</span> with the contents of the variable <span class=" code">VARIABLE</span>.
     We have not defined any of these variables explicitly yet, but they are defined internally by many Autoconf and Automake macros.</p>
-<p class="p">Here, we tell Autoconf that we would like to transform <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.in</span> into <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>.
-    Where is <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.in</span>?
-    When we run Automake, it creates <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.in</span> from <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span>.
-    We will do this in the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="automake-project.html" title="">next step</a></span>.</p>
+<p class="p">Here, we tell Autoconf that we would like to transform <span class=" file">Makefile.in</span> into <span class=" file">Makefile</span>.
+    Where is <span class=" file">Makefile.in</span>?
+    When we run Automake, it creates <span class=" file">Makefile.in</span> from <span class=" file">Makefile.am</span>.
+    We will do this in the <span class=" link"><a href="automake-project.html" title="Setting up Automake">next step</a></span>.</p>
 </dd>
-<dt class="item-terms"><span xmlns:e="http://projectmallard.org/experimental/" class=" code">AC_OUTPUT</span></dt>
-<dd class="item-terms"><p class="p first-child">This macro takes care of outputting any files we have asked Autoconf to output.</p></dd>
-</dl></div></div>
-<p class="p">We must now <span xmlns:e="http://projectmallard.org/experimental/" class=" em">bootstrap</span> this project (initialize it from this pristine state into a state where the build system is working.)
+<dt class="terms"><span class=" code">AC_OUTPUT</span></dt>
+<dd class="terms"><p class="p">This macro takes care of outputting any files we have asked Autoconf to output.</p></dd>
+</dl></div></div></div>
+<p class="p">We must now <span class=" em">bootstrap</span> this project (initialize it from this pristine state into a state where the build system is working.)
 The Autoreconf program does this.
 Autoreconf runs Autoconf, Automake, and several other programs in order to get the project ready to be built.
 In a terminal, type:</p>
-<pre class="screen"><span xmlns:e="http://projectmallard.org/experimental/" class=" input">autoreconf -i</span>
-<span xmlns:e="http://projectmallard.org/experimental/" class=" output">configure.ac:2: installing `./install.sh'
-configure.ac:2: installing `./missing'</span></pre>
+<div class="screen"><pre class="contents "><span class=" input">autoreconf -i</span>
+<span class=" output">configure.ac:2: installing `./install.sh'
+configure.ac:2: installing `./missing'</span></pre></div>
 <p class="p">You will be notified of files being installed.
-(That is what the <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">-i</span> option does; once the files are there, you can simply run <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">autoreconf</span> without any options.)
+(That is what the <span class=" cmd">-i</span> option does; once the files are there, you can simply run <span class=" cmd">autoreconf</span> without any options.)
 If you look inside the directory, however, those won't be the only files that have appeared.
-<span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.in</span>, <span xmlns:e="http://projectmallard.org/experimental/" class=" file">aclocal.m4</span>, <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure</span>, and a directory <span xmlns:e="http://projectmallard.org/experimental/" class=" file">autom4te.cache</span> will also have been created.</p>
-<div class="note"><div class="note-inner">
-<div class="title title-note">Bootstrapping</div>
-<div class="note-contents"><p class="p first-child">It is worth noting here that anybody who wants to build your program from this point onwards doesn't need Autoconf or Automake, only a shell and Make.
+<span class=" file">Makefile.in</span>, <span class=" file">aclocal.m4</span>, <span class=" file">configure</span>, and a directory <span class=" file">autom4te.cache</span> will also have been created.</p>
+<div class="note" title="Note"><div class="inner">
+<div class="title title-note"><h2><span class="title">Bootstrapping</span></h2></div>
+<div class="region"><div class="contents"><p class="p">It is worth noting here that anybody who wants to build your program from this point onwards doesn't need Autoconf or Automake, only a shell and Make.
   Distributions of source code usually include all the files that are in the directory right now, so that users who want to compile the software from source don't have to bother with Autotools.
   When checking out source code from a repository, however, only the handwritten files are included.
   The reasoning goes that those who are savvy enough to mess with development snapshots of software can be expected to have various build tools installed.
-  If you check out source code from a repository, bootstrap it using <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">autoreconf -i</span>.
-  Sometimes there is a script called <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">autogen.sh</span> or <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">bootstrap</span> to do this for you, especially if there are other steps needed for bootstrapping.
-  If one of these files exists, use it instead.</p></div>
+  If you check out source code from a repository, bootstrap it using <span class=" cmd">autoreconf -i</span>.
+  Sometimes there is a script called <span class=" cmd">autogen.sh</span> or <span class=" cmd">bootstrap</span> to do this for you, especially if there are other steps needed for bootstrapping.
+  If one of these files exists, use it instead.</p></div></div>
 </div></div>
 <p class="p">Now the build system is initialized, we can build the source in the usual way.</p>
-<pre class="screen"><span xmlns:e="http://projectmallard.org/experimental/" class=" input">./configure</span>
-<span xmlns:e="http://projectmallard.org/experimental/" class=" output">checking for a BSD-compatible install... /usr/bin/install -c
+<div class="screen"><pre class="contents "><span class=" input">./configure</span>
+<span class=" output">checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a thread-safe mkdir -p... /bin/mkdir -p
 checking for gawk... gawk
 checking whether make sets $(MAKE)... yes
 configure: creating ./config.status
 config.status: creating Makefile</span>
-<span xmlns:e="http://projectmallard.org/experimental/" class=" input">make</span>
-<span xmlns:e="http://projectmallard.org/experimental/" class=" output">make: Nothing to be done for `all'.</span></pre>
-<p class="p">Of course there is nothing for <span xmlns:e="http://projectmallard.org/experimental/" class=" cmd">make</span> to do.
-We have no source files, and our <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile.am</span> was empty.
-If you look at the size of the generated <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span>, however, it is anything but empty: my system reports it to be 14 kilobytes large.
+<span class=" input">make</span>
+<span class=" output">make: Nothing to be done for `all'.</span></pre></div>
+<p class="p">Of course there is nothing for <span class=" cmd">make</span> to do.
+We have no source files, and our <span class=" file">Makefile.am</span> was empty.
+If you look at the size of the generated <span class=" file">Makefile</span>, however, it is anything but empty: my system reports it to be 14 kilobytes large.
 Even though we have no project yet, we still have a versatile build system in place.</p>
-<p class="p">For an example of just how versatile, type <span xmlns:e="http://projectmallard.org/experimental/" class=" input">make dist</span>.
-A file named <span xmlns:e="http://projectmallard.org/experimental/" class=" file">app-skeleton-1.tar.gz</span> will appear in the directory.
-It is a <span xmlns:e="http://projectmallard.org/experimental/" class=" em">tarball</span> (archive) of the project's source code, ready to be distributed.
+<p class="p">For an example of just how versatile, type <span class=" input">make dist</span>.
+A file named <span class=" file">app-skeleton-1.tar.gz</span> will appear in the directory.
+It is a <span class=" em">tarball</span> (archive) of the project's source code, ready to be distributed.
 It is also worth noting that whoever downloads this tarball can build the project without having Autotools installed:
-all they need are the <span xmlns:e="http://projectmallard.org/experimental/" class=" file">configure</span> and <span xmlns:e="http://projectmallard.org/experimental/" class=" file">Makefile</span> files, which are included.</p>
+all they need are the <span class=" file">configure</span> and <span class=" file">Makefile</span> files, which are included.</p>
 <p class="p">We can do other things, such as clean up our project directory.
-For a full list of standard <span xmlns:e="http://projectmallard.org/experimental/" class=" em">make targets</span>, refer to the <span xmlns:e="http://projectmallard.org/experimental/" class=" link"><a href="http://www.gnu.org/s/hello/manual/make/Standard-Targets.html" title="http://www.gnu.org/s/hello/manual/make/Standard-Targets.html">Make manual</a></span>.</p>
+For a full list of standard <span class=" em">make targets</span>, refer to the <span class=" link"><a href="http://www.gnu.org/s/hello/manual/make/Standard-Targets.html" title="http://www.gnu.org/s/hello/manual/make/Standard-Targets.html">Make manual</a></span>.</p>
 </div>
-<div class="section autolinkssection">
-<div class="header"><h2 class="title">Further Reading</h2></div>
-<div class="autolinks">
-<div class="title"><span>More About</span></div>
-<ul><li class="autolink"><a href="index.html#app-setup">Setting up a real-life GTK application</a></li></ul>
+<div class="sect sect-links">
+<div class="hgroup"></div>
+<div class="contents"><div class="links guidelinks"><div class="inner">
+<div class="title"><h2><span class="title">More Information</span></h2></div>
+<div class="region"><ul><li class="links">
+<a href="real-life-app-setup.html" title="Setting up a real-life GTK application">Setting up a real-life GTK application</a><span class="desc"> — Putting together the build infrastructure for an application</span>
+</li></ul></div>
+</div></div></div>
 </div>
 </div>
+<div class="clear"></div>
 </div>
-<div class="footbar"><div class="copyrights"></div></div>
+<div class="footer"><div class="sect about">
+<div class="hgroup"><h2>About</h2></div>
+<div class="region"><div class="contents">
+<div class="copyrights"><div class="copyright">© 2008-2012 Philip Chimento</div></div>
+<div class="aboutblurb authors">
+<div class="title"><span class="title">Written By</span></div>
+<ul class="credits"><li>Philip Chimento</li></ul>
+</div>
+<div class="aboutblurb maintainers">
+<div class="title"><span class="title">Maintained By</span></div>
+<ul class="credits"><li>Philip Chimento</li></ul>
+</div>
+<div class="aboutblurb license">
+<div class="title"><span class="title">Creative Commons</span></div>
+<div class="contents"><p class="p">This work is licensed under a <span class=" link"><a href="http://creativecommons.org/licenses/by-nc-sa/3.0/" title="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a></span>.</p></div>
+</div>
+</div></div>
+</div></div>
+</div>
+<div class="links nextlinks">« <a class="nextlinks-prev" href="real-life-app-setup.html" title="Setting up a real-life GTK application">Setting up a real-life GTK application</a> :: <a class="nextlinks-contents" href="real-life-app-setup.html" title="Setting up a real-life GTK application">Contents</a> :: <a class="nextlinks-next" href="automake-project.html" title="Setting up Automake">Setting up <span class=" app">Automake</span></a> »</div>
 </body>
 </html>
