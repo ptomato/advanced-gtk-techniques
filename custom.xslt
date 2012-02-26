@@ -28,6 +28,24 @@
     </div>
 
     <!-- Custom prev/next links -->
+    <xsl:call-template name="my-custom-prev-next-links">
+      <xsl:with-param name="node" select="$node"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template name="html.bottom.custom">
+    <xsl:param name="node"/>
+
+    <!-- Repeat the custom prev/next links at the bottom -->
+    <xsl:call-template name="my-custom-prev-next-links">
+      <xsl:with-param name="node" select="$node"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- Template based on mal2html.links.prevnext -->
+  <xsl:template name="my-custom-prev-next-links">
+    <xsl:param name="node"/>
+
     <xsl:variable name="page" select="$node/ancestor-or-self::mal:page[last()]"/>
     <xsl:variable name="linkid">
       <xsl:call-template name="mal.link.linkid">
