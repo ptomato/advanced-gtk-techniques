@@ -124,43 +124,52 @@ div.body {
 	font-size: 0.9em;
 }
 
-div.trails {
+div.trails,
+div.nextlinks {
 	padding: 0;
+	font-size: 0.8em;
+	color: white;
+	margin: 0;
+	text-align: center;
+}
+
+div.trails {
+	background: #5c3566;
+}
+
+div.nextlinks {
+	float: none;
 	background: #3465a4;
 }
 
 div.trail {
-	text-align: center;
-	font-size: 0.8em;
 	margin: 0 1px 0.2em 1px;
 	padding-left: 1.2em;
 	color: white;
 }
 
-div.trail a {
+div.trail a,
+div.nextlinks a {
 	color: #eeeeec;
 }
 
-div.nextlinks {
-	background: #ccc;
-	border-radius: 15px;
-	-moz-box-shadow: inset 0 0 5px #888;
-	-webkit-box-shadow: inset 0 0 5px #888;
-	box-shadow: inset 0 0 5px #888;
-	float: right;
-	padding: 0.2em 0.3em;
-}
-
-div.nextlinks a {
-	color: #333;
-}
-
-a.nextlinks-prev:before {
-	content: '« ';
-}
-
+/* Remove Mallard's arrows from the previous/next links */
+a.nextlinks-prev:before,
+a.nextlinks-prev:after,
+a.nextlinks-next:before,
 a.nextlinks-next:after {
-	content: ' »';
+	content: '';
+}
+
+a.nextlinks-prev,
+a.nextlinks-next,
+a.nextlinks-contents {
+  padding: 0 0.5em;
+}
+
+a.nextlinks-prev,
+a.nextlinks-next {
+	font-weight: bold;
 }
 
 a.linkdiv:visited {
