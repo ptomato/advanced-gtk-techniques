@@ -176,10 +176,14 @@ a.linkdiv:visited {
 	color: #4e9a06;
 }
 
-div.custom-footer {
+div.copyright,
+div.aboutblurb {
 	padding: 8px;
 	font-size: 11px;
-	text-align: center;
+}
+
+div.aboutblurb {
+	max-width: none;
 }
 
 /* Inline styling elements */
