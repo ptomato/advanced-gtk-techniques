@@ -2,7 +2,17 @@
       type="topic"
       id="dynamic-actions">
 <info>
-  <link type="guide" xref="index#advanced"/>
+  <credit type="author maintainer copyright">
+    <name>Philip Chimento</name>
+    <email>philip.chimento@gmail.com</email>
+    <years>2008-2012</years>
+  </credit>
+  <license href="http://creativecommons.org/licenses/by-nc-sa/3.0/">
+    <p>This work is licensed under a <link href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</link>.</p>
+  </license>
+  <link type="guide" xref="index" group="#default"/>
+  <desc>Changing menus, shortcuts, and toolbars while the application is running</desc>
+  <revision status="stub"/>
 </info>
 <title>Using dynamic menu and toolbar actions</title>
 

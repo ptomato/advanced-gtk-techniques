@@ -2,9 +2,18 @@
       type="topic"
       id="desktop-file">
 <info>
+  <credit type="author maintainer copyright">
+    <name>Philip Chimento</name>
+    <email>philip.chimento@gmail.com</email>
+    <years>2008-2012</years>
+  </credit>
+  <license href="http://creativecommons.org/licenses/by-nc-sa/3.0/">
+    <p>This work is licensed under a <link href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</link>.</p>
+  </license>
   <link type="next" xref="gettext-project"/>
-  <link type="guide" xref="index#app-setup"/>
+  <link type="guide" xref="real-life-app-setup" group="#default"/>
   <desc>Installing your program onto the user's desktop</desc>
+  <revision status="final"/>
 </info>
 <title>Icons and desktop files</title>
 
@@ -43,7 +52,7 @@ done</input>
 </screen>
 
 <p>This is the icon we have just downloaded, in five different sizes: 
-<media type="image" src="../app-skeleton3/pixmaps/48x48/apps/app-skeleton.png">[An icon of a raincloud from the GNOME icon theme]</media></p>
+<media type="image" src="app-skeleton3/pixmaps/48x48/apps/app-skeleton.png">[An icon of a raincloud from the GNOME icon theme]</media></p>
 
 <p>There is a reason why we are creating this particular directory structure.
 It is explained in the Free Desktop <link href="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html">Icon Theme Specification</link> and <link href="http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html">Icon Naming Specification</link>.</p>

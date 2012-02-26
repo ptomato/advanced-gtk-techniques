@@ -2,9 +2,18 @@
       type="topic"
       id="automake-project">
 <info>
+  <credit type="author maintainer copyright">
+    <name>Philip Chimento</name>
+    <email>philip.chimento@gmail.com</email>
+    <years>2008-2012</years>
+  </credit>
+  <license href="http://creativecommons.org/licenses/by-nc-sa/3.0/">
+    <p>This work is licensed under a <link href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</link>.</p>
+  </license>
   <link type="next" xref="desktop-file"/>
-  <link type="guide" xref="index#app-setup"/>
+  <link type="guide" xref="real-life-app-setup" group="#first"/>
   <desc>Generating your Makefiles automatically</desc>
+  <revision status="final"/>
 </info>
 <title>Setting up <app>Automake</app></title>
 

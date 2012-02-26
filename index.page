@@ -13,16 +13,4 @@
 </info>
 <title>Advanced GTK Techniques</title>
 
-<section id="app-setup">
-  <title>Setting up a real-life GTK application</title>
-</section>
-
-<section id="app-writing">
-  <title>Writing a real-life GTK application</title>
-</section>
-
-<section id="advanced">
-  <title>More esoteric techniques</title>
-</section>
-
 </page>

@@ -1,5 +1,5 @@
-#ifndef __P_INFO_APP_H__
-#define __P_INFO_APP_H__
+#ifndef P_INFO_APP_H
+#define P_INFO_APP_H
 
 #include <gio/gio.h>
 
@@ -36,4 +36,4 @@ PInfoApp *p_info_app_get(void);
 
 G_END_DECLS
 
-#endif /* __P_INFO_APP_H__ */
+#endif /* P_INFO_APP_H */

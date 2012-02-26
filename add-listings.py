@@ -41,10 +41,10 @@ for line in fileinput.input():
 		# Remove any indentation common to the whole block
 		while all([l.startswith(' ') for l in lines if l != '\n']) \
 			or all([l.startswith('\t') for l in lines if l != '\n']):
-			lines = [l[1:] for l in lines if l != '\n']
+			lines = [(l[1:] if l != '\n' else l) for l in lines]
 
 		print '<listing>'
-		print '<title><file>{0}</file></title>'.format(m.group('file'))
+		print '<title><file href="../{0}">{0}</file></title>'.format(m.group('file'))
 		print '<code mime="text/{0}"><![CDATA['.format(mimetype)
 		for l in lines:
 			print l,

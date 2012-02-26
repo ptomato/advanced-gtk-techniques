@@ -2,15 +2,24 @@
       type="topic"
       id="custom-container">
 <info>
-  <link type="guide" xref="index#advanced"/>
-  <title type="link">Custom container</title>
+  <credit type="author maintainer copyright">
+    <name>Philip Chimento</name>
+    <email>philip.chimento@gmail.com</email>
+    <years>2008-2012</years>
+  </credit>
+  <license href="http://creativecommons.org/licenses/by-nc-sa/3.0/">
+    <p>This work is licensed under a <link href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</link>.</p>
+  </license>
+  <link type="guide" xref="index" group="#default"/>
+  <desc>A container that does its own size allocation</desc>
+  <revision status="final"/>
 </info>
-<title>A container that does its own size allocation</title>
+<title>Custom container</title>
 
 <p>Size allocation is not a very difficult procedure in GTK; every widget has overridable <code>size_request</code> and <code>size_allocate</code> methods.
 Sizes are requested from the bottom of the widget tree up, with each container calling <code>gtk_widget_size_request()</code> on each of its children and then calculating its own size request using that information.
 Once the total size is known, the available space is calculated and allocated from the top down: each container divides up the space it receives among its children by calling their <code>gtk_widget_size_allocate()</code> methods.
-This is covered in chapter 11 of <em>Foundations</em>.</p>
+This is covered in chapter 11 of <em href="http://gtkbook.com">Foundations of GTK Development</em>.</p>
 
 <p>In most cases, such as writing a composite widget or adding functionality to an existing container, you can get away with subclassing a container like <code>GtkVBox</code>.
 That way, you don't have to deal with size negotiation and other container stuff directly, since it's already implemented in your parent class.
@@ -21,7 +30,6 @@ Then you'll have to write a new container with its own size request and allocati
 Therefore, we will write a fairly useless container which arranges all its children in a square, inspired by '80's video clips with cheesy split screen effects, like <em>Heat of the Moment</em>.
 The container will find an integer <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mi>n</m:mi></m:mrow></m:math></span> so that</p>
 
-<!-- TODO: find a better way to do math -->
 <table><tr><td>
   <p><span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow>
     <m:msup><m:mi>n</m:mi><m:mn>2</m:mn></m:msup>
@@ -35,27 +43,34 @@ The container will find an integer <span xmlns:m="http://www.w3.org/1998/Math/Ma
 <section id="header-file">
 <title>Header file</title>
 
-<p>We will create a subclass of <code>GtkContainer</code> called <code>PSquare</code>. The header file, <file>psquare.h</file>, is a textbook case if there ever was one, so I won't reprint it here. It exports only two functions, <code>p_square_get_type()</code> and <code>p_square_new()</code>, since all of the interesting stuff happens in overridden <code>GtkContainer</code> functions.</p>
+<p>We will create a subclass of <code>GtkContainer</code> called <code>PSquare</code>. The header file, <file href="../psquare/psquare.h">psquare.h</file>, is a textbook case if there ever was one, so I won't reprint it here. It exports only two functions, <code>p_square_get_type()</code> and <code>p_square_new()</code>, since all of the interesting stuff happens in overridden <code>GtkContainer</code> functions.</p>
 
 </section>
 <section id="class-boilerplate">
 <title>Class boilerplate</title>
 
-<p>We will briefly go over the required GObject stuff in the <file>psquare.c</file> file, since <em>Foundations</em> doesn't cover the <code>G_DEFINE_TYPE</code> macros or the <code>g_type_class_add_private()</code> mechanism.</p>
+<p>We will briefly go over the required GObject stuff in the <file href="../psquare/psquare.c">psquare.c</file> file, since it's good to know about the <code>G_DEFINE_TYPE</code> macros and the <code>g_type_class_add_private()</code> mechanism.
+Not all online resources mention them.</p>
 
 <p><code>G_DEFINE_TYPE()</code> is a handy macro that saves you a lot of typing.
 It writes your <code>p_square_get_type()</code> function for you, which you then export in your header file; it also declares a static <code>p_square_parent_class</code> variable, a static <code>p_square_class_init()</code> function, and a static <code>p_square_init()</code> function.</p>
 
-<!--{{{psquare/psquare.c:24}}}-->
+<!--{{{psquare/psquare.c:25}}}-->
 
-<p>The parent class variable is there to avoid a costly call to <code>g_type_class_peek_parent()</code> every time you need to chain up to a method in the parent class (often in <code>finalize</code>).
+<p>The <code>parent_class</code> variable is there to avoid a costly call to <code>g_type_class_peek_parent()</code> every time you need to chain up to a method in the parent class (often in <code>finalize</code>).
 You need to write the class and instance initialization functions yourself.</p>
 
-<!--{{{psquare/psquare.c:27-44}}}-->
+<!--{{{psquare/psquare.c:28-45}}}-->
 
 <p>The class initialization function <code>p_square_class_init</code> overrides several methods in ancestor classes.
 If you are not familiar with the GObject way of doing this, then take a good look now.
-Our test program will not use the <code>forall</code> and <code>child_type</code> methods, but a peek at <file>gtkcontainer.c</file> will reveal that they are set to <code>NULL</code> in the <code>GtkContainer</code> class initializer; in other words, they are pure virtual functions, and are required to be overridden.</p>
+Our test program will not use the <code>forall</code> and <code>child_type</code> methods, but a peek at <file href="http://git.gnome.org/browse/gtk+/tree/gtk/gtkcontainer.c">gtkcontainer.c</file> will reveal that they are set to <code>NULL</code> in the <code>GtkContainer</code> class initializer; in other words, they are pure virtual functions, and are required to be overridden.</p>
+
+<note>
+  <p>To find out what methods there are to override in the parent class, you have to look at the source code of <code>GtkContainer</code>.
+  There isn't really a good way to tell from the API documentation, which is unfortunate.
+  </p>
+</note>
 
 <p>The other thing the class initializer does is register <code>PSquare</code>'s private indirection member.
 This is probably the most effective way of hiding your implementation details when you write a class.
@@ -63,7 +78,7 @@ This is achieved by defining a private member structure and telling GObject to a
 That way, each object has private data stored in it, but you can only access that data if the composition of your private structure is exposed.
 The private structure is defined in the following code.</p>
 
-<!--{{{psquare/psquare.c:6-13}}}-->
+<!--{{{psquare/psquare.c:6-14}}}-->
 
 <p>You might prefer to put these lines in a file called something like <file>psquare-private.h</file>.
 That way, any implementation file that includes it will be able to access the private data, kind of like the <code>friend</code> directive in C++.
@@ -91,7 +106,9 @@ p_square_init(PSquare *square)
 The private member <code>children</code> is initialized to <code>NULL</code>, which is an empty <code>GList</code>, as you should know.</p>
 
 <p>You should also know that it is customary to create a widget with a <code>p_square_new()</code> function, which returns a new instance of the class, cast to a <code>GtkWidget</code> pointer.
-It's too trivial to reprint here.</p>
+Here it is:</p>
+
+<!--{{{psquare/psquare.c:62-66}}}-->
 
 </section>
 <section id="overriding-container">
@@ -105,19 +122,19 @@ One iterates over all children including "internal" ones (such as the <code>GtkB
 The class <code>forall</code> function takes a flag telling whether to include internal children or not.
 <code>PSquare</code> doesn't have any internal children, so we just ignore that.</p>
 
-<!--{{{psquare/psquare.c:280-999}}}-->
+<!--{{{psquare/psquare.c:304-999}}}-->
 
 <p>The next things to implement are the <code>add</code> and <code>remove</code> methods.
 Note that you don't have to have them if, for example, your container has a different mechanism for adding widgets; the default <code>GtkContainer</code> implementations do nothing, and print a warning message saying that the method is not implemented.</p>
 
-<!--{{{psquare/psquare.c:235-253}}}-->
+<!--{{{psquare/psquare.c:258-275}}}-->
 
 <p>It may surprise you that this function is not longer.
 However, as the comment says, all the real work is done in <code>gtk_widget_set_parent()</code>: sinking the child's floating reference, redrawing the child, emitting the appropriate signals, etc.
 We still have to redraw the container ourselves.
 The corresponding method to remove a child is much the same, with all the real work being done in <code>gtk_widget_unparent()</code>.</p>
 
-<!--{{{psquare/psquare.c:255-277}}}-->
+<!--{{{psquare/psquare.c:278-299}}}-->
 
 <p>Note that we don't have to write <code>p_square_destroy()</code> or <code>p_square_finalize()</code> methods to unref the child widgets, since the <code>GtkContainer</code> code already does that when the container is destroyed.</p>
 
@@ -134,40 +151,42 @@ We will also respect the <code>border_width</code> property of <code>GtkContaine
 <p>The <code>size_request</code> method is passed a pointer to a <code>GtkRequisition</code> structure, which it must fill with its requested size.</p>
 
 <code mime="text/x-csrc"><![CDATA[
-static void p_square_size_request(GtkWidget *widget, GtkRequisition *requisition);
+static void p_square_size_request(GtkWidget *widget,
+                                  GtkRequisition *requisition);
 ]]></code>
 
 <p>We start by setting the <code>width</code> and <code>height</code> fields of the size requisition to their minimum value, twice the border width.
 Then we compute the number of visible children, and if that is zero, our work is done; we don't layout unshown widgets.</p>
 
-<!--{{{psquare/psquare.c:76-88}}}-->
+<!--{{{psquare/psquare.c:77-89}}}-->
 
 <p>Then, we compute the size of the side of our square, and allocate arrays to store that number of column widths and row heights.
 When we get all the size requests of the container's children, we will store a running maximum for each row and column in those arrays, then add them up.</p>
 
-<!--{{{psquare/psquare.c:90-95}}}-->
+<!--{{{psquare/psquare.c:91-97}}}-->
 
 <p>We then iterate over the children again, asking them for their size requests.
 The simplest way is to allocate a <code>GtkRequisition</code> structure on the stack and pass its address to the child's size request function. 
 If the child's width is larger than the width we have stored for the column we're in, we replace the stored width by the child's width, and likewise for the height. 
 Then we add the widths and heights to our own requisition.</p>
 
-<!--{{{psquare/psquare.c:97-116}}}-->
+<!--{{{psquare/psquare.c:99-124}}}-->
 
 <p>The <code>size_allocate</code> method is similar. 
 It receives a pointer to a <code>GtkAllocation</code> structure, which contains the size that the widget will have to deal with.</p>
 
 <code mime="text/x-csrc"><![CDATA[
-static void p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation);
+static void p_square_size_allocate(GtkWidget *widget,
+                                   GtkAllocation *allocation);
 ]]></code>
 
 <p>The first thing it must do is store the allocation in the widget structure.</p>
 
-<!--{{{psquare/psquare.c:131}}}-->
+<!--{{{psquare/psquare.c:139}}}-->
 
 <p>The next section is very similar to the code in the <code>size_request</code> method.</p>
 
-<!--{{{psquare/psquare.c:133-163}}}-->
+<!--{{{psquare/psquare.c:141-175}}}-->
 
 <p>The only thing different here is that instead of calling <code>gtk_widget_size_request()</code> on each child, we call <code>gtk_widget_get_size_requisition()</code> instead.
 The latter function does not ask the child to calculate a size request, but instead retrieves the last known size request, which is either the size set in the child's size request method, or from program code calling <code>gtk_widget_set_size_request()</code> on the widget.
@@ -178,30 +197,30 @@ Our policy will be to divide any extra width equally among the columns, and any 
 If there is too little space, it will be taken equally from each column or row.
 First we calculate the space surplus or deficit per column and row.</p>
 
-<!--{{{psquare/psquare.c:166-167}}}-->
+<!--{{{psquare/psquare.c:178-181}}}-->
 
 <p>Then we calculate the actual space to allocate to each column and row, by adding the extra space (which can be negative) to each column.
 We have to watch out that we don't allocate less than zero space to any widget, so if any space is less than zero, we borrow pixels one by one from any other nonzero columns until the space is zero.</p>
 
-<!--{{{psquare/psquare.c:169-193}}}-->
+<!--{{{psquare/psquare.c:183-215}}}-->
 
 <p>We will keep track of the <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow></m:math></span> coordinates at which we will place the top left corner of our next child widget.
 Note that the <code>x</code> and <code>y</code> members of the <code>GtkAllocation</code> structure contain (I think) screen coordinates, not offsets from the top left of the containing widget, so you always need to start from those values.</p>
 
-<!--{{{psquare/psquare.c:196-198}}}-->
+<!--{{{psquare/psquare.c:217-220}}}-->
 
 <p>Then we iterate once more over the visible children.
 For each child, we allocate a <code>GtkAllocation</code> structure on the stack, fill it with the correct <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow></m:math></span> coordinates and size, and notify the child by calling <code>gtk_widget_size_allocate()</code>.
 Then we update our <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mi>x</m:mi></m:mrow></m:math></span> and <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mi>y</m:mi></m:mrow></m:math></span> coordinates appropriately for the next child, moving down a row and returning to the left edge of the container when we reach the end of a row.</p>
 
-<!--{{{psquare/psquare.c:200-221}}}-->
+<!--{{{psquare/psquare.c:222-244}}}-->
 
 </section>
 <section id="example">
 <title>Example application</title>
 
 <p>We will create a simple example application to showcase our new container.
-You will find <file>test-psquare.c</file> in the code distribution, along with a simple <file>Makefile</file>. 
+You will find <file href="../psquare/test-psquare.c">test-psquare.c</file> in the code distribution, along with a simple <file href="../psquare/Makefile">Makefile</file>. 
 We create a toplevel window and require it to be a specific size (although you can resize it to be larger while the program is running), using <code>gtk_widget_set_size_request()</code>. 
 Since the window will stay the same size, then the widgets in the container will have more than enough space if there are only a few, but as more and more widgets are added, they will have to start squeezing themselves into spaces smaller than their size requests.</p>
 
