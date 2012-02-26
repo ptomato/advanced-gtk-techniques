@@ -80,6 +80,42 @@ div.page {
 	max-width: 100%;
 }
 
+div.banner {
+    margin: 0;
+    height: 85px;
+    background: #eeeeee;
+}
+
+div.banner h1 {
+    font-size: 1.6em;
+    font-weight: normal;
+    letter-spacing: 1px;
+    color: #204a87;
+    border: 0;
+    margin: 0 40px;
+    padding-top: 15px;
+}
+
+div.banner h1 a {
+    font-weight: normal;
+    color: #204a87;
+}
+
+div.banner h1 a:hover {
+	text-decoration: none;
+}
+
+div.banner h2 {
+    font-size: 1.3em;
+    font-weight: normal;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #aaa;
+    border: 0;
+    margin: -3px 40px 0;
+    padding: 0;
+}
+
 div.body {
 	margin: 1.5em auto;
 	padding: 1em;
