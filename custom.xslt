@@ -4,6 +4,10 @@
                 xmlns:mal="http://projectmallard.org/1.0/"
                 version="1.0">
 
+  <!-- Parameters -->
+  <xsl:param name="html.syntax.highlight" select="false()"/>
+
+  <!-- Pass MathML elements through -->
   <xsl:template mode="mal2html.inline.mode" match="m:*">
     <xsl:element name="{local-name()}" namespace="http://www.w3.org/1998/Math/MathML">
       <xsl:apply-templates mode="mal2html.inline.mode" select="@*|node()"/>
@@ -12,6 +16,13 @@
 
   <xsl:template name="html.head.custom">
     <link rel="stylesheet" href="../index.css" type="text/css"/>
+    <script src="../highlight.pack.js"/>
+    <script>
+$(document).ready(function() {
+  $('div.code pre').each(function(i, e) {hljs.highlightBlock(e, '    ')});
+});
+    </script>
+    <link rel="stylesheet" href="http://yandex.st/highlightjs/6.1/styles/github.min.css"/>
   </xsl:template>
 
   <xsl:template name="html.top.custom">
