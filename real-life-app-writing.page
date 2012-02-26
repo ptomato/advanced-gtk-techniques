@@ -1,5 +1,5 @@
 <page xmlns="http://projectmallard.org/1.0/"
-      type="topic"
+      type="guide"
       id="real-life-app-writing">
 <info>
   <credit type="author maintainer copyright">
@@ -10,8 +10,8 @@
   <license href="http://creativecommons.org/licenses/by-nc-sa/3.0/">
     <p>This work is licensed under a <link href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</link>.</p>
   </license>
-  <link type="guide" xref="index#app-writing"/>
-  <desc>Introduction</desc>
+  <link type="guide" xref="index" group="#default"/>
+  <desc>A sample application with useful features that appear in real apps</desc>
 </info>
 <title>Writing a real-life GTK application</title>
 
