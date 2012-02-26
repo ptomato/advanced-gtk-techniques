@@ -67,74 +67,72 @@
     <xsl:variable name="next" select="$page/mal:info/mal:link[@type='next']"/>
     <xsl:for-each select="$mal.cache">
       <xsl:variable name="prev" select="key('mal.cache.link.key', concat('next:', $linkid))"/>
-      <xsl:if test="$prev or $next">
-        <div class="links nextlinks">
-          <xsl:if test="$prev">
-            <xsl:text>« </xsl:text>
-            <a class="nextlinks-prev">
-              <xsl:attribute name="href">
-                <xsl:call-template name="mal.link.target">
-                  <xsl:with-param name="node" select="$prev"/>
-                  <xsl:with-param name="xref" select="$prev/../../@id"/>
-                </xsl:call-template>
-              </xsl:attribute>
-              <xsl:attribute name="title">
-                <xsl:call-template name="mal.link.tooltip">
-                  <xsl:with-param name="node" select="$prev"/>
-                  <xsl:with-param name="xref" select="$prev/../../@id"/>
-                </xsl:call-template>
-              </xsl:attribute>
-              <xsl:call-template name="mal.link.content">
-                <xsl:with-param name="node" select="$prev"/>
-                <xsl:with-param name="xref" select="$prev/../../@id"/>
-                <xsl:with-param name="role" select="'trail'"/>
-              </xsl:call-template>
-            </a>
-            <xsl:text> :: </xsl:text>
-          </xsl:if>
-          <xsl:variable name="contents" select="$page/mal:info/mal:link[@type='guide']"/>
-          <a class="nextlinks-contents">
+      <div class="links nextlinks">
+        <xsl:if test="$prev">
+          <xsl:text>« </xsl:text>
+          <a class="nextlinks-prev">
             <xsl:attribute name="href">
               <xsl:call-template name="mal.link.target">
-                <xsl:with-param name="node" select="$contents"/>
-                <xsl:with-param name="xref" select="$contents/@xref"/>
+                <xsl:with-param name="node" select="$prev"/>
+                <xsl:with-param name="xref" select="$prev/../../@id"/>
               </xsl:call-template>
             </xsl:attribute>
             <xsl:attribute name="title">
               <xsl:call-template name="mal.link.tooltip">
-                <xsl:with-param name="node" select="$contents"/>
-                <xsl:with-param name="xref" select="$contents/@xref"/>
+                <xsl:with-param name="node" select="$prev"/>
+                <xsl:with-param name="xref" select="$prev/../../@id"/>
               </xsl:call-template>
             </xsl:attribute>
-            <xsl:call-template name="l10n.gettext">
-              <xsl:with-param name="msgid" select="'Contents'"/>
+            <xsl:call-template name="mal.link.content">
+              <xsl:with-param name="node" select="$prev"/>
+              <xsl:with-param name="xref" select="$prev/../../@id"/>
+              <xsl:with-param name="role" select="'trail'"/>
             </xsl:call-template>
           </a>
-          <xsl:if test="$next">
-            <xsl:text> :: </xsl:text>
-            <a class="nextlinks-next">
-              <xsl:attribute name="href">
-                <xsl:call-template name="mal.link.target">
-                  <xsl:with-param name="node" select="$next"/>
-                  <xsl:with-param name="xref" select="$next/@xref"/>
-                </xsl:call-template>
-              </xsl:attribute>
-              <xsl:attribute name="title">
-                <xsl:call-template name="mal.link.tooltip">
-                  <xsl:with-param name="node" select="$next"/>
-                  <xsl:with-param name="xref" select="$next/@xref"/>
-                </xsl:call-template>
-              </xsl:attribute>
-              <xsl:call-template name="mal.link.content">
+          <xsl:text> :: </xsl:text>
+        </xsl:if>
+        <xsl:variable name="contents" select="$page/mal:info/mal:link[@type='guide']"/>
+        <a class="nextlinks-contents">
+          <xsl:attribute name="href">
+            <xsl:call-template name="mal.link.target">
+              <xsl:with-param name="node" select="$contents"/>
+              <xsl:with-param name="xref" select="$contents/@xref"/>
+            </xsl:call-template>
+          </xsl:attribute>
+          <xsl:attribute name="title">
+            <xsl:call-template name="mal.link.tooltip">
+              <xsl:with-param name="node" select="$contents"/>
+              <xsl:with-param name="xref" select="$contents/@xref"/>
+            </xsl:call-template>
+          </xsl:attribute>
+          <xsl:call-template name="l10n.gettext">
+            <xsl:with-param name="msgid" select="'Contents'"/>
+          </xsl:call-template>
+        </a>
+        <xsl:if test="$next">
+          <xsl:text> :: </xsl:text>
+          <a class="nextlinks-next">
+            <xsl:attribute name="href">
+              <xsl:call-template name="mal.link.target">
                 <xsl:with-param name="node" select="$next"/>
                 <xsl:with-param name="xref" select="$next/@xref"/>
-                <xsl:with-param name="role" select="'trail'"/>
               </xsl:call-template>
-            </a>
-            <xsl:text> »</xsl:text>
-          </xsl:if>
-        </div>
-      </xsl:if>
+            </xsl:attribute>
+            <xsl:attribute name="title">
+              <xsl:call-template name="mal.link.tooltip">
+                <xsl:with-param name="node" select="$next"/>
+                <xsl:with-param name="xref" select="$next/@xref"/>
+              </xsl:call-template>
+            </xsl:attribute>
+            <xsl:call-template name="mal.link.content">
+              <xsl:with-param name="node" select="$next"/>
+              <xsl:with-param name="xref" select="$next/@xref"/>
+              <xsl:with-param name="role" select="'trail'"/>
+            </xsl:call-template>
+          </a>
+          <xsl:text> »</xsl:text>
+        </xsl:if>
+      </div>
     </xsl:for-each>
   </xsl:template>
 
