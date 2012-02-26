@@ -43,7 +43,7 @@ done</input>
 </screen>
 
 <p>This is the icon we have just downloaded, in five different sizes: 
-<media type="image" src="../app-skeleton3/pixmaps/48x48/apps/app-skeleton.png">[An icon of a raincloud from the GNOME icon theme]</media></p>
+<media type="image" src="app-skeleton3/pixmaps/48x48/apps/app-skeleton.png">[An icon of a raincloud from the GNOME icon theme]</media></p>
 
 <p>There is a reason why we are creating this particular directory structure.
 It is explained in the Free Desktop <link href="http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html">Icon Theme Specification</link> and <link href="http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html">Icon Naming Specification</link>.</p>
