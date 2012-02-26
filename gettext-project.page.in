@@ -12,6 +12,7 @@
   </license>
   <link type="guide" xref="real-life-app-setup" group="#default"/>
   <desc>Allowing your program to be translated into other languages</desc>
+  <revision status="final"/>
 </info>
 <title>Setting up <app>Gettext</app></title>
 

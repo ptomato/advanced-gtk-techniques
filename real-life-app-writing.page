@@ -12,6 +12,7 @@
   </license>
   <link type="guide" xref="index" group="#default"/>
   <desc>A sample application with useful features that appear in real apps</desc>
+  <revision status="incomplete"/>
 </info>
 <title>Writing a real-life GTK application</title>
 

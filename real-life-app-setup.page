@@ -13,6 +13,7 @@
   <link type="guide" xref="index" group="#default"/>
   <link type="next" xref="autoconf-project"/>
   <desc>Putting together the build infrastructure for an application</desc>
+  <revision status="final"/>
 </info>
 <title>Setting up a real-life GTK application</title>
 
