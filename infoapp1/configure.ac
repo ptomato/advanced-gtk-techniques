@@ -41,7 +41,7 @@ IT_PROG_INTLTOOL([0.40])
 PKG_CHECK_MODULES([INFO_APP], [
 	glib-2.0
 	gio-2.0 >= 2.28
-	gtk+-2.0 >= 2.12
+	gtk+-3.0
 ])
 # Check for OS X integration package
 PKG_CHECK_EXISTS([gtk-mac-integration], [
