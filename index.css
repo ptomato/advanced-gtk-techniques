@@ -232,3 +232,11 @@ div.topiclinks a:hover {
 	text-decoration: none;
 }
 
+a.linkdiv:hover,
+a.linkdiv:visited {
+	color: #204a87;
+}
+
+div.title-listing a {
+	color: #4e9a06;
+}
