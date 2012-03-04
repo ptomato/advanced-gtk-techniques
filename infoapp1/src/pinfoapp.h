@@ -2,6 +2,7 @@
 #define P_INFO_APP_H
 
 #include <gio/gio.h>
+#include <gtk/gtk.h>
 
 #ifdef MAC_INTEGRATION
 #include <gtkmacintegration/gtkosxapplication.h>
@@ -34,6 +35,7 @@ typedef struct {
 
 GType p_info_app_get_type(void) G_GNUC_CONST;
 PInfoApp *p_info_app_get(void);
+GtkActionGroup *p_info_app_get_action_group(PInfoApp *self);
 
 G_END_DECLS
 

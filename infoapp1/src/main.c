@@ -17,6 +17,7 @@ main(int argc, char **argv)
 #else
 	PInfoApp *theapp = p_info_app_get();
 	gtk_main();
+	g_object_unref(theapp);
 	return 0;
 #endif
 }
