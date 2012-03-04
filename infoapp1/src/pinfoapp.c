@@ -4,6 +4,7 @@
 #include <gio/gio.h>
 #include <gtk/gtk.h>
 #include "pinfoapp.h"
+#include "pinfowindow.h"
 
 #ifdef MAC_INTEGRATION
 #include <gtkmacintegration/gtkosxapplication.h>
@@ -94,6 +95,8 @@ static void
 p_info_app_activate(PInfoApp *self)
 {
 	g_print("Activate\n");
+	GtkWidget *mainwin = p_info_window_new();
+	gtk_window_present(GTK_WINDOW(mainwin));
 }
 
 /* Signal handlers */
