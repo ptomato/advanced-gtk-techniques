@@ -7,17 +7,17 @@ add_clicked(GtkToolButton *button, GtkWidget *square)
 {
     GList *children;
     GtkWidget *widget;
-    gint count;
-    gchar *text;
-    
+    int count;
+    char *text;
+
     /* Get the number of this new widget and print it in a string */
     children = gtk_container_get_children(GTK_CONTAINER(square));
-    count = g_list_position(children, g_list_last(children)) + 2;
+    count = g_list_length(children) + 1;
     g_list_free(children);
     text = g_strdup_printf("Widget #%d", count);
     
-    /* Pick a widget and put the text in it (unless it's a GtkImage) */
-    switch(g_random_int_range(0, 7)) {
+    /* Pick a widget and put the text in it if possible */
+    switch(g_random_int_range(0, 8)) {
     case 0:
         widget = gtk_image_new_from_stock(GTK_STOCK_NEW, g_random_int_range(1, 6));
         break;
@@ -35,17 +35,18 @@ add_clicked(GtkToolButton *button, GtkWidget *square)
         gtk_entry_set_text(GTK_ENTRY(widget), text);
         break;
     case 5:
-    {
-        GtkObject *adjustment = gtk_adjustment_new(count, 0, count, 1, 1, 0);
-        widget = gtk_spin_button_new(GTK_ADJUSTMENT(adjustment), 1, 0);
-    }
+        widget = gtk_spin_button_new_with_range(0.0, (double)count, 1.0);
+        gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget), (double)count);
         break;
     case 6:
-        widget = gtk_combo_box_new_text();
-        gtk_combo_box_append_text(GTK_COMBO_BOX(widget), text);
-        gtk_combo_box_append_text(GTK_COMBO_BOX(widget), text);
+        widget = gtk_combo_box_text_new();
+        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(widget), text);
+        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(widget), text);
         gtk_combo_box_set_active(GTK_COMBO_BOX(widget), 0);
         break;
+    case 7:
+		widget = gtk_switch_new();
+		break;
     }
     g_free(text);
     
