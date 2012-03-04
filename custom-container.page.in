@@ -55,12 +55,12 @@ Not all online resources mention them.</p>
 <p><code>G_DEFINE_TYPE()</code> is a handy macro that saves you a lot of typing.
 It writes your <code>p_square_get_type()</code> function for you, which you then export in your header file; it also declares a static <code>p_square_parent_class</code> variable, a static <code>p_square_class_init()</code> function, and a static <code>p_square_init()</code> function.</p>
 
-<!--{{{psquare/psquare.c:25}}}-->
+<!--{{{psquare/psquare.c:29}}}-->
 
 <p>The <code>parent_class</code> variable is there to avoid a costly call to <code>g_type_class_peek_parent()</code> every time you need to chain up to a method in the parent class (often in <code>finalize</code>).
 You need to write the class and instance initialization functions yourself.</p>
 
-<!--{{{psquare/psquare.c:28-45}}}-->
+<!--{{{psquare/psquare.c:32-50}}}-->
 
 <p>The class initialization function <code>p_square_class_init</code> overrides several methods in ancestor classes.
 If you are not familiar with the GObject way of doing this, then take a good look now.
@@ -94,7 +94,7 @@ We need to keep track of this list ourselves, since <code>GtkContainer</code> wo
 static void
 p_square_init(PSquare *square)
 {
-	GTK_WIDGET_SET_FLAGS(GTK_WIDGET(square), GTK_NO_WINDOW);
+	gtk_widget_set_has_window(GTK_WIDGET(square), FALSE);
 
 	/* Initialize private members */
 	PSquarePrivate *priv = P_SQUARE_PRIVATE(square);
@@ -102,13 +102,13 @@ p_square_init(PSquare *square)
 }
 ]]></code>
 
-<p>The <code>GTK_NO_WINDOW</code> flag means that <code>Psquare</code> doesn't have a <code>GdkWindow</code> associated with it; we don't do any drawing ourselves, we just arrange the container's children.
+<p>The <code>gtk_widget_set_has_window()</code> call means that <code>Psquare</code> doesn't have a <code>GdkWindow</code> associated with it; we don't do any drawing ourselves, we just arrange the container's children.
 The private member <code>children</code> is initialized to <code>NULL</code>, which is an empty <code>GList</code>, as you should know.</p>
 
 <p>You should also know that it is customary to create a widget with a <code>p_square_new()</code> function, which returns a new instance of the class, cast to a <code>GtkWidget</code> pointer.
 Here it is:</p>
 
-<!--{{{psquare/psquare.c:62-66}}}-->
+<!--{{{psquare/psquare.c:68-72}}}-->
 
 </section>
 <section id="overriding-container">
@@ -117,24 +117,24 @@ Here it is:</p>
 <p>Now for the overridden ancestor methods.
 The <code>GtkContainer</code> ones are fairly trivial, so we'll do them first.
 The <code>child_type</code> method, specifying what types of children can be added to the container, simply returns <code>GTK_TYPE_WIDGET</code>.
-The <code>forall</code> pointer in the <code>GtkContainerClass</code> structure doesn't correspond exactly to a <code>GtkContainer</code> method, but <code>gtk_container_forall()</code> and <code>gtk_container_foreach()</code> are implemented in terms of it, as well as some other functions.
-One iterates over all children including "internal" ones (such as the <code>GtkButton</code>s in a dialog), the other doesn't.
+The <code>forall</code> pointer in the <code>GtkContainerClass</code> structure doesn't correspond exactly to a <code>GtkContainer</code> method, but <code>gtk_container_forall()</code> and <code>gtk_container_foreach()</code> are use it in their implementations.
+One iterates over all children including "internal" ones (such as the <code>GtkButton</code>s in a dialog that aren't meant to be manipulated by your program), the other iterates over the container's children but skips internal ones..
 The class <code>forall</code> function takes a flag telling whether to include internal children or not.
 <code>PSquare</code> doesn't have any internal children, so we just ignore that.</p>
 
-<!--{{{psquare/psquare.c:304-999}}}-->
+<!--{{{psquare/psquare.c:397-999}}}-->
 
 <p>The next things to implement are the <code>add</code> and <code>remove</code> methods.
 Note that you don't have to have them if, for example, your container has a different mechanism for adding widgets; the default <code>GtkContainer</code> implementations do nothing, and print a warning message saying that the method is not implemented.</p>
 
-<!--{{{psquare/psquare.c:258-275}}}-->
+<!--{{{psquare/psquare.c:351-363}}}-->
 
 <p>It may surprise you that this function is not longer.
 However, as the comment says, all the real work is done in <code>gtk_widget_set_parent()</code>: sinking the child's floating reference, redrawing the child, emitting the appropriate signals, etc.
 We still have to redraw the container ourselves.
 The corresponding method to remove a child is much the same, with all the real work being done in <code>gtk_widget_unparent()</code>.</p>
 
-<!--{{{psquare/psquare.c:278-299}}}-->
+<!--{{{psquare/psquare.c:371-392}}}-->
 
 <p>Note that we don't have to write <code>p_square_destroy()</code> or <code>p_square_finalize()</code> methods to unref the child widgets, since the <code>GtkContainer</code> code already does that when the container is destroyed.</p>
 
@@ -148,49 +148,70 @@ The width of a column will be equal to the width of the widest widget in that co
 The container height will be determined likewise.
 We will also respect the <code>border_width</code> property of <code>GtkContainer</code>.</p>
 
-<p>The <code>size_request</code> method is passed a pointer to a <code>GtkRequisition</code> structure, which it must fill with its requested size.</p>
+<p>There are two functions with which the container reports its size: one for the width, and one for the height.
+They are passed pointers to two integers, which they must fill with the minimum size (the absolute minimum they need to function) and the natural size (at which they can function comfortably.)</p>
+
+<!--{{{psquare/psquare.c:17-20}}}-->
+
+<p>In our case, these two functions will work nearly the same, so we will write them both in terms of a third function, <code>get_size()</code>.
+This function gets an extra <code>GtkOrientation</code> parameter, called <code>direction</code>:
+<code>GTK_ORIENTATION_HORIZONTAL</code> if we are requesting the width, <code>GTK_ORIENTATION_VERTICAL</code> if we are requesting the height.</p>
 
 <code mime="text/x-csrc"><![CDATA[
-static void p_square_size_request(GtkWidget *widget,
-                                  GtkRequisition *requisition);
+static void get_size(PSquare *self, GtkOrientation direction,
+    int *minimal, int *natural);
 ]]></code>
 
-<p>We start by setting the <code>width</code> and <code>height</code> fields of the size requisition to their minimum value, twice the border width.
-Then we compute the number of visible children, and if that is zero, our work is done; we don't layout unshown widgets.</p>
+<p>We start by setting the <code>minimal</code> and <code>natural</code> parameters to their minimum value, twice the border width.
+Then we compute the size of the side of our square, or in other words, the number of rows and columns.
+We call it <code>n_groups</code> because it doesn't matter whether we are talking about rows or columns here.
+If the number of groups is zero, our work is done.</p>
 
-<!--{{{psquare/psquare.c:77-89}}}-->
+<p>Then, we iterate over the children, asking them for their sizes, in the function <code>get_group_sizes()</code>.
+The <code>GtkRequestedSize</code> structure stores both the minimum and the natural size requests.
+Once we have got this information, we add them all up to find the total size we want to request.</p>
 
-<p>Then, we compute the size of the side of our square, and allocate arrays to store that number of column widths and row heights.
-When we get all the size requests of the container's children, we will store a running maximum for each row and column in those arrays, then add them up.</p>
+<!--{{{psquare/psquare.c:186-210}}}-->
 
-<!--{{{psquare/psquare.c:91-97}}}-->
+<p>The function <code>get_n_columns_and_rows()</code> is shown below.
+Note that the container might still have children, but the number of groups will be zero if they are all invisible; we don't layout unshown widgets.</p>
 
-<p>We then iterate over the children again, asking them for their size requests.
-The simplest way is to allocate a <code>GtkRequisition</code> structure on the stack and pass its address to the child's size request function. 
-If the child's width is larger than the width we have stored for the column we're in, we replace the stored width by the child's width, and likewise for the height. 
-Then we add the widths and heights to our own requisition.</p>
+<!--{{{psquare/psquare.c:84-98}}}-->
+<!--{{{psquare/psquare.c:74-81}}}-->
 
-<!--{{{psquare/psquare.c:99-124}}}-->
+<p>Next we describe <code>get_group_sizes()</code>, since that is where most of the real work of finding the preferred size is done.
+</p>
+
+<p>First, we allocate arrays to store all the group sizes (that is, the column widths or row heights.)
+When we get all the preferred sizes of the container's children, we will store a running maximum for each group in this array.</p>
+
+<!--{{{psquare/psquare.c:111}}}-->
+
+<p>We then iterate over the children again, asking them for their preferred sizes.
+If we are in width mode, we ask for the width, or the height in height mode.
+We also set the variable <code>group_num</code> depending on width or height mode; this is the row or column number the current child widget is in.</p>
+
+<p>Then, if the child's size is larger than the size we have stored for the group we're in, we replace the stored size by the child's size. 
+We return this <code>sizes</code> array.</p>
+
+<!--{{{psquare/psquare.c:115-139}}}-->
+
+</section>
+<section id="size-allocation">
+<title>Size allocation</title>
 
 <p>The <code>size_allocate</code> method is similar. 
 It receives a pointer to a <code>GtkAllocation</code> structure, which contains the size that the widget will have to deal with.</p>
 
-<code mime="text/x-csrc"><![CDATA[
-static void p_square_size_allocate(GtkWidget *widget,
-                                   GtkAllocation *allocation);
-]]></code>
+<!--{{{psquare/psquare.c:21-22}}}-->
 
 <p>The first thing it must do is store the allocation in the widget structure.</p>
 
-<!--{{{psquare/psquare.c:139}}}-->
+<!--{{{psquare/psquare.c:273}}}-->
 
 <p>The next section is very similar to the code in the <code>size_request</code> method.</p>
 
-<!--{{{psquare/psquare.c:141-175}}}-->
-
-<p>The only thing different here is that instead of calling <code>gtk_widget_size_request()</code> on each child, we call <code>gtk_widget_get_size_requisition()</code> instead.
-The latter function does not ask the child to calculate a size request, but instead retrieves the last known size request, which is either the size set in the child's size request method, or from program code calling <code>gtk_widget_set_size_request()</code> on the widget.
-The GTK documentation says it should only be used when you know that the widget's size request is up to date, and in this case, we do.</p>
+<p>...</p>
 
 <p>Now we have to distribute the container's allocated space to the children.
 Our policy will be to divide any extra width equally among the columns, and any extra height equally among the rows.

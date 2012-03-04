@@ -14,9 +14,12 @@ struct _PSquarePrivate
 };
 
 /* Forward declarations */
-static void p_square_get_preferred_width(GtkWidget *widget, int *minimal, int *natural);
-static void p_square_get_preferred_height(GtkWidget *widget, int *minimal, int *natural);
-static void p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation);
+static void p_square_get_preferred_width(GtkWidget *widget,
+	int *minimal, int *natural);
+static void p_square_get_preferred_height(GtkWidget *widget,
+	int *minimal, int *natural);
+static void p_square_size_allocate(GtkWidget *widget,
+	GtkAllocation *allocation);
 static GType p_square_child_type(GtkContainer *container);
 static void p_square_add(GtkContainer *container, GtkWidget *widget);
 static void p_square_remove(GtkContainer *container, GtkWidget *widget);
@@ -77,7 +80,7 @@ count_visible_children(GtkWidget *widget, unsigned *n_visible_children)
 		(*n_visible_children)++;
 }
 
-/* Determines the number of columns and rows in this square. */
+/* Determines the number of columns and rows in this square */
 unsigned
 get_n_columns_and_rows(PSquare *self)
 {
@@ -188,11 +191,12 @@ get_size(PSquare *self, GtkOrientation direction, int *minimal, int *natural)
 		gtk_container_get_border_width(GTK_CONTAINER(self));
 	*minimal = *natural = border_width * 2;
 
-	/* Find out how many children there are and how much space
-	 * they want */
+	/* Find out how many children there are */
 	unsigned n_groups = get_n_columns_and_rows(self);
 	if(n_groups == 0)
 		return;
+
+	/* Find out how much space they want */
 	GtkRequestedSize *sizes = get_group_sizes(self, direction, n_groups);
 
 	/* Add the widths and pass that as the container's width */
