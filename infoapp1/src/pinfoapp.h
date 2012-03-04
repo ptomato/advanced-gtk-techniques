@@ -32,6 +32,7 @@ typedef struct {
 #endif
 } PInfoAppClass;
 
+GType p_info_app_get_type(void) G_GNUC_CONST;
 PInfoApp *p_info_app_get(void);
 
 G_END_DECLS
