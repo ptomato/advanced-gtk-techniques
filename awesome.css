@@ -119,40 +119,43 @@ div.menu li.current {
 }
 
 #bigbuttons {
-	margin-top: 20px;
-	text-align: center;
+	margin-top: 3em;
+    text-align: center;
 }
 
-/* This clears the "float" status of the big buttons and makes sure the
-footer doesn't appear to the right of them */
-#bigbuttons:after {
-	content: ".";
-	display: block;
-	height: 0;
-	clear: both;
-	visibility: hidden;
-}
-
-div.bigbutton h2 {
-	font-size: 32px;
-}
-
-div.bigbutton h2 a {
-	color: white;
-}
-
-div.bigbutton {
-	float: left;
-	width: 18.2em;
+/* Nice button tutorial:
+http://webdesignerwall.com/tutorials/css3-gradient-buttons */
+a.bigbutton {
+    font-size: 32px;
+    color: white;
+	min-width: 18.2em;
 	padding: 1em;
 	margin: 1em;
-	border-radius: 15px;
-	background: #a40000;
-	border: 1px solid #cc0000;
+	cursor: pointer;
+	text-shadow: 0 1px 1px rgba(0,0,0,.3);
+    border: 1px solid #ef2929;
+	-webkit-border-radius: .5em; 
+	-moz-border-radius: .5em;
+	border-radius: .5em;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+	box-shadow: 0 1px 2px rgba(0,0,0,.2);
+	background: #cc0000;
+	background: -webkit-gradient(linear, left top, left bottom, from(#d41e1e), to(#a40000));
+	background: -moz-linear-gradient(top, #d41e1e,  #a40000);
 }
 
-div.bigbutton p {
-	color: white;
+a.bigbutton:hover {
+    text-decoration: none;
+    border: 1px solid #ef2929;
+    background: #b60000;
+	background: -webkit-gradient(linear, left top, left bottom, from(#cc0000), to(#910000));
+	background: -moz-linear-gradient(top,  #cc0000,  #910000);
+}
+
+a.bigbutton:active {
+	position: relative;
+	top: 1px;
 }
 
 #license {
