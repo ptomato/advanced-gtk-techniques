@@ -13,7 +13,7 @@
   <link type="next" xref="gettext-project"/>
   <link type="guide" xref="real-life-app-setup" group="#default"/>
   <desc>Installing your program onto the user's desktop</desc>
-  <revision status="final"/>
+  <revision status="final" date="2012-03-07"/>
 </info>
 <title>Icons and desktop files</title>
 

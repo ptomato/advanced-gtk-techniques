@@ -12,7 +12,7 @@
   </license>
   <link type="guide" xref="index" group="#default"/>
   <desc>Changing menus, shortcuts, and toolbars while the application is running</desc>
-  <revision status="stub"/>
+  <revision status="stub" date="2012-03-07"/>
 </info>
 <title>Using dynamic menu and toolbar actions</title>
 
