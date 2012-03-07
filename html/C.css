@@ -897,3 +897,26 @@ span.gloss-desc {
   .if-choose.if__not-target-mobile > .if-when { display: none; }
   .if-choose.if__not-target-mobile > .if-else { display: block; }
 }
+
+div.version {
+  position: absolute;
+  right: 12px;
+  opacity: 0.2;
+  margin-top: -1em;
+  padding: 0.5em 1em 0.5em 1em;
+  max-width: 24em;
+  border: solid 1px #babdb6;
+  background-color: #fffacc;
+}
+div.version:hover { opacity: 0.8; }
+div.version p.version { margin-top: 0.2em; }
+span.status {
+  font-size: 0.83em;
+  font-weight: normal;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  color: #2e3436;
+  border: solid 1px #ef2929;
+  background-color: #fffacc;
+}
+span.status-stub, span.status-draft, span.status-incomplete, span.status-outdated { background-color: #ffdede; }
