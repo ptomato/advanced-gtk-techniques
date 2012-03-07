@@ -13,7 +13,6 @@
   <link type="next" xref="desktop-file"/>
   <link type="guide" xref="real-life-app-setup" group="#first"/>
   <desc>Generating your Makefiles automatically</desc>
-  <revision status="final" date="2012-03-07"/>
 </info>
 <title>Setting up <app>Automake</app></title>
 
