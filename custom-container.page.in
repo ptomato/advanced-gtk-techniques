@@ -12,7 +12,7 @@
   </license>
   <link type="guide" xref="index" group="#default"/>
   <desc>A container that does its own size allocation</desc>
-  <revision status="final"/>
+  <revision status="incomplete" date="2012-03-07"/>
 </info>
 <title>Custom container</title>
 
