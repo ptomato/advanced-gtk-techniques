@@ -300,7 +300,7 @@ p_square_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 	GtkRequestedSize *heights = get_group_sizes_for_sizes(P_SQUARE(widget),
 		GTK_ORIENTATION_VERTICAL, widths, n_rows);
 
-	/* Calculate the extra space per row (can be negative) */
+	/* Distribute the extra space per row (can be negative) */
 	for(count = 0; count < n_rows; count++)
 		extra_height -= heights[count].minimum_size;
 	distribute_extra_space(P_SQUARE(widget), heights, extra_height, n_rows);
