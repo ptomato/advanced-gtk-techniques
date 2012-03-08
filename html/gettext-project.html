@@ -87,7 +87,7 @@ It doesn't need much changing; I changed the <span class=" code">COPYRIGHT_HOLDE
 First, add at the top of the file:</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../app-skeleton4/src/hello-world.c" title="../app-skeleton4/src/hello-world.c">app-skeleton4/src/hello-world.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">#include &lt;glib/gi18n.h&gt;</pre></div></div></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">#include &lt;glib/gi18n.h&gt;</pre></div></div></div>
 </div></div>
 <p class="p">This is a special GLib header file where the interface to <span class=" cmd">gettext</span> is defined.
 (<span class=" code">i18n</span> stands for "internationalization", because there are eighteen letters between the initial I and the final N.)
@@ -97,7 +97,7 @@ It is called <span class=" code">_</span> so as to save typing and not to distra
 <p class="p">Then, add the following code to the top of the <span class=" code">main()</span> function, at line 40:</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../app-skeleton4/src/hello-world.c" title="../app-skeleton4/src/hello-world.c">app-skeleton4/src/hello-world.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">/* Set up internationalization */
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">/* Set up internationalization */
 setlocale (LC_ALL, "");
 bindtextdomain (PACKAGE, LOCALEDIR);
 textdomain (PACKAGE);</pre></div></div></div>

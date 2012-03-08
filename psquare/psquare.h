@@ -17,12 +17,12 @@ typedef struct _PSquareClass  PSquareClass;
 
 struct _PSquare
 {
-    GtkContainer parent_instance;
+	GtkContainer parent_instance;
 };
 
 struct _PSquareClass
 {
-    GtkContainerClass parent_class;
+	GtkContainerClass parent_class;
 };
 
 GType p_square_get_type(void) G_GNUC_CONST;

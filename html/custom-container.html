@@ -24,11 +24,13 @@ $(document).ready(function() {
 <div class="hgroup"><h1 class="title"><span class="title">Custom container</span></h1></div>
 <div class="region">
 <div class="contents">
-<p class="p">Size allocation is not a very difficult procedure in GTK; every widget has overridable <span class=" code">size_request</span> and <span class=" code">size_allocate</span> methods.
-Sizes are requested from the bottom of the widget tree up, with each container calling <span class=" code">gtk_widget_size_request()</span> on each of its children and then calculating its own size request using that information.
-Once the total size is known, the available space is calculated and allocated from the top down: each container divides up the space it receives among its children by calling their <span class=" code">gtk_widget_size_allocate()</span> methods.
-This is covered in chapter 11 of <span class=" em"><a href="http://gtkbook.com" title="http://gtkbook.com">Foundations of GTK Development</a></span>.</p>
-<p class="p">In most cases, such as writing a composite widget or adding functionality to an existing container, you can get away with subclassing a container like <span class=" code">GtkVBox</span>.
+<p class="p">Size allocation is not a very difficult procedure in GTK.
+Widgets report their preferred size from the bottom of the widget tree up, with each container figuring out the preferred sizes of its children and then calculating its own preferred size using that information.
+This can be done simply by using <span class=" code">gtk_widget_get_preferred_height()</span> and <span class=" code">gtk_widget_get_preferred_width()</span>, but you can also have the height depend on the width or the width depend on the height.
+Once the total preferred size is known, the available space is allocated from the top down: each container divides up the space it receives among its children by calling their <span class=" code">gtk_widget_size_allocate()</span> methods.
+What's more, you can customize the process for any widget by overriding these methods.</p>
+<div class="note note-warning" title="Warning"><div class="inner"><div class="region"><div class="contents"><p class="p">This is rather different from the way things worked in GTK 2, and there are probably plenty of GTK 2 instructions still floating around on the Internet.</p></div></div></div></div>
+<p class="p">In most cases, such as writing a composite widget or adding functionality to an existing container, you can get away with subclassing a container like <span class=" code">GtkGrid</span>.
 That way, you don't have to deal with size negotiation and other container stuff directly, since it's already implemented in your parent class.
 But what if you want a container that arranges its children differently than all the existing GTK containers?
 Then you'll have to write a new container with its own size request and allocation algorithms.</p>
@@ -55,29 +57,30 @@ Not all online resources mention them.</p>
 It writes your <span class=" code">p_square_get_type()</span> function for you, which you then export in your header file; it also declares a static <span class=" code">p_square_parent_class</span> variable, a static <span class=" code">p_square_class_init()</span> function, and a static <span class=" code">p_square_init()</span> function.</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">G_DEFINE_TYPE(PSquare, p_square, GTK_TYPE_CONTAINER);</pre></div></div></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">G_DEFINE_TYPE(PSquare, p_square, GTK_TYPE_CONTAINER);</pre></div></div></div>
 </div></div>
 <p class="p">The <span class=" code">parent_class</span> variable is there to avoid a costly call to <span class=" code">g_type_class_peek_parent()</span> every time you need to chain up to a method in the parent class (often in <span class=" code">finalize</span>).
 You need to write the class and instance initialization functions yourself.</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">static void
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">static void
 p_square_class_init(PSquareClass *klass)
-{    
-    /* Override GtkWidget methods */
-    GtkWidgetClass *widget_class = GTK_WIDGET_CLASS(klass);
-    widget_class-&gt;size_request = p_square_size_request;
-    widget_class-&gt;size_allocate = p_square_size_allocate;
-    
-    /* Override GtkContainer methods */
-    GtkContainerClass *container_class = GTK_CONTAINER_CLASS(klass);
-    container_class-&gt;child_type = p_square_child_type;
-    container_class-&gt;add = p_square_add;
-    container_class-&gt;remove = p_square_remove;
-    container_class-&gt;forall = p_square_forall;
-    
-    /* Add private indirection member */
-    g_type_class_add_private(klass, sizeof(PSquarePrivate));
+{
+	/* Override GtkWidget methods */
+	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS(klass);
+	widget_class-&gt;get_preferred_width = p_square_get_preferred_width;
+	widget_class-&gt;get_preferred_height = p_square_get_preferred_height;
+	widget_class-&gt;size_allocate = p_square_size_allocate;
+
+	/* Override GtkContainer methods */
+	GtkContainerClass *container_class = GTK_CONTAINER_CLASS(klass);
+	container_class-&gt;child_type = p_square_child_type;
+	container_class-&gt;add = p_square_add;
+	container_class-&gt;remove = p_square_remove;
+	container_class-&gt;forall = p_square_forall;
+
+	/* Add private indirection member */
+	g_type_class_add_private(klass, sizeof(PSquarePrivate));
 }</pre></div></div></div>
 </div></div>
 <p class="p">The class initialization function <span class=" code">p_square_class_init</span> overrides several methods in ancestor classes.
@@ -93,14 +96,14 @@ That way, each object has private data stored in it, but you can only access tha
 The private structure is defined in the following code.</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">#define P_SQUARE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), \
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">#define P_SQUARE_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), \
 	P_SQUARE_TYPE, PSquarePrivate))
-                                    
+
 typedef struct _PSquarePrivate PSquarePrivate;
 
 struct _PSquarePrivate
 {
-    GList *children;
+	GList *children;
 };</pre></div></div></div>
 </div></div>
 <p class="p">You might prefer to put these lines in a file called something like <span class=" file">psquare-private.h</span>.
@@ -110,25 +113,25 @@ It also comes in handy if the implementation of your class is very big and you w
 Our only private member is the list of our container's children.
 We need to keep track of this list ourselves, since <span class=" code">GtkContainer</span> won't do it for us.</p>
 <p class="p">The instance initialization function <span class=" code">p_square_init()</span> initializes the public and private members of our object:</p>
-<div class="code"><pre class="contents ">static void
+<div class="code"><pre class="contents language-cpp">static void
 p_square_init(PSquare *square)
 {
-	GTK_WIDGET_SET_FLAGS(GTK_WIDGET(square), GTK_NO_WINDOW);
+	gtk_widget_set_has_window(GTK_WIDGET(square), FALSE);
 
 	/* Initialize private members */
 	PSquarePrivate *priv = P_SQUARE_PRIVATE(square);
 	priv-&gt;children = NULL;
 }</pre></div>
-<p class="p">The <span class=" code">GTK_NO_WINDOW</span> flag means that <span class=" code">Psquare</span> doesn't have a <span class=" code">GdkWindow</span> associated with it; we don't do any drawing ourselves, we just arrange the container's children.
+<p class="p">The <span class=" code">gtk_widget_set_has_window()</span> call means that <span class=" code">Psquare</span> doesn't have a <span class=" code">GdkWindow</span> associated with it; we don't do any drawing ourselves, we just arrange the container's children.
 The private member <span class=" code">children</span> is initialized to <span class=" code">NULL</span>, which is an empty <span class=" code">GList</span>, as you should know.</p>
 <p class="p">You should also know that it is customary to create a widget with a <span class=" code">p_square_new()</span> function, which returns a new instance of the class, cast to a <span class=" code">GtkWidget</span> pointer.
 Here it is:</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">GtkWidget *
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">GtkWidget *
 p_square_new()
 {
-    return GTK_WIDGET(g_object_new(p_square_get_type(), NULL));
+	return GTK_WIDGET(g_object_new(p_square_get_type(), NULL));
 }</pre></div></div></div>
 </div></div>
 </div></div>
@@ -139,17 +142,17 @@ p_square_new()
 <p class="p">Now for the overridden ancestor methods.
 The <span class=" code">GtkContainer</span> ones are fairly trivial, so we'll do them first.
 The <span class=" code">child_type</span> method, specifying what types of children can be added to the container, simply returns <span class=" code">GTK_TYPE_WIDGET</span>.
-The <span class=" code">forall</span> pointer in the <span class=" code">GtkContainerClass</span> structure doesn't correspond exactly to a <span class=" code">GtkContainer</span> method, but <span class=" code">gtk_container_forall()</span> and <span class=" code">gtk_container_foreach()</span> are implemented in terms of it, as well as some other functions.
-One iterates over all children including "internal" ones (such as the <span class=" code">GtkButton</span>s in a dialog), the other doesn't.
+The <span class=" code">forall</span> pointer in the <span class=" code">GtkContainerClass</span> structure doesn't correspond exactly to a <span class=" code">GtkContainer</span> method, but <span class=" code">gtk_container_forall()</span> and <span class=" code">gtk_container_foreach()</span> are use it in their implementations.
+One iterates over all children including "internal" ones (such as the <span class=" code">GtkButton</span>s in a dialog that aren't meant to be manipulated by your program), the other iterates over the container's children but skips internal ones..
 The class <span class=" code">forall</span> function takes a flag telling whether to include internal children or not.
 <span class=" code">PSquare</span> doesn't have any internal children, so we just ignore that.</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">static void 
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">static void
 p_square_forall(GtkContainer *container, gboolean include_internals,
-                GtkCallback callback, gpointer callback_data)
+	GtkCallback callback, gpointer callback_data)
 {
-    PSquarePrivate *priv = P_SQUARE_PRIVATE(container);
+	PSquarePrivate *priv = P_SQUARE_PRIVATE(container);
 	g_list_foreach(priv-&gt;children, (GFunc)callback, callback_data);
 }</pre></div></div></div>
 </div></div>
@@ -157,23 +160,23 @@ p_square_forall(GtkContainer *container, gboolean include_internals,
 Note that you don't have to have them if, for example, your container has a different mechanism for adding widgets; the default <span class=" code">GtkContainer</span> implementations do nothing, and print a warning message saying that the method is not implemented.</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">static void
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">static void
 p_square_add(GtkContainer *container, GtkWidget *widget)
 {
-    g_return_if_fail(container || P_IS_SQUARE(container));
-    g_return_if_fail(widget || GTK_IS_WIDGET(widget));
-    g_return_if_fail(widget-&gt;parent == NULL);
-    
-    PSquarePrivate *priv = P_SQUARE_PRIVATE(container);
-    
-    /* Add the child to our list of children. 
-     * All the real work is done in gtk_widget_set_parent(). */
-    priv-&gt;children = g_list_append(priv-&gt;children, widget);
-    gtk_widget_set_parent(widget, GTK_WIDGET(container));
-    
-    /* Queue redraw */
-    if(GTK_WIDGET_VISIBLE(widget))
-        gtk_widget_queue_resize(GTK_WIDGET(container));
+	g_return_if_fail(container || P_IS_SQUARE(container));
+	g_return_if_fail(widget || GTK_IS_WIDGET(widget));
+	g_return_if_fail(gtk_widget_get_parent(widget) == NULL);
+
+	PSquarePrivate *priv = P_SQUARE_PRIVATE(container);
+
+	/* Add the child to our list of children. 
+	 * All the real work is done in gtk_widget_set_parent(). */
+	priv-&gt;children = g_list_append(priv-&gt;children, widget);
+	gtk_widget_set_parent(widget, GTK_WIDGET(container));
+
+	/* Queue redraw */
+	if(gtk_widget_get_visible(widget))
+		gtk_widget_queue_resize(GTK_WIDGET(container));
 }</pre></div></div></div>
 </div></div>
 <p class="p">It may surprise you that this function is not longer.
@@ -182,27 +185,27 @@ We still have to redraw the container ourselves.
 The corresponding method to remove a child is much the same, with all the real work being done in <span class=" code">gtk_widget_unparent()</span>.</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">static void
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">static void
 p_square_remove(GtkContainer *container, GtkWidget *widget)
 {
-    g_return_if_fail(container || P_IS_SQUARE(container));
-    g_return_if_fail(widget || GTK_IS_WIDGET(widget));
-    
-    PSquarePrivate *priv = P_SQUARE_PRIVATE(container);
-    
-    /* Remove the child from our list of children. 
-     * Again, all the real work is done in gtk_widget_unparent(). */
-    GList *link = g_list_find(priv-&gt;children, widget);
-    if(link) {
-        gboolean was_visible = GTK_WIDGET_VISIBLE(widget);
-        gtk_widget_unparent(widget);
+	g_return_if_fail(container || P_IS_SQUARE(container));
+	g_return_if_fail(widget || GTK_IS_WIDGET(widget));
 
-        priv-&gt;children = g_list_delete_link(priv-&gt;children, link);
-            
-        /* Queue redraw */
-        if(was_visible)
-            gtk_widget_queue_resize(GTK_WIDGET(container));
-    }
+	PSquarePrivate *priv = P_SQUARE_PRIVATE(container);
+
+	/* Remove the child from our list of children. 
+	 * Again, all the real work is done in gtk_widget_unparent(). */
+	GList *link = g_list_find(priv-&gt;children, widget);
+	if(link) {
+		gboolean was_visible = gtk_widget_get_visible(widget);
+		gtk_widget_unparent(widget);
+
+		priv-&gt;children = g_list_delete_link(priv-&gt;children, link);
+
+		/* Queue redraw */
+		if(was_visible)
+			gtk_widget_queue_resize(GTK_WIDGET(container));
+	}
 }</pre></div></div></div>
 </div></div>
 <p class="p">Note that we don't have to write <span class=" code">p_square_destroy()</span> or <span class=" code">p_square_finalize()</span> methods to unref the child widgets, since the <span class=" code">GtkContainer</span> code already does that when the container is destroyed.</p>
@@ -216,208 +219,273 @@ We will determine how much width our container needs by adding up the width of e
 The width of a column will be equal to the width of the widest widget in that column.
 The container height will be determined likewise.
 We will also respect the <span class=" code">border_width</span> property of <span class=" code">GtkContainer</span>.</p>
-<p class="p">The <span class=" code">size_request</span> method is passed a pointer to a <span class=" code">GtkRequisition</span> structure, which it must fill with its requested size.</p>
-<div class="code"><pre class="contents ">static void p_square_size_request(GtkWidget *widget,
-                                  GtkRequisition *requisition);</pre></div>
-<p class="p">We start by setting the <span class=" code">width</span> and <span class=" code">height</span> fields of the size requisition to their minimum value, twice the border width.
-Then we compute the number of visible children, and if that is zero, our work is done; we don't layout unshown widgets.</p>
+<p class="p">There are two functions with which the container reports its size: one for the width, and one for the height.
+They are passed pointers to two integers, which they must fill with the minimum size (the absolute minimum they need to function) and the natural size (at which they can function comfortably.)</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">/* Start with the container's border width */
-requisition-&gt;width = GTK_CONTAINER(widget)-&gt;border_width * 2;
-requisition-&gt;height = GTK_CONTAINER(widget)-&gt;border_width * 2;
-
-/* Count the visible children */
-GList *iter;
-unsigned n_visible_children = 0;
-for(iter = priv-&gt;children; iter; iter = g_list_next(iter))
-    if(GTK_WIDGET_VISIBLE(iter-&gt;data))
-        n_visible_children++;
-
-if(n_visible_children == 0)
-    return;</pre></div></div></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">static void p_square_get_preferred_width(GtkWidget *widget,
+	int *minimal, int *natural);
+static void p_square_get_preferred_height(GtkWidget *widget,
+	int *minimal, int *natural);</pre></div></div></div>
 </div></div>
-<p class="p">Then, we compute the size of the side of our square, and allocate arrays to store that number of column widths and row heights.
-When we get all the size requests of the container's children, we will store a running maximum for each row and column in those arrays, then add them up.</p>
+<p class="p">In our case, these two functions will work nearly the same, so we will write them both in terms of a third function, <span class=" code">get_size()</span>.
+This function gets an extra <span class=" code">GtkOrientation</span> parameter, called <span class=" code">direction</span>:
+<span class=" code">GTK_ORIENTATION_HORIZONTAL</span> if we are requesting the width, <span class=" code">GTK_ORIENTATION_VERTICAL</span> if we are requesting the height.</p>
+<div class="code"><pre class="contents language-cpp">static void get_size(PSquare *self, GtkOrientation direction,
+    int *minimal, int *natural);</pre></div>
+<p class="p">We start by setting the <span class=" code">minimal</span> and <span class=" code">natural</span> parameters to their minimum value, twice the border width.
+Then we compute the size of the side of our square, or in other words, the number of rows and columns.
+We call it <span class=" code">n_groups</span> because it doesn't matter whether we are talking about rows or columns here.
+If the number of groups is zero, our work is done.</p>
+<p class="p">Then, we iterate over the children, asking them for their sizes, in the function <span class=" code">get_group_sizes()</span>.
+The <span class=" code">GtkRequestedSize</span> structure stores both the minimum and the natural size requests.
+Once we have got this information, we add them all up to find the total size we want to request.</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">/* Calculate the number of columns (and rows) */
-int n_columns = (int)ceil(sqrt((double)n_visible_children));
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">static void
+get_size(PSquare *self, GtkOrientation direction, int *minimal, int *natural)
+{
+	/* Start with the container's border width */
+	unsigned border_width =
+		gtk_container_get_border_width(GTK_CONTAINER(self));
+	*minimal = *natural = border_width * 2;
 
-/* Allocate arrays for the width of each column 
- * and the height of each row */
-int *width = g_new0(int, n_columns);
-int *height = g_new0(int, n_columns);</pre></div></div></div>
-</div></div>
-<p class="p">We then iterate over the children again, asking them for their size requests.
-The simplest way is to allocate a <span class=" code">GtkRequisition</span> structure on the stack and pass its address to the child's size request function. 
-If the child's width is larger than the width we have stored for the column we're in, we replace the stored width by the child's width, and likewise for the height. 
-Then we add the widths and heights to our own requisition.</p>
-<div class="listing"><div class="inner">
-<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">/* Get each child's size request; set the width of each column
- * to the maximum width of each child in that column,
- * and the height of each row to the maximum height of each
- * child in that row */
-int count = 0;
-for(iter = priv-&gt;children; iter; iter = g_list_next(iter)) {
-    if(!GTK_WIDGET_VISIBLE(iter-&gt;data))
-        continue;
-    
-    GtkRequisition child_requisition;
-    gtk_widget_size_request(iter-&gt;data, &amp;child_requisition);
-    
-    width[count % n_columns] = 
-        MAX(child_requisition.width, width[count % n_columns]);
-    height[count / n_columns] = 
-        MAX(child_requisition.height, height[count / n_columns]);
-    
-    count++;
-}    
+	/* Find out how many children there are */
+	unsigned n_groups = get_n_columns_and_rows(self);
+	if(n_groups == 0)
+		return;
 
-/* Add the widths and heights and pass that
- * as the container's size request */
-for(count = 0; count &lt; n_columns; count++) {
-    requisition-&gt;width += width[count];
-    requisition-&gt;height += height[count];
+	/* Find out how much space they want */
+	GtkRequestedSize *sizes = get_group_sizes(self, direction, n_groups);
+
+	/* Add the widths and pass that as the container's width */
+	unsigned count;
+	for(count = 0; count &lt; n_groups; count++) {
+		*minimal += sizes[count].minimum_size;
+		*natural += sizes[count].natural_size;
+	}
+
+	g_free(sizes);
 }</pre></div></div></div>
 </div></div>
+<p class="p">The function <span class=" code">get_n_columns_and_rows()</span> is shown below.
+Note that the container might still have children, but the number of groups will be zero if they are all invisible; we don't layout unshown widgets.</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">unsigned
+get_n_columns_and_rows(PSquare *self)
+{
+	PSquarePrivate *priv = P_SQUARE_PRIVATE(self);
+
+	/* Count the visible children */
+	unsigned n_visible_children = 0;
+	g_list_foreach(priv-&gt;children, (GFunc)count_visible_children,
+		&amp;n_visible_children);
+	if(n_visible_children == 0)
+		return 0;
+
+	/* Calculate the number of columns */
+	return (unsigned)ceil(sqrt((double)n_visible_children));
+}</pre></div></div></div>
+</div></div>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">/* Convenience function for counting the number of visible
+ * children, for use with g_list_foreach() */
+static void
+count_visible_children(GtkWidget *widget, unsigned *n_visible_children)
+{
+	if(gtk_widget_get_visible(widget))
+		(*n_visible_children)++;
+}</pre></div></div></div>
+</div></div>
+<p class="p">Next we describe <span class=" code">get_group_sizes()</span>, since that is where most of the real work of finding the preferred size is done.
+</p>
+<p class="p">First, we allocate arrays to store all the group sizes (that is, the column widths or row heights.)
+When we get all the preferred sizes of the container's children, we will store a running maximum for each group in this array.</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">GtkRequestedSize *sizes = g_new0(GtkRequestedSize, n_groups);</pre></div></div></div>
+</div></div>
+<p class="p">We then iterate over the children again, asking them for their preferred sizes.
+If we are in width mode, we ask for the width, or the height in height mode.
+We also set the variable <span class=" code">group_num</span> depending on width or height mode; this is the row or column number the current child widget is in.</p>
+<p class="p">Then, if the child's size is larger than the size we have stored for the group we're in, we replace the stored size by the child's size. 
+We return this <span class=" code">sizes</span> array.</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">unsigned count = 0;
+GList *iter;
+for(iter = priv-&gt;children; iter; iter = g_list_next(iter)) {
+	if(!gtk_widget_get_visible(iter-&gt;data))
+		continue;
+
+	int child_minimal, child_natural;
+	unsigned group_num;
+	if(direction == GTK_ORIENTATION_HORIZONTAL) {
+		gtk_widget_get_preferred_width(iter-&gt;data,
+			&amp;child_minimal, &amp;child_natural);
+		group_num = count % n_groups;
+	} else {
+		gtk_widget_get_preferred_height(iter-&gt;data,
+			&amp;child_minimal, &amp;child_natural);
+		group_num = count / n_groups;
+	}
+
+	sizes[group_num].minimum_size =
+		MAX(child_minimal, sizes[group_num].minimum_size);
+	sizes[group_num].natural_size =
+		MAX(child_natural, sizes[group_num].natural_size);
+
+	count++;
+}</pre></div></div></div>
+</div></div>
+</div></div>
+</div></div>
+<div id="size-allocation" class="sect"><div class="inner">
+<div class="hgroup"><h2 class="title"><span class="title">Size allocation</span></h2></div>
+<div class="region"><div class="contents">
 <p class="p">The <span class=" code">size_allocate</span> method is similar. 
 It receives a pointer to a <span class=" code">GtkAllocation</span> structure, which contains the size that the widget will have to deal with.</p>
-<div class="code"><pre class="contents ">static void p_square_size_allocate(GtkWidget *widget,
-                                   GtkAllocation *allocation);</pre></div>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">static void p_square_size_allocate(GtkWidget *widget,
+	GtkAllocation *allocation);</pre></div></div></div>
+</div></div>
 <p class="p">The first thing it must do is store the allocation in the widget structure.</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">widget-&gt;allocation = *allocation;</pre></div></div></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">gtk_widget_set_allocation(widget, allocation);</pre></div></div></div>
 </div></div>
-<p class="p">The next section is very similar to the code in the <span class=" code">size_request</span> method.</p>
+<p class="p">The next section is very similar to the code in the <span class=" code">size_request</span> method.
+First we obtain the number of columns and rows:</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">/* Count the visible children */
-GList *iter;
-unsigned n_visible_children = 0;
-for(iter = priv-&gt;children; iter; iter = g_list_next(iter))
-    if(GTK_WIDGET_VISIBLE(iter-&gt;data))
-        n_visible_children++;
-
-if(n_visible_children == 0)
-    return;
-
-/* Calculate the number of columns (and rows) */
-int n_columns = (gint)ceil(sqrt((double)n_visible_children));
-
-/* Allocate arrays for the width of each column 
- * and the height of each row */
-int *width = g_new0(int, n_columns);
-int *height = g_new0(int, n_columns);
-
-/* Follow the same procedure as in the size request to get 
- * the ideal sizes of each row and column */
-int count = 0;
-for(iter = priv-&gt;children; iter; iter = g_list_next(iter)) {
-    if(!GTK_WIDGET_VISIBLE(iter-&gt;data))
-        continue;
-    
-    GtkRequisition child_requisition;
-    gtk_widget_get_child_requisition(iter-&gt;data, &amp;child_requisition);
-    
-    width[count % n_columns] = 
-        MAX(child_requisition.width, width[count % n_columns]);
-    height[count / n_columns] =
-        MAX(child_requisition.height, height[count / n_columns]);
-    
-    count++;
-}</pre></div></div></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">unsigned n_columns, n_rows;
+n_columns = n_rows = get_n_columns_and_rows(P_SQUARE(widget));
+if(n_columns == 0)
+	return;</pre></div></div></div>
 </div></div>
-<p class="p">The only thing different here is that instead of calling <span class=" code">gtk_widget_size_request()</span> on each child, we call <span class=" code">gtk_widget_get_size_requisition()</span> instead.
-The latter function does not ask the child to calculate a size request, but instead retrieves the last known size request, which is either the size set in the child's size request method, or from program code calling <span class=" code">gtk_widget_set_size_request()</span> on the widget.
-The GTK documentation says it should only be used when you know that the widget's size request is up to date, and in this case, we do.</p>
+<p class="p">They are the same, but I'm using two separate <span class=" code">n_columns</span> and <span class=" code">n_rows</span> variables for clarity in the code.
+Again, if there are no visible widgets in the container, our work is now done.</p>
 <p class="p">Now we have to distribute the container's allocated space to the children.
 Our policy will be to divide any extra width equally among the columns, and any extra height equally among the rows.
 If there is too little space, it will be taken equally from each column or row.
-First we calculate the space surplus or deficit per column and row.</p>
+First we calculate the space surplus or deficit per column and row.
+We do this with two variables, <span class=" code">extra_width</span> and <span class=" code">extra_height</span>.
+We start them off equal to the total width or height, then we will subtract all the space that we need.
+The first thing is to subtract the container's border width.</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">int extra_width = 
-    (allocation-&gt;width - widget-&gt;requisition.width) / n_columns;
-int extra_height = 
-    (allocation-&gt;height - widget-&gt;requisition.height) / n_columns;</pre></div></div></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">unsigned border_width =
+	gtk_container_get_border_width(GTK_CONTAINER(widget));
+int extra_width = allocation-&gt;width - 2 * border_width;
+int extra_height = allocation-&gt;height - 2 * border_width;</pre></div></div></div>
 </div></div>
-<p class="p">Then we calculate the actual space to allocate to each column and row, by adding the extra space (which can be negative) to each column.
+<p class="p">Then we get all the column widths with the <span class=" code">get_group_sizes()</span> function described above.
+We calculate the actual space to allocate to each column, by adding the extra space (which can be negative) to each column.
+This happens in the <span class=" code">distribute_extra_space()</span> function, which we will get to in a moment.</p>
+<p class="p">After we have figured out the width of each column, we can calculate the height of each row. This follows the same procedure, except that instead of <span class=" code">get_group_sizes()</span> we write a new function called <span class=" code">get_group_sizes_for_sizes()</span>, which gets the appropriate height for a certain width, or vice versa.
+We will skip showing that function here — it's the same as <span class=" code">get_group_sizes()</span> except that it calls <span class=" code">gtk_widget_get_preferred_height_for_width()</span> and <span class=" code">..._width_for_height()</span>, instead of <span class=" code">gtk_widget_get_preferred_height()</span> and <span class=" code">..._width()</span>, respectively.
+If you want to see it, look in the <span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare.c</a></span> file.</p>
+<div class="listing"><div class="inner">
+<div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">/* Follow the same procedure as in the size request to get 
+ * the ideal sizes of each column */
+GtkRequestedSize *widths = get_group_sizes(P_SQUARE(widget),
+	GTK_ORIENTATION_HORIZONTAL, n_columns);
+
+/* Distribute the extra space per column (can be negative) */
+unsigned count;
+for(count = 0; count &lt; n_columns; count++)
+	extra_width -= widths[count].minimum_size;
+distribute_extra_space(P_SQUARE(widget), widths, extra_width, n_columns);
+
+/* Follow the same procedure for height,
+ * now that we know the width */
+GtkRequestedSize *heights = get_group_sizes_for_sizes(P_SQUARE(widget),
+	GTK_ORIENTATION_VERTICAL, widths, n_rows);
+
+/* Distribute the extra space per row (can be negative) */
+for(count = 0; count &lt; n_rows; count++)
+	extra_height -= heights[count].minimum_size;
+distribute_extra_space(P_SQUARE(widget), heights, extra_height, n_rows);</pre></div></div></div>
+</div></div>
+<p class="p">Here is the <span class=" code">distribute_extra_space()</span> function, which adds the extra space (which can be negative) to each group (column or row).
+GTK provides a convenience function to distribute any extra space (which <span class=" em">can't</span> be negative) among a group of widgets so that they each get as much as their natural size, so we do this first if we have space left over.
+Then if there's still space left, or if we had a shortage in the first place, we distribute the surplus or shortage equally among the groups.
 We have to watch out that we don't allocate less than zero space to any widget, so if any space is less than zero, we borrow pixels one by one from any other nonzero columns until the space is zero.</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">/* Distribute the surplus or shortage of space
- * equally between columns */
-for(count = 0; count &lt; n_columns; count++) {
-    width[count] += extra_width;
-    /* If this results in a negative width, redistribute
-     * pixels from other nonzero-width columns to this one */
-    if(width[count] &lt; 0) {
-        int count2;
-        for(count2 = (count + 1) % n_columns;
-            width[count] &lt; 0;
-            count2++, count2 %= n_columns) 
-        {
-            if(count2 == count || width[count2] &lt; 0)
-                continue;
-            width[count2]--;
-            width[count]++;
-        }
-    }
-    /* Do the same for the rows */
-    height[count] += extra_height;
-    if(height[count] &lt; 0) {
-        int count2;
-        for(count2 = (count + 1) % n_columns;
-            height[count] &lt; 0;
-            count2++, count2 %= n_columns)
-        {
-            if(count2 == count || height[count2] &lt; 0)
-                continue;
-            height[count2]--;
-            height[count]++;
-        }
-    }
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">static void
+distribute_extra_space(PSquare *self, GtkRequestedSize *sizes,
+	int extra_space, unsigned n_groups)
+{
+	if(extra_space &gt; 0) {
+		extra_space = gtk_distribute_natural_allocation(extra_space,
+			n_groups, sizes);
+	}
+
+	unsigned count;
+	int extra_per_group = extra_space / (int)n_groups;
+
+	for(count = 0; count &lt; n_groups; count++) {
+		sizes[count].minimum_size += extra_per_group;
+		/* If this results in a negative width, redistribute
+		 * pixels from other nonzero-width columns to this one */
+		if(sizes[count].minimum_size &lt; 0) {
+			unsigned count2;
+			for(count2 = (count + 1) % n_groups;
+				sizes[count].minimum_size &lt; 0;
+				count2++, count2 %= n_groups)
+			{
+				if(count2 == count || sizes[count2].minimum_size &lt; 0)
+					continue;
+				sizes[count2].minimum_size--;
+				sizes[count].minimum_size++;
+			}
+		}
+	}
 }</pre></div></div></div>
 </div></div>
-<p class="p">We will keep track of the <span class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo></mrow></math></span> coordinates at which we will place the top left corner of our next child widget.
+<p class="p">Back to the size allocation method.
+We will keep track of the <span class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo></mrow></math></span> coordinates at which we will place the top left corner of our next child widget.
 Note that the <span class=" code">x</span> and <span class=" code">y</span> members of the <span class=" code">GtkAllocation</span> structure contain (I think) screen coordinates, not offsets from the top left of the containing widget, so you always need to start from those values.</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">/* Start positioning the items at the container's origin,
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">/* Start positioning the items at the container's origin,
  * less the border width */
-int x = allocation-&gt;x + GTK_CONTAINER(widget)-&gt;border_width;
-int y = allocation-&gt;y + GTK_CONTAINER(widget)-&gt;border_width;</pre></div></div></div>
+int x = allocation-&gt;x + border_width;
+int y = allocation-&gt;y + border_width;</pre></div></div></div>
 </div></div>
 <p class="p">Then we iterate once more over the visible children.
 For each child, we allocate a <span class=" code">GtkAllocation</span> structure on the stack, fill it with the correct <span class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo></mrow></math></span> coordinates and size, and notify the child by calling <span class=" code">gtk_widget_size_allocate()</span>.
 Then we update our <span class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math></span> and <span class=" span"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>y</mi></mrow></math></span> coordinates appropriately for the next child, moving down a row and returning to the left edge of the container when we reach the end of a row.</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../psquare/psquare.c" title="../psquare/psquare.c">psquare/psquare.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">count = 0;
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">count = 0;
+GList *iter;
 for(iter = priv-&gt;children; iter; iter = g_list_next(iter)) {
-    if(!GTK_WIDGET_VISIBLE(iter-&gt;data))
-        continue;
-    
-    /* Give the child its allocation */
-    GtkAllocation child_allocation;
-    child_allocation.x = x;
-    child_allocation.y = y;
-    child_allocation.width = width[count % n_columns];
-    child_allocation.height = height[count / n_columns];
-    gtk_widget_size_allocate(iter-&gt;data, &amp;child_allocation);
-    
-    /* Advance the x coordinate */
-    x += child_allocation.width;
-    count++;
-    /* If we've moved to the next row, return the x coordinate 
-     * to the left, and advance the y coordinate */
-    if(count % n_columns == 0) {
-        x = allocation-&gt;x + GTK_CONTAINER(widget)-&gt;border_width;
-        y += child_allocation.height;
-    }
+	if(!gtk_widget_get_visible(iter-&gt;data))
+		continue;
+
+	/* Give the child its allocation */
+	GtkAllocation child_allocation;
+	child_allocation.x = x;
+	child_allocation.y = y;
+	child_allocation.width = widths[count % n_columns].minimum_size;
+	child_allocation.height = heights[count / n_columns].minimum_size;
+	gtk_widget_size_allocate(iter-&gt;data, &amp;child_allocation);
+
+	/* Advance the x coordinate */
+	x += child_allocation.width;
+	count++;
+	/* If we've moved to the next row, return the x coordinate 
+	 * to the left, and advance the y coordinate */
+	if(count % n_columns == 0) {
+		x = allocation-&gt;x + border_width;
+		y += child_allocation.height;
+	}
 }</pre></div></div></div>
 </div></div>
 </div></div>

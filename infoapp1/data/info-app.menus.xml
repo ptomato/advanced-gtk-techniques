@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ui>
+  <menubar>
+    <menu action="file">
+      <menuitem action="open"/>
+      <separator/>
+      <menuitem action="quit"/>
+    </menu>
+    <menu action="edit">
+      <menuitem action="preferences"/>
+    </menu>
+    <menu action="view">
+      <menuitem action="info"/>
+    </menu>
+    <menu action="help">
+      <menuitem action="about"/>
+    </menu>
+  </menubar>
+  <toolbar>
+    <toolitem action="open"/>
+    <toolitem action="info"/>
+  </toolbar>
+</ui>

@@ -140,5 +140,118 @@ $(document).ready(function() {
     <xsl:param name="node" select="."/>
   </xsl:template>
 
+  <!-- Override Mallard's <pre> template to provide a starting line number
+  and highlighting class attributes for highlight.js -->
+  <xsl:template name="mal2html.pre">
+  <xsl:param name="node" select="."/>
+  <xsl:param name="numbered" select="contains(concat(' ', @style, ' '), 'numbered')"/>
+  <xsl:variable name="if"><xsl:call-template name="mal.if.test"/></xsl:variable><xsl:if test="$if != ''">
+  <xsl:variable name="first" select="$node/node()[1]/self::text()"/>
+  <xsl:variable name="last" select="$node/node()[last()]/self::text()"/>
+  <div>
+    <xsl:call-template name="html.lang.attrs">
+      <xsl:with-param name="node" select="$node"/>
+    </xsl:call-template>
+    <xsl:attribute name="class">
+      <xsl:value-of select="local-name($node)"/>
+      <xsl:if test="$if != 'true'">
+        <xsl:text> if-if </xsl:text>
+        <xsl:value-of select="$if"/>
+      </xsl:if>
+    </xsl:attribute>
+    <xsl:if test="$numbered">
+      <pre class="numbered"><xsl:call-template name="utils.linenumbering">
+        <xsl:with-param name="node" select="$node"/>
+        <xsl:with-param name="number" select="@startline"/> <!-- PC -->
+      </xsl:call-template></pre>
+    </xsl:if>
+    <pre>
+      <xsl:attribute name="class">
+        <xsl:text>contents </xsl:text>
+        <xsl:if test="$node/@mime">
+          <xsl:choose>
+            <xsl:when test="@mime = 'application/x-shellscript'">
+              <xsl:text>language-bash</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'text/x-csrc' or @mime = 'text/x-chdr' or
+                            @mime = 'text/x-c++hdr' or @mime = 'text/x-c++src'">
+              <xsl:text>language-cpp</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'text/x-objcsrc'">
+              <xsl:text>language-objectivec</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'text/x-csharp'">
+              <xsl:text>language-cs</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'text/css'">
+              <xsl:text>language-css</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'text/x-patch'">
+              <xsl:text>language-diff</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'text/html' or @mime = 'application/xml' or
+                            substring(@mime, string-length(@mime) - 3) = '+xml'">
+              <xsl:text>language-xml</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'text/x-java'">
+              <xsl:text>language-java</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'application/javascript'">
+              <xsl:text>language-javascript</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'text/x-scheme' or @mime = 'text/x-emacs-lisp'">
+              <xsl:text>language-lisp</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'text/x-lua'">
+              <xsl:text>language-lua</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'text/x-pascal'">
+              <xsl:text>language-pascal</xsl:text> <!-- Not supported highlight.js -->
+            </xsl:when>
+            <xsl:when test="@mime = 'application/x-perl'">
+              <xsl:text>language-perl</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'application/x-php'">
+              <xsl:text>language-php</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'text/x-python'">
+              <xsl:text>language-python</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'application/x-ruby'">
+              <xsl:text>language-ruby</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'text/x-sql'">
+              <xsl:text>language-sql</xsl:text>
+            </xsl:when>
+            <xsl:when test="@mime = 'application/x-yaml'">
+              <xsl:text>language-yaml</xsl:text> <!-- Not supported highlight.js -->
+            </xsl:when>
+            <xsl:when test="@mime = 'text/x-desktop'">
+              <xsl:text>language-ini</xsl:text>
+            </xsl:when>
+          </xsl:choose>
+        </xsl:if>
+      </xsl:attribute>
+      <xsl:if test="$first">
+        <xsl:call-template name="utils.strip_newlines">
+          <xsl:with-param name="string" select="$first"/>
+          <xsl:with-param name="leading" select="true()"/>
+          <xsl:with-param name="trailing" select="count(node()) = 1"/>
+        </xsl:call-template>
+      </xsl:if>
+      <xsl:apply-templates mode="mal2html.inline.mode"
+                           select="node()[not(self::text() and (position() = 1 or position() = last()))]"/>
+      <xsl:if test="$last and (count(node()) != 1)">
+        <xsl:call-template name="utils.strip_newlines">
+          <xsl:with-param name="string" select="$last"/>
+          <xsl:with-param name="leading" select="false()"/>
+          <xsl:with-param name="trailing" select="true()"/>
+        </xsl:call-template>
+      </xsl:if>
+    </pre>
+  </div>
+</xsl:if>
+</xsl:template>
+
 </xsl:stylesheet>
 

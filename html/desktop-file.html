@@ -102,7 +102,7 @@ Since we have already installed the icon into the icon theme, having the program
 Add the following line to the <span class=" code">main()</span> function of <span class=" file">hello-world.c</span>, for example as line 47:</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../app-skeleton3/src/hello-world.c" title="../app-skeleton3/src/hello-world.c">app-skeleton3/src/hello-world.c</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">gtk_window_set_icon_name (GTK_WINDOW (window), "app-skeleton");</pre></div></div></div>
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-cpp">gtk_window_set_icon_name (GTK_WINDOW (window), "app-skeleton");</pre></div></div></div>
 </div></div>
 <p class="p">When an icon is present in the icon theme, it can be used like this as a <span class=" em">named icon</span>.
 (Remember that you have to run <span class=" cmd">make install</span> before it will work, though.)</p>
@@ -115,7 +115,7 @@ Add the following line to the <span class=" code">main()</span> function of <spa
 Create a file <span class=" file">app-skeleton.desktop</span> in the <span class=" file">app-skeleton3</span> directory and write in it:</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../app-skeleton3/app-skeleton.desktop" title="../app-skeleton3/app-skeleton.desktop">app-skeleton3/app-skeleton.desktop</a></span></span></h3></div>
-<div class="region"><div class="contents"><div class="code"><pre class="contents ">[Desktop Entry]
+<div class="region"><div class="contents"><div class="code"><pre class="contents language-ini">[Desktop Entry]
 Version=1.0
 Type=Application
 Name=App Skeleton
