@@ -12,16 +12,20 @@
   </license>
   <link type="guide" xref="index" group="#default"/>
   <desc>A container that does its own size allocation</desc>
-  <revision status="incomplete" date="2012-03-07"/>
 </info>
 <title>Custom container</title>
 
-<p>Size allocation is not a very difficult procedure in GTK; every widget has overridable <code>size_request</code> and <code>size_allocate</code> methods.
-Sizes are requested from the bottom of the widget tree up, with each container calling <code>gtk_widget_size_request()</code> on each of its children and then calculating its own size request using that information.
-Once the total size is known, the available space is calculated and allocated from the top down: each container divides up the space it receives among its children by calling their <code>gtk_widget_size_allocate()</code> methods.
-This is covered in chapter 11 of <em href="http://gtkbook.com">Foundations of GTK Development</em>.</p>
+<p>Size allocation is not a very difficult procedure in GTK.
+Widgets report their preferred size from the bottom of the widget tree up, with each container figuring out the preferred sizes of its children and then calculating its own preferred size using that information.
+This can be done simply by using <code>gtk_widget_get_preferred_height()</code> and <code>gtk_widget_get_preferred_width()</code>, but you can also have the height depend on the width or the width depend on the height.
+Once the total preferred size is known, the available space is allocated from the top down: each container divides up the space it receives among its children by calling their <code>gtk_widget_size_allocate()</code> methods.
+What's more, you can customize the process for any widget by overriding these methods.</p>
 
-<p>In most cases, such as writing a composite widget or adding functionality to an existing container, you can get away with subclassing a container like <code>GtkVBox</code>.
+<note title="GTK 2" style="warning">
+  <p>This is rather different from the way things worked in GTK 2, and there are probably plenty of GTK 2 instructions still floating around on the Internet.</p>
+</note>
+
+<p>In most cases, such as writing a composite widget or adding functionality to an existing container, you can get away with subclassing a container like <code>GtkGrid</code>.
 That way, you don't have to deal with size negotiation and other container stuff directly, since it's already implemented in your parent class.
 But what if you want a container that arranges its children differently than all the existing GTK containers?
 Then you'll have to write a new container with its own size request and allocation algorithms.</p>
@@ -122,19 +126,19 @@ One iterates over all children including "internal" ones (such as the <code>GtkB
 The class <code>forall</code> function takes a flag telling whether to include internal children or not.
 <code>PSquare</code> doesn't have any internal children, so we just ignore that.</p>
 
-<!--{{{psquare/psquare.c:397-999}}}-->
+<!--{{{psquare/psquare.c:396-999}}}-->
 
 <p>The next things to implement are the <code>add</code> and <code>remove</code> methods.
 Note that you don't have to have them if, for example, your container has a different mechanism for adding widgets; the default <code>GtkContainer</code> implementations do nothing, and print a warning message saying that the method is not implemented.</p>
 
-<!--{{{psquare/psquare.c:351-363}}}-->
+<!--{{{psquare/psquare.c:350-367}}}-->
 
 <p>It may surprise you that this function is not longer.
 However, as the comment says, all the real work is done in <code>gtk_widget_set_parent()</code>: sinking the child's floating reference, redrawing the child, emitting the appropriate signals, etc.
 We still have to redraw the container ourselves.
 The corresponding method to remove a child is much the same, with all the real work being done in <code>gtk_widget_unparent()</code>.</p>
 
-<!--{{{psquare/psquare.c:371-392}}}-->
+<!--{{{psquare/psquare.c:370-391}}}-->
 
 <p>Note that we don't have to write <code>p_square_destroy()</code> or <code>p_square_finalize()</code> methods to unref the child widgets, since the <code>GtkContainer</code> code already does that when the container is destroyed.</p>
 
@@ -209,32 +213,52 @@ It receives a pointer to a <code>GtkAllocation</code> structure, which contains 
 
 <!--{{{psquare/psquare.c:273}}}-->
 
-<p>The next section is very similar to the code in the <code>size_request</code> method.</p>
+<p>The next section is very similar to the code in the <code>size_request</code> method.
+First we obtain the number of columns and rows:</p>
 
-<p>...</p>
+<!--{{{psquare/psquare.c:276-279}}}-->
+
+<p>They are the same, but I'm using two separate <code>n_columns</code> and <code>n_rows</code> variables for clarity in the code.
+Again, if there are no visible widgets in the container, our work is now done.</p>
 
 <p>Now we have to distribute the container's allocated space to the children.
 Our policy will be to divide any extra width equally among the columns, and any extra height equally among the rows.
 If there is too little space, it will be taken equally from each column or row.
-First we calculate the space surplus or deficit per column and row.</p>
+First we calculate the space surplus or deficit per column and row.
+We do this with two variables, <code>extra_width</code> and <code>extra_height</code>.
+We start them off equal to the total width or height, then we will subtract all the space that we need.
+The first thing is to subtract the container's border width.</p>
 
-<!--{{{psquare/psquare.c:178-181}}}-->
+<!--{{{psquare/psquare.c:282-285}}}-->
 
-<p>Then we calculate the actual space to allocate to each column and row, by adding the extra space (which can be negative) to each column.
+<p>Then we get all the column widths with the <code>get_group_sizes()</code> function described above.
+We calculate the actual space to allocate to each column, by adding the extra space (which can be negative) to each column.
+This happens in the <code>distribute_extra_space()</code> function, which we will get to in a moment.</p>
+
+<p>After we have figured out the width of each column, we can calculate the height of each row. This follows the same procedure, except that instead of <code>get_group_sizes()</code> we write a new function called <code>get_group_sizes_for_sizes()</code>, which gets the appropriate height for a certain width, or vice versa.
+We will skip showing that function here &#x2014; it's the same as <code>get_group_sizes()</code> except that it calls <code>gtk_widget_get_preferred_height_for_width()</code> and <code>..._width_for_height()</code>, instead of <code>gtk_widget_get_preferred_height()</code> and <code>..._width()</code>, respectively.
+If you want to see it, look in the <file href="../psquare/psquare.c">psquare.c</file> file.</p>
+
+<!--{{{psquare/psquare.c:287-306}}}-->
+
+<p>Here is the <code>distribute_extra_space()</code> function, which adds the extra space (which can be negative) to each group (column or row).
+GTK provides a convenience function to distribute any extra space (which <em>can't</em> be negative) among a group of widgets so that they each get as much as their natural size, so we do this first if we have space left over.
+Then if there's still space left, or if we had a shortage in the first place, we distribute the surplus or shortage equally among the groups.
 We have to watch out that we don't allocate less than zero space to any widget, so if any space is less than zero, we borrow pixels one by one from any other nonzero columns until the space is zero.</p>
 
-<!--{{{psquare/psquare.c:183-215}}}-->
+<!--{{{psquare/psquare.c:213-242}}}-->
 
-<p>We will keep track of the <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow></m:math></span> coordinates at which we will place the top left corner of our next child widget.
+<p>Back to the size allocation method.
+We will keep track of the <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow></m:math></span> coordinates at which we will place the top left corner of our next child widget.
 Note that the <code>x</code> and <code>y</code> members of the <code>GtkAllocation</code> structure contain (I think) screen coordinates, not offsets from the top left of the containing widget, so you always need to start from those values.</p>
 
-<!--{{{psquare/psquare.c:217-220}}}-->
+<!--{{{psquare/psquare.c:308-311}}}-->
 
 <p>Then we iterate once more over the visible children.
 For each child, we allocate a <code>GtkAllocation</code> structure on the stack, fill it with the correct <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow></m:math></span> coordinates and size, and notify the child by calling <code>gtk_widget_size_allocate()</code>.
 Then we update our <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mi>x</m:mi></m:mrow></m:math></span> and <span xmlns:m="http://www.w3.org/1998/Math/MathML"><m:math><m:mrow><m:mi>y</m:mi></m:mrow></m:math></span> coordinates appropriately for the next child, moving down a row and returning to the left edge of the container when we reach the end of a row.</p>
 
-<!--{{{psquare/psquare.c:222-244}}}-->
+<!--{{{psquare/psquare.c:313-336}}}-->
 
 </section>
 <section id="example">
