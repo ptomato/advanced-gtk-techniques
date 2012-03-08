@@ -17,7 +17,7 @@ PKG_PROG_PKG_CONFIG
 
 PKG_CHECK_MODULES([APP_SKELETON], [
 	glib-2.0
-	gtk+-2.0
+	gtk+-3.0
 ])
 
 ### OUTPUT #####################################################################

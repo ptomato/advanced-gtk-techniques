@@ -20,7 +20,7 @@ IT_PROG_INTLTOOL([0.40])
 
 PKG_CHECK_MODULES([APP_SKELETON], [
 	glib-2.0
-	gtk+-2.0
+	gtk+-3.0
 ])
 
 ### VARIABLES ##################################################################
