@@ -16,10 +16,11 @@ u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Index of {thisdir}</title>
-  <link href="http://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet" type="text/css"/>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Droid+Serif:700' rel='stylesheet' type='text/css'>
   <style type="text/css">
 body {{
-	font-family: "PT Sans", Calibri, sans-serif;
+	font-family: "Open Sans", Calibri, sans-serif;
 	max-width: 600px;
 	margin: 0 auto;
 	padding-top: 1em;
