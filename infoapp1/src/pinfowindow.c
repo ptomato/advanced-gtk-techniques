@@ -2,6 +2,7 @@
 #include <gtk/gtk.h>
 #include "pinfoapp.h"
 #include "pinfowindow.h"
+#include "pinfowidget.h"
 
 #define P_INFO_WINDOW_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), \
 	P_TYPE_INFO_WINDOW, PInfoWindowPrivate))
@@ -11,6 +12,7 @@
 typedef struct {
 	GtkActionGroup *file_actions;
 	GFile *displayed_file;
+	GtkWidget *info_widget;
 } PInfoWindowPrivate;
 
 enum {
@@ -65,6 +67,11 @@ p_info_window_init(PInfoWindow *self)
 	gtk_box_pack_start(GTK_BOX(window_contents), tool_bar, FALSE, FALSE, 0);
 
 	g_object_unref(ui_manager);
+
+	/* Build contents */
+	priv->info_widget = p_info_widget_new();
+	gtk_box_pack_start(GTK_BOX(window_contents), priv->info_widget, TRUE, FALSE, 6);
+	gtk_widget_show(priv->info_widget);
 
 	/* Configure this window */
 	gtk_window_set_icon_name(GTK_WINDOW(self), "info-app");
@@ -139,15 +146,21 @@ p_info_window_set_displayed_file(PInfoWindow *self, GFile *file)
 	g_object_notify(G_OBJECT(self), "displayed-file");
 	
 	/* Set the window title */
-	GFileInfo *info = g_file_query_info(file,
-		G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, G_FILE_QUERY_INFO_NONE,
+	GFileInfo *info = g_file_query_info(file, "standard::*", G_FILE_QUERY_INFO_NONE,
 		NULL, NULL);
 	if(info != NULL) {
 		const char *display_name = g_file_info_get_display_name(info);
 		gtk_window_set_title(GTK_WINDOW(self), display_name);
+		p_info_widget_set_display_name(P_INFO_WIDGET(priv->info_widget), display_name);
+		GIcon *icon = g_file_info_get_icon(info);
+		p_info_widget_set_icon(P_INFO_WIDGET(priv->info_widget), icon);
+		g_object_unref(icon);
 		g_object_unref(info);
-	} else
+	} else {
 		gtk_window_set_title(GTK_WINDOW(self), g_get_application_name());
+		p_info_widget_set_display_name(P_INFO_WIDGET(priv->info_widget), NULL);
+		p_info_widget_set_icon(P_INFO_WIDGET(priv->info_widget), NULL);
+	}
 }
 
 GFile *
