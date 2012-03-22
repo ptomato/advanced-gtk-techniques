@@ -22,7 +22,7 @@
       <object class="GtkAction" id="about">
         <property name="label" translatable="yes">_About...</property>
         <property name="short_label" translatable="yes">_About</property>
-        <property name="tooltip" translatable="yes">More information about the application</property>
+        <property name="tooltip" translatable="yes">More information about Info App</property>
         <property name="stock_id">gtk-about</property>
         <signal name="activate" handler="action_about" swapped="no"/>
       </object>
@@ -31,7 +31,7 @@
       <object class="GtkAction" id="open">
         <property name="label" translatable="yes">_Open...</property>
         <property name="short_label" translatable="yes">_Open</property>
-        <property name="tooltip" translatable="yes">Open a font to examine</property>
+        <property name="tooltip" translatable="yes">Open a file to compute the checksum</property>
         <property name="stock_id">gtk-open</property>
         <signal name="activate" handler="action_open" swapped="no"/>
       </object>
@@ -63,8 +63,8 @@
     </child>
     <child>
       <object class="GtkAction" id="info">
-        <property name="label" translatable="yes">Font _Info</property>
-        <property name="tooltip" translatable="yes">View information about the font</property>
+        <property name="label" translatable="yes">File _Info</property>
+        <property name="tooltip" translatable="yes">View extra information about the file</property>
         <property name="stock_id">gtk-properties</property>
         <property name="is_important">True</property>
         <signal name="activate" handler="action_info" swapped="no"/>
