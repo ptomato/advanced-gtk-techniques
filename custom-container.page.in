@@ -21,7 +21,8 @@ This can be done simply by using <code>gtk_widget_get_preferred_height()</code> 
 Once the total preferred size is known, the available space is allocated from the top down: each container divides up the space it receives among its children by calling their <code>gtk_widget_size_allocate()</code> methods.
 What's more, you can customize the process for any widget by overriding these methods.</p>
 
-<note title="GTK 2" style="warning">
+<note style="warning">
+  <title>GTK 2</title>
   <p>This is rather different from the way things worked in GTK 2, and there are probably plenty of GTK 2 instructions still floating around on the Internet.</p>
 </note>
 

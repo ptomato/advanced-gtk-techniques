@@ -33,7 +33,7 @@ Users expect to be able to install a package and then find a new entry in their 
 The <file>Makefile.am</file> may install our executable file into <file>/usr/local/bin</file>, but nowadays we can't expect users to open a terminal every time they want to run it.
 We can put an entry into the menu by means of a <em>desktop file</em>.</p>
 
-<section>
+<section id="adding-icon">
 <title>Adding an icon to the program</title>
 
 <p>Copy the <file>app-skeleton2</file> project to <file>app-skeleton3</file>, or just rename it.
@@ -89,7 +89,7 @@ Add the following line to the <code>main()</code> function of <file>hello-world.
 (Remember that you have to run <cmd>make install</cmd> before it will work, though.)</p>
 
 </section>
-<section>
+<section id="desktop-file">
 <title>The desktop file</title>
 
 <p>Now to create our desktop file.
