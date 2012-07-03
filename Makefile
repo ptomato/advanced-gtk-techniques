@@ -29,7 +29,12 @@ html: all
 
 hmtl: html
 
+# Only works when connected to the internet
+# To enable offline, see: http://mimico-tiffany.tumblr.com/post/25656871782
+check: all
+	yelp-check validate *.page
+
 clean:
 	rm -rf html
 
-.PHONY: all html hmtl clean
+.PHONY: all html hmtl check clean
