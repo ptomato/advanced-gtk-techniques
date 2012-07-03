@@ -52,7 +52,7 @@ Also, if the translator did not finish translating the entire translation templa
 This allows translation to be an ongoing process, and translators can contribute as much as they have time for.
 Also, if you add a new message in a new version of the program, and the translator is on vacation, it won't mean the whole translation is invalidated.</p>
 </div>
-<div id="" class="sect"><div class="inner">
+<div id="using-gettext" class="sect"><div class="inner">
 <div class="hgroup"><h2 class="title"><span class="title">Using <span class=" cmd">gettext</span></span></h2></div>
 <div class="region"><div class="contents">
 <p class="p">First, copy the project that we have so far to a new <span class=" file">app-skeleton4</span> directory, and change the version number if you like.
@@ -126,7 +126,7 @@ Surround these strings with a call to <span class=" code">_()</span>, so that <s
 This is the template that translators can base their translations on.</p>
 </div></div>
 </div></div>
-<div id="" class="sect"><div class="inner">
+<div id="translating-the-program" class="sect"><div class="inner">
 <div class="hgroup"><h2 class="title"><span class="title">Translating the program</span></h2></div>
 <div class="region"><div class="contents">
 <p class="p">Now, we will translate the program into another language and test it.
@@ -170,7 +170,7 @@ If you have your system in English or a different locale, you can test the trans
 (Just type <span class=" code">LANG=nl</span> before the program name on the command line.)</p>
 </div></div>
 </div></div>
-<div id="" class="sect"><div class="inner">
+<div id="translating-non-source-code" class="sect"><div class="inner">
 <div class="hgroup"><h2 class="title"><span class="title">Translating non-source code</span></h2></div>
 <div class="region"><div class="contents">
 <p class="p">The <span class=" cmd">gettext</span> program has one shortcoming:
@@ -182,7 +182,7 @@ Then, when they have been translated, it merges the strings back into the data f
 We will now add <span class=" cmd">intltool</span> to our program and use it to translate the desktop file.</p>
 <p class="p">First of all, <span class=" cmd">intltool</span> has its own bootstrapping program, called <span class=" cmd">intltoolize</span>.
 It needs to be run after <span class=" cmd">autoreconf</span>.
-Since using <span class=" cmd">intltool</span> means we can't bootstrap the build system simply by using <span class=" cmd">autoreconf -i</span> anymore, we will make a <span class=" link"><a href="" title="autoconf-project#note:bootstrapping">bootstrap script</a></span>.
+Since using <span class=" cmd">intltool</span> means we can't bootstrap the build system simply by using <span class=" cmd">autoreconf -i</span> anymore, we will make a <span class=" link"><a href="autoconf-project.html" title="Setting up Autoconf">bootstrap script</a></span>.
 Create a file in called <span class=" file">autogen.sh</span>, make it executable, and write in it:</p>
 <div class="listing"><div class="inner">
 <div class="title title-listing"><h3><span class="title"><span class=" file"><a href="../app-skeleton4/autogen.sh" title="../app-skeleton4/autogen.sh">app-skeleton4/autogen.sh</a></span></span></h3></div>

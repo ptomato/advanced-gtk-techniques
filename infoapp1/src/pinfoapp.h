@@ -36,6 +36,8 @@ typedef struct {
 GType p_info_app_get_type(void) G_GNUC_CONST;
 PInfoApp *p_info_app_get(void);
 GtkActionGroup *p_info_app_get_action_group(PInfoApp *self);
+GtkWidget *p_info_app_open_new_window(PInfoApp *self, GFile *file);
+GtkWidget *p_info_app_get_open_window(PInfoApp *self, GFile *file);
 
 G_END_DECLS
 

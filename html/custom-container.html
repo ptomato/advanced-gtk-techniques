@@ -29,7 +29,10 @@ Widgets report their preferred size from the bottom of the widget tree up, with 
 This can be done simply by using <span class=" code">gtk_widget_get_preferred_height()</span> and <span class=" code">gtk_widget_get_preferred_width()</span>, but you can also have the height depend on the width or the width depend on the height.
 Once the total preferred size is known, the available space is allocated from the top down: each container divides up the space it receives among its children by calling their <span class=" code">gtk_widget_size_allocate()</span> methods.
 What's more, you can customize the process for any widget by overriding these methods.</p>
-<div class="note note-warning" title="Warning"><div class="inner"><div class="region"><div class="contents"><p class="p">This is rather different from the way things worked in GTK 2, and there are probably plenty of GTK 2 instructions still floating around on the Internet.</p></div></div></div></div>
+<div class="note note-warning" title="Warning"><div class="inner">
+<div class="title title-note"><h2><span class="title">GTK 2</span></h2></div>
+<div class="region"><div class="contents"><p class="p">This is rather different from the way things worked in GTK 2, and there are probably plenty of GTK 2 instructions still floating around on the Internet.</p></div></div>
+</div></div>
 <p class="p">In most cases, such as writing a composite widget or adding functionality to an existing container, you can get away with subclassing a container like <span class=" code">GtkGrid</span>.
 That way, you don't have to deal with size negotiation and other container stuff directly, since it's already implemented in your parent class.
 But what if you want a container that arranges its children differently than all the existing GTK containers?
@@ -143,7 +146,7 @@ p_square_new()
 The <span class=" code">GtkContainer</span> ones are fairly trivial, so we'll do them first.
 The <span class=" code">child_type</span> method, specifying what types of children can be added to the container, simply returns <span class=" code">GTK_TYPE_WIDGET</span>.
 The <span class=" code">forall</span> pointer in the <span class=" code">GtkContainerClass</span> structure doesn't correspond exactly to a <span class=" code">GtkContainer</span> method, but <span class=" code">gtk_container_forall()</span> and <span class=" code">gtk_container_foreach()</span> are use it in their implementations.
-One iterates over all children including "internal" ones (such as the <span class=" code">GtkButton</span>s in a dialog that aren't meant to be manipulated by your program), the other iterates over the container's children but skips internal ones..
+One iterates over all children including "internal" ones (such as the <span class=" code">GtkButton</span>s in a dialog that aren't meant to be manipulated by your program), the other iterates over the container's children but skips internal ones.
 The class <span class=" code">forall</span> function takes a flag telling whether to include internal children or not.
 <span class=" code">PSquare</span> doesn't have any internal children, so we just ignore that.</p>
 <div class="listing"><div class="inner">

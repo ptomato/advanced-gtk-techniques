@@ -3,10 +3,6 @@
 #include <gio/gio.h>
 #include "pinfoapp.h"
 
-#ifdef MAC_INTEGRATION
-#include "pinfowindow.h"
-#endif
-
 int
 main(int argc, char **argv)
 {
@@ -20,7 +16,7 @@ main(int argc, char **argv)
 	return g_application_run(G_APPLICATION(p_info_app_get()), argc, argv);
 #else
 	PInfoApp *theapp = p_info_app_get();
-	GtkWidget *mainwin = p_info_window_new();
+	GtkWidget *mainwin = p_info_app_open_new_window(theapp, NULL);
 	gtk_window_present(GTK_WINDOW(mainwin));
 	gtk_main();
 	g_object_unref(theapp);

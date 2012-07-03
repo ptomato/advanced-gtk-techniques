@@ -1,6 +1,8 @@
+#include <gio/gio.h>
 #include <gtk/gtk.h>
 #include "pinfoapp.h"
 #include "pinfowindow.h"
+#include "pinfowidget.h"
 
 #define P_INFO_WINDOW_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), \
 	P_TYPE_INFO_WINDOW, PInfoWindowPrivate))
@@ -9,7 +11,14 @@
 
 typedef struct {
 	GtkActionGroup *file_actions;
+	GFile *displayed_file;
+	GtkWidget *info_widget;
 } PInfoWindowPrivate;
+
+enum {
+	PROP_0,
+	PROP_DISPLAYED_FILE
+};
 
 G_DEFINE_TYPE(PInfoWindow, p_info_window, GTK_TYPE_WINDOW);
 
@@ -21,6 +30,9 @@ p_info_window_init(PInfoWindow *self)
 	P_INFO_WINDOW_USE_PRIVATE;
 	GError *error = NULL;
 	PInfoApp *theapp = p_info_app_get();
+
+	/* Initialize private properties */
+	priv->displayed_file = NULL;
 
 	/* Build widgets */
 	GtkBuilder *builder = gtk_builder_new();
@@ -56,8 +68,37 @@ p_info_window_init(PInfoWindow *self)
 
 	g_object_unref(ui_manager);
 
+	/* Build contents */
+	priv->info_widget = p_info_widget_new();
+	gtk_box_pack_start(GTK_BOX(window_contents), priv->info_widget, TRUE, FALSE, 6);
+	gtk_widget_show(priv->info_widget);
+
 	/* Configure this window */
 	gtk_window_set_icon_name(GTK_WINDOW(self), "info-app");
+}
+
+static void
+p_info_window_set_property(GObject *self, unsigned prop_id, const GValue *value, GParamSpec *pspec)
+{
+	switch(prop_id) {
+		case PROP_DISPLAYED_FILE:
+			p_info_window_set_displayed_file(P_INFO_WINDOW(self), g_value_get_object(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(self, prop_id, pspec);
+	}
+}
+
+static void
+p_info_window_get_property(GObject *self, unsigned prop_id, GValue *value, GParamSpec *pspec)
+{
+	switch(prop_id) {
+		case PROP_DISPLAYED_FILE:
+			g_value_take_object(value, G_OBJECT(p_info_window_get_displayed_file(P_INFO_WINDOW(self))));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(self, prop_id, pspec);
+	}
 }
 
 static void
@@ -65,9 +106,18 @@ p_info_window_class_init(PInfoWindowClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
 	object_class->finalize = p_info_window_finalize;
+	object_class->set_property = p_info_window_set_property;
+	object_class->get_property = p_info_window_get_property;
 
 	/* Add private indirection member */
 	g_type_class_add_private(klass, sizeof(PInfoWindowPrivate));
+
+	/* Add properties */
+	g_object_class_install_property(object_class, PROP_DISPLAYED_FILE,
+		g_param_spec_object("displayed-file", "Displayed file",
+			"The file currently displaying in the window",
+			G_TYPE_FILE,
+			G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 static void
@@ -78,10 +128,49 @@ p_info_window_finalize(GObject *self)
 	G_OBJECT_CLASS(p_info_window_parent_class)->finalize(self);
 }
 
-GtkWidget *
-p_info_window_new(void)
+/* "Public" API */
+
+void
+p_info_window_set_displayed_file(PInfoWindow *self, GFile *file)
 {
-	return GTK_WIDGET(g_object_new(p_info_window_get_type(), NULL));
+	g_return_if_fail(self || P_IS_INFO_WINDOW(self));
+	P_INFO_WINDOW_USE_PRIVATE;
+
+	if(priv->displayed_file == file)
+		return;
+
+	if(priv->displayed_file)
+		g_object_unref(priv->displayed_file);
+
+	priv->displayed_file = file? g_object_ref(file) : NULL;
+	g_object_notify(G_OBJECT(self), "displayed-file");
+	
+	/* Set the window title */
+	GFileInfo *info = g_file_query_info(file, "standard::*", G_FILE_QUERY_INFO_NONE,
+		NULL, NULL);
+	if(info != NULL) {
+		const char *display_name = g_file_info_get_display_name(info);
+		gtk_window_set_title(GTK_WINDOW(self), display_name);
+		p_info_widget_set_display_name(P_INFO_WIDGET(priv->info_widget), display_name);
+		GIcon *icon = g_file_info_get_icon(info);
+		p_info_widget_set_icon(P_INFO_WIDGET(priv->info_widget), icon);
+		g_object_unref(icon);
+		g_object_unref(info);
+	} else {
+		gtk_window_set_title(GTK_WINDOW(self), g_get_application_name());
+		p_info_widget_set_display_name(P_INFO_WIDGET(priv->info_widget), NULL);
+		p_info_widget_set_icon(P_INFO_WIDGET(priv->info_widget), NULL);
+	}
+}
+
+GFile *
+p_info_window_get_displayed_file(PInfoWindow *self)
+{
+	g_return_if_fail(self || P_IS_INFO_WINDOW(self));
+	P_INFO_WINDOW_USE_PRIVATE;
+	if(priv->displayed_file == NULL)
+		return NULL;
+	return g_object_ref(priv->displayed_file);
 }
 
 /* Signal handlers */

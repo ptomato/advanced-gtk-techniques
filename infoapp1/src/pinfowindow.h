@@ -1,6 +1,7 @@
 #ifndef P_INFO_WINDOW_H
 #define P_INFO_WINDOW_H
 
+#include <gio/gio.h>
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS
@@ -21,7 +22,8 @@ typedef struct {
 } PInfoWindowClass;
 
 GType p_info_window_get_type(void) G_GNUC_CONST;
-GtkWidget *p_info_window_new(void);
+void p_info_window_set_displayed_file(PInfoWindow *self, GFile *file);
+GFile *p_info_window_get_displayed_file(PInfoWindow *self);
 
 G_END_DECLS
 

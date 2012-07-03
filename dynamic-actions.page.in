@@ -70,10 +70,10 @@ It is also important to notice that the text view (representing the actual appli
 This is convenient because we can then start-pack the menu bar and toolbar, and not have to worry about where to insert them.</p>
 
 </section>
-<section>
+<section id="menu-structure">
 <title>Building the menu structure</title>
 
-The menus and
+<p>The menus and</p>
 
 </section>
 </page>

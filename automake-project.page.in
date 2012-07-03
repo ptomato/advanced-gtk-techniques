@@ -39,7 +39,7 @@ Automake allows you to write the Make code in a more abstract, platform-independ
 Automake looks for Automake files named <file>Makefile.am</file>, and changes them into almost-Makefiles named <file>Makefile.in</file>.
 These almost-Makefiles are then transformed into real <file>Makefile</file>s when you run <cmd>configure</cmd>.</p>
 
-<section>
+<section id="creating-makefile-am">
 <title>Creating a <file>Makefile.am</file></title>
 
 <p>To get started, copy your <file>app-skeleton1</file> directory to a new <file>app-skeleton2</file> directory, or just rename it if you like.
@@ -101,7 +101,7 @@ But when we run <cmd>make</cmd>, we get a screen full of errors: all of the GTK 
 
 </section>
 
-<section>
+<section id="defining-libraries">
 <title>Defining our libraries</title>
 
 <p>We need to define what libraries the program will use.

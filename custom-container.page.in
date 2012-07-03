@@ -21,7 +21,8 @@ This can be done simply by using <code>gtk_widget_get_preferred_height()</code> 
 Once the total preferred size is known, the available space is allocated from the top down: each container divides up the space it receives among its children by calling their <code>gtk_widget_size_allocate()</code> methods.
 What's more, you can customize the process for any widget by overriding these methods.</p>
 
-<note title="GTK 2" style="warning">
+<note style="warning">
+  <title>GTK 2</title>
   <p>This is rather different from the way things worked in GTK 2, and there are probably plenty of GTK 2 instructions still floating around on the Internet.</p>
 </note>
 
@@ -122,7 +123,7 @@ Here it is:</p>
 The <code>GtkContainer</code> ones are fairly trivial, so we'll do them first.
 The <code>child_type</code> method, specifying what types of children can be added to the container, simply returns <code>GTK_TYPE_WIDGET</code>.
 The <code>forall</code> pointer in the <code>GtkContainerClass</code> structure doesn't correspond exactly to a <code>GtkContainer</code> method, but <code>gtk_container_forall()</code> and <code>gtk_container_foreach()</code> are use it in their implementations.
-One iterates over all children including "internal" ones (such as the <code>GtkButton</code>s in a dialog that aren't meant to be manipulated by your program), the other iterates over the container's children but skips internal ones..
+One iterates over all children including "internal" ones (such as the <code>GtkButton</code>s in a dialog that aren't meant to be manipulated by your program), the other iterates over the container's children but skips internal ones.
 The class <code>forall</code> function takes a flag telling whether to include internal children or not.
 <code>PSquare</code> doesn't have any internal children, so we just ignore that.</p>
 
