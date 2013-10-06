@@ -68,7 +68,7 @@ ResourceLoader.prototype._loaded = function (name) {
 	this.loading[name] = null;
 
 	if (!resource) {
-		alert("Could not load resource named " + name);
+		alert("ResourceLoader: Could not load resource named " + name);
 	} else {
 		for (var i = 0; i < loading.length; i += 1) {
 			loading[i](resource);
@@ -108,10 +108,12 @@ var Syntax = {
 	root: null, 
 	aliases: {},
 	styles: {},
+	themes: {},
 	lib: {},
 	defaultOptions: {
 		cacheScripts: true,
-		cacheStyleSheets: true
+		cacheStyleSheets: true,
+		theme: "base"
 	},
 	
 	brushes: new ResourceLoader(function (name, callback) {
@@ -170,9 +172,12 @@ var Syntax = {
 	
 	getResource: function (prefix, name, callback) {
 		var basename = prefix + "." + name;
+		var styles = this.styles[basename];
 		
-		if (this.styles[basename]) {
-			this.getStyles(this.root + this.styles[basename]);
+		if (styles) {
+			for (var i = 0; i < styles.length; i += 1) {
+				this.getStyles(this.root + styles[i]);
+			}
 		}
 		
 		Syntax.getScript(this.root + basename + '.js', callback);
@@ -256,10 +261,10 @@ var Syntax = {
 	},
 	
 	log: function() {
-		if (console && console.log) {
+		if (typeof(console) != "undefined" && console.log) {
 			console.log.apply(console, arguments);
-		} else {
-			alert(arguments.join(" "));
+		} else if (window.console && window.console.log) {
+			window.console.log.apply(window.console, arguments);
 		}
 	}
 };

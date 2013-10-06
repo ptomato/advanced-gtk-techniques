@@ -7,52 +7,34 @@ function yelp_generate_id () {
   else
     return ret;
 };
-$(document).ready(function () {
-  $('div.about').each(function () {
-    var header = $(this).children('div.hgroup').children('h2');
-    var region = $(this).children('div.region');
-    if (region.attr('id') == '')
-      region.attr('id', yelp_generate_id());
-    header.attr('aria-controls', region.attr('id'));
-    region.attr('aria-expanded', 'false').hide();
-    header.click(function () {
-      if (region.attr('aria-expanded') == 'true')
-        region.attr('aria-expanded', 'false').slideUp('fast');
-      else
-        region.attr('aria-expanded', 'true').slideDown('fast');
-    });
-  });
-});
 $(document).ready (function () {
-  if (location.hash != '') {
-    var sect = $(location.hash);
-    var hgrp = sect.find('div.hgroup:first')
-    sect.css('background-color',  '#fffacc');
-    hgrp.css('background-color',  '#fffacc')
-    window.setTimeout(function () {
-      sect.css({
-        '-webkit-transition': 'background-color 2s linear',
-        '-moz-transition': 'background-color 2s linear',
-        'transition': 'background-color 2s linear',
-        'background-color': '#ffffff'
-      });
-      hgrp.css({
-        '-webkit-transition': 'background-color 2s linear',
-        '-moz-transition': 'background-color 2s linear',
-        'transition': 'background-color 2s linear',
-        'background-color': '#f3f3f0'
-      });
-    }, 200);
-  }
+  var highlight_hash = function () {
+    if (location.hash != '') {
+      var sect = $(location.hash);
+      sect.css('background-color',  '#fffacc');
+      window.setTimeout(function () {
+        sect.css({
+          '-webkit-transition': 'background-color 2s linear',
+          '-moz-transition': 'background-color 2s linear',
+          'transition': 'background-color 2s linear',
+          'background-color': 'rgba(1, 1, 1, 0)'
+        });
+      }, 200);
+    }
+  };
+  $(window).bind('hashchange', highlight_hash);
+  highlight_hash();
 });
 
-$.fn.yelp_ui_expander_toggle = function (onlyopen) {
+$.fn.yelp_ui_expander_toggle = function (onlyopen, callback) {
   var expander = $(this);
   var region = expander.children('.inner').children('.region');
   var yelpdata = expander.children('div.yelp-data-ui-expander');
-  var compfunc = function () { return true; };
-  if (expander.is('div.figure'))
-    compfunc = function () { expander.yelp_auto_resize(); };
+  var compfunc = function () {
+    if (expander.is('div.figure')) { expander.yelp_auto_resize(); }
+    if (callback) { callback(); }
+    return true;
+  };
   var title = expander.children('.inner').children('.title');
   if (title.length == 0)
     title = expander.children('.inner').children('.hgroup');
@@ -94,7 +76,7 @@ $(document).ready(function () {
       yelpdata.append($('<div class="yelp-title-expanded"></div>').html(titlespan.html()));
     if (title_c.length == 0)
       yelpdata.append($('<div class="yelp-title-collapsed"></div>').html(titlespan.html()));
-    if (yelpdata.attr('data-yelp-expanded') == 'no') {
+    if (yelpdata.attr('data-yelp-expanded') == 'false') {
       expander.addClass('ui-expander-c');
       region.attr('aria-expanded', 'false').hide();
       if (title_c.length != 0)
@@ -111,18 +93,25 @@ $(document).ready(function () {
   });
 });
 $(document).ready(function () {
-  if (location.hash != '') {
-    var target = $(location.hash);
-    var parents = target.parents('div.ui-expander');
-    if (target.is('div.ui-expander'))
-      parents = parents.andSelf();
-    parents.each(function () {
-      $(this).yelp_ui_expander_toggle(true);
-    });
-  }
+  var expand_hash = function () {
+    if (location.hash != '') {
+      var target = $(location.hash);
+      var parents = target.parents('div.ui-expander');
+      if (target.is('div.ui-expander'))
+        parents = parents.andSelf();
+      parents.each(function () {
+        $(this).yelp_ui_expander_toggle(true, function () {
+          window.scrollTo(0, $(target).offset().top);
+        });
+      });
+    }
+  };
+  $(window).bind('hashchange', expand_hash);
+  expand_hash();
 });
 
 yelp_color_text_light = '#2e3436';
+yelp_color_gray_background = '#f3f3f0';
 yelp_color_gray_border = '#babdb6';
 yelp_paint_zoom = function (zoom, zoomed) {
   var ctxt = zoom.children('canvas')[0].getContext('2d');
@@ -243,7 +232,7 @@ function yelp_init_video (element) {
   var video = $(element);
   video.removeAttr('controls');
 
-  var controls = $('<div class="media-controls"></div>');
+  var controls = $('<div class="media-controls media-controls-' + element.nodeName + '"></div>');
   var playControl = $('<button class="media-play"></button>').attr({
     'data-play-label': video.attr('data-play-label'),
     'data-pause-label': video.attr('data-pause-label'),
@@ -257,12 +246,15 @@ function yelp_init_video (element) {
   rangeCanvasCtxt.strokeWidth = 1;
   rangeCanvasCtxt.strokeRect(0.5, 0.5, 103, 19);
   var currentSpan = $('<span class="media-current">0:00</span>');
-  controls.append(playControl, $('<div class="media-range"></div>').append(rangeCanvas), currentSpan);
+  var durationSpan = $('<span class="media-duration">-:--</span>');
+  controls.append(playControl,
+                  $('<div class="media-range"></div>').append(rangeCanvas),
+                  $('<div class="media-time"></div>').append(currentSpan, durationSpan));
   video.after(controls);
 
   var playCanvasCtxt = playCanvas[0].getContext('2d');
   var paintPlayButton = function () {
-    playCanvasCtxt.fillStyle = yelp_color_text_light;
+    playCanvasCtxt.fillStyle = yelp_color_gray_background;
     playCanvasCtxt.clearRect(0, 0, 20, 20);
     playCanvasCtxt.beginPath();
     playCanvasCtxt.moveTo(5, 5);   playCanvasCtxt.lineTo(5, 15);
@@ -270,7 +262,7 @@ function yelp_init_video (element) {
     playCanvasCtxt.fill();
   }
   var paintPauseButton = function () {
-    playCanvasCtxt.fillStyle = yelp_color_text_light;
+    playCanvasCtxt.fillStyle = yelp_color_gray_background;
     playCanvasCtxt.clearRect(0, 0, 20, 20);
     playCanvasCtxt.beginPath();
     playCanvasCtxt.moveTo(5, 5);   playCanvasCtxt.lineTo(9, 5);
@@ -321,9 +313,9 @@ function yelp_init_video (element) {
     currentSpan.text(mins + (secs < 10 ? ':0' : ':') + secs);
     ttmlNodes.each(function () {
       var ttml = this;
-      if (element.currentTime >= parseFloat(ttml.getAttribute('data-begin')) &&
-          (!ttml.hasAttribute('data-end') ||
-           element.currentTime < parseFloat(ttml.getAttribute('data-end')) )) {
+      if (element.currentTime >= parseFloat(ttml.getAttribute('data-ttml-begin')) &&
+          (!ttml.hasAttribute('data-ttml-end') ||
+           element.currentTime < parseFloat(ttml.getAttribute('data-ttml-end')) )) {
         if (ttml.tagName == 'span')
           ttml.style.display = 'inline';
         else
@@ -335,6 +327,14 @@ function yelp_init_video (element) {
     });
   };
   element.addEventListener('timeupdate', timeUpdate, false);
+  var durationUpdate = function () {
+    if (!isNaN(element.duration)) {
+      mins = parseInt(element.duration / 60);
+      secs = parseInt(element.duration - (60 * mins));
+      durationSpan.text(mins + (secs < 10 ? ':0' : ':') + secs);
+    }
+  };
+  element.addEventListener('durationchange', durationUpdate, false);
 
   rangeCanvas.click(function (event) {
     var pct = event.clientX - Math.floor(rangeCanvas.offset().left);
@@ -346,14 +346,14 @@ function yelp_init_video (element) {
   });
 };
 $(document).ready(function () {
-  $('video.media-block').each(function () { yelp_init_video(this) });;
+  $('video, audio').each(function () { yelp_init_video(this) });;
 });
 
 $(document).ready(function () {
   $('input.facet').change(function () {
     var control = $(this);
     var content = control.closest('div.body,div.sect');
-    content.find('a.facet').each(function () {
+    content.find('.facet-link').each(function () {
       var link = $(this);
       var facets = link.parents('div.body,div.sect').children('div.region').children('div.contents').children('div.facets').children('div.facet');
       var visible = true;
@@ -367,7 +367,7 @@ $(document).ready(function () {
           var key = input.attr('data-facet-key');
           var values = input.attr('data-facet-values').split(' ');
           for (var k = 0; k < values.length; k++) {
-            if (link.is('a[data-facet-' + key + ' ~= "' + values[k] + '"]')) {
+            if (link.is('*[data-facet-' + key + ' ~= "' + values[k] + '"]')) {
               inputvis = true;
               break;
             }
@@ -443,7 +443,7 @@ $(document).ready(function () {
       );
     });
   });
-  $('div.links-ui-mouseovers').each(function () {
+  $('div.links-ui-hover').each(function () {
     var contdiv = $(this);
     var width = 0;
     var height = 0;
@@ -454,13 +454,63 @@ $(document).ready(function () {
           if (contdiv.is(':visible')) {
             var offset = contdiv.offset();
             mlink.find('img').parent('span').css({left: offset.left, top: offset.top, zIndex: 10});
-            mlink.find('img').parent('span').fadeIn('slow');
+            mlink.find('img').parent('span').show();
           }
         },
         function () {
-          mlink.find('img').parent('span').fadeOut('slow');
+          mlink.find('img').parent('span').hide();
         }
       );
+    });
+  });
+  $('a.ui-overlay').each(function () {
+    $(this).click(function () {
+      var overlay = $(this).parent('div').children('div.ui-overlay');
+      var inner = overlay.children('div.inner');
+      var close = inner.children('a.ui-overlay-close');
+      var media = inner.find('audio, video');
+      var screen = $('div.ui-screen');
+      if (screen.length == 0) {
+        screen = $('<div class="ui-screen"></div>');
+        $('body').append(screen);
+      }
+      var hideoverlay = function () {
+        if (media.length > 0)
+          media[0].pause();
+        $(document).unbind('keydown.yelp-ui-overlay');
+        close.unbind('click');
+        screen.unbind('click');
+        screen.fadeOut('slow');
+        overlay.unbind('click');
+        overlay.slideUp('fast');
+        return false;
+      };
+      screen.click(hideoverlay);
+      close.click(hideoverlay);
+      $(document).bind('keydown.yelp-ui-overlay', function (event) {
+        if (event.which == 27) {
+          hideoverlay();
+        }
+      });
+      overlay.click(function (event) {
+        var target = event.target;
+        do {
+          if (target == inner[0]) {
+            break;
+          }
+        } while (target = target.parentNode);
+        if (target != inner[0]) {
+          hideoverlay();
+          return false;
+        }
+      });
+      overlay.css({top: $(this).offset().top});
+      screen.fadeIn('slow');
+      overlay.slideDown('fast', function () {
+        if (media.length > 0)
+          media[0].play();
+      });
+      return false;
     });
   });
 });

@@ -20,37 +20,26 @@ if (!String.prototype.repeat) {
 	};
 }
 
-// The jQuery version of container.text() is broken on IE6.
-// This version fixes it... for pre elements only. Other elements
-// in IE will have the whitespace manipulated.
-Syntax.getCDATA = function (elems) {
-	var cdata = "", elem;
+// Return the inner text of an element - must preserve whitespace.
+// Avoid returning \r characters.
+Syntax.innerText = function(element) {
+	var text;
 	
-	(function (elems) {
-		for (var i = 0; elems[i]; i++) {
-			elem = elems[i];
-
-			// Get the text from text nodes and CDATA nodes
-			if (elem.nodeType === 3 || elem.nodeType === 4) {
-				cdata += elem.nodeValue;
-		
-			// Use textContent || innerText for elements
-			} else if (elem.nodeType === 1) {
-				if (typeof(elem.textContent) === 'string')
-					cdata += elem.textContent;
-				else if (typeof(elem.innerText) === 'string')
-					cdata += elem.innerText;
-				else
-					arguments.callee(elem.childNodes);
-			
-			// Traverse everything else, except comment nodes
-			} else if (elem.nodeType !== 8) {
-				arguments.callee(elem.childNodes);
-			}
-		}
-	})(elems);
+	if (!element) {
+		return "";
+	}
 	
-	return cdata.replace(/\r\n?/g, "\n");
+	if (element.nodeName == 'BR') {
+		return '\n';
+	} else if (element.textContent) {
+		// W3C: FF, Safari, Chrome, etc.
+		text = element.textContent;
+	} else if (document.body.innerText) {
+		// IE, other older browsers.
+		text = element.innerText;
+	}
+	
+	return text.replace(/\r\n?/g, '\n');
 }
 
 // Convert to stack based implementation
@@ -67,14 +56,18 @@ Syntax.extractElementMatches = function (elems, offset, tabWidth) {
 				offset += elem.nodeValue.length;
 			
 			} else if (elem.nodeType === 1) {
-				var text = Syntax.getCDATA(elem.childNodes);
-				var expr = {klass: elem.className, force: true, element: elem};
+				var text = Syntax.innerText(elem);
 				
-				matches.push(new Syntax.Match(offset, text.length, expr, text));
+				matches.push(new Syntax.Match(offset, text.length, {
+					klass: elem.className,
+					force: true,
+					element: elem,
+					allow: '*'
+				}, text));
 			}
 			
 			// Traverse everything, except comment nodes
-			if (elem.nodeType !== 8) {
+			if (elem.nodeType !== 8 && elem.children) {
 				arguments.callee(elem.childNodes, offset);
 			}
 		}
@@ -87,6 +80,7 @@ Syntax.extractElementMatches = function (elems, offset, tabWidth) {
 	return matches;
 }
 
+// Basic layout doesn't do anything e.g. identity layout.
 Syntax.layouts.preformatted = function (options, html, container) {
 	return html;
 };
@@ -95,6 +89,7 @@ Syntax.modeLineOptions = {
 	'tab-width': function(name, value, options) { options.tabWidth = parseInt(value, 10); }
 };
 
+// Should be obvious right?
 Syntax.convertTabsToSpaces = function (text, tabSize) {
 	var space = [], pattern = /\r|\n|\t/g, tabOffset = 0, offsets = [], totalOffset = 0;
 	tabSize = tabSize || 4
@@ -123,6 +118,15 @@ Syntax.convertTabsToSpaces = function (text, tabSize) {
 	return {text: text, offsets: offsets};
 };
 
+// This function converts from a compressed set of offsets of the form:
+//	[
+//		[offset, width, totalOffset],
+//		...
+//	]
+// This means that at a $offset, a tab (single character) was expanded to $width
+// single space characters.
+// This function produces a lookup table of offsets, where a given character offset
+// is mapped to how far the character has been offset.
 Syntax.convertToLinearOffsets = function (offsets, length) {
 	var current = 0, changes = [];
 	
@@ -130,11 +134,19 @@ Syntax.convertToLinearOffsets = function (offsets, length) {
 	// has been shifted right by offset[current][2]
 	for (var i = 0; i < length; i++) {
 		if (offsets[current] && i > offsets[current][0]) {
-			if (offsets[current+1] && i <= offsets[current+1][0]) {
-				changes.push(offsets[current][2]);
+			// Is there a next offset?
+			if (offsets[current+1]) {
+				// Is the index less than the start of the next offset?
+				if (i <= offsets[current+1][0]) {
+					changes.push(offsets[current][2]);
+				} else {
+					// If so, move to the next offset.
+					current += 1;
+					i -= 1;
+				}
 			} else {
-				current += 1;
-				i -= 1;
+				// If there is no next offset we assume this one to the end.
+				changes.push(offsets[current][2]);
 			}
 		} else {
 			changes.push(changes[changes.length-1] || 0);
@@ -144,6 +156,8 @@ Syntax.convertToLinearOffsets = function (offsets, length) {
 	return changes;
 }
 
+// Used for tab expansion process, by shifting matches when tab charaters were converted to
+// spaces.
 Syntax.updateMatchesWithOffsets = function (matches, linearOffsets, text) {
 	(function (matches) {
 		for (var i = 0; i < matches.length; i++) {
@@ -165,6 +179,9 @@ Syntax.updateMatchesWithOffsets = function (matches, linearOffsets, text) {
 	return matches;
 };
 
+// A helper function which automatically matches expressions with capture groups from the regular expression match.
+// Each argument position corresponds to the same index regular expression group.
+// Or, override by providing rule.index
 Syntax.extractMatches = function() {
 	var rules = arguments;
 	
@@ -188,7 +205,7 @@ Syntax.extractMatches = function() {
 			
 			if (match[index].length > 0) {
 				if (rule.brush) {
-					matches.push(Syntax.brushes[rule.brush].buildTree(match[index], RegExp.indexOf(match, index)));
+					matches.push(Syntax.Brush.buildTree(rule, match[index], RegExp.indexOf(match, index)));
 				} else {
 					var expression = jQuery.extend({owner: expr.owner}, rule);
 					
@@ -201,19 +218,30 @@ Syntax.extractMatches = function() {
 	};
 };
 
+// Used to create processing functions that automatically link to remote documentation.
 Syntax.lib.webLinkProcess = function (queryURI, lucky) {
 	if (lucky) {
 		queryURI = "http://www.google.com/search?btnI=I&q=" + encodeURIComponent(queryURI + " ");
 	}
 	
-	return function (element, match) {
-		return jQuery('<a>').
-			attr('href', queryURI + encodeURIComponent(element.text())).
-			attr('class', element.attr('class')).
-			append(element.contents());
+	return function (element, match, options) {
+		// Per-code block linkification control.
+		if (options.linkify === false)
+			return element;
+		
+		var a = document.createElement('a');
+		a.href = queryURI + encodeURIComponent(Syntax.innerText(element));
+		a.className = element.className;
+		
+		// Move children from <element> to <a>
+		while (element.childNodes.length > 0)
+			a.appendChild(element.childNodes[0]);
+		
+		return a;
 	};
 };
 
+// Global brush registration function.
 Syntax.register = function (name, callback) {
 	var brush = Syntax.brushes[name] = new Syntax.Brush();
 	brush.klass = name;
@@ -221,14 +249,16 @@ Syntax.register = function (name, callback) {
 	callback(brush);
 };
 
+// Library of helper patterns
 Syntax.lib.cStyleComment = {pattern: /\/\*[\s\S]*?\*\//gm, klass: 'comment', allow: ['href']};
 Syntax.lib.cppStyleComment = {pattern: /\/\/.*$/gm, klass: 'comment', allow: ['href']};
 Syntax.lib.perlStyleComment = {pattern: /#.*$/gm, klass: 'comment', allow: ['href']};
 
-Syntax.lib.perlStyleRegularExpressions = {pattern: /\B\/([^\/]|\\\/)*?\/[a-z]*(?=\s*[^\w\s'";\/])/g, klass: 'constant'};
+Syntax.lib.perlStyleRegularExpression = {pattern: /\B\/([^\/]|\\\/)*?\/[a-z]*(?=\s*($|[^\w\s'"\(]))/gm, klass: 'constant', incremental: true};
 
 Syntax.lib.cStyleFunction = {pattern: /([a-z_][a-z0-9_]*)\s*\(/gi, matches: Syntax.extractMatches({klass: 'function'})};
 Syntax.lib.camelCaseType = {pattern: /\b_*[A-Z][\w]*\b/g, klass: 'type'};
+Syntax.lib.cStyleType = {pattern: /\b[_a-z][_\w]*_t\b/gi, klass: 'type'};
 
 Syntax.lib.xmlComment = {pattern: /(&lt;|<)!--[\s\S]*?--(&gt;|>)/gm, klass: 'comment'};
 Syntax.lib.webLink = {pattern: /\w+:\/\/[\w\-.\/?%&=@:;#]*/g, klass: 'href'};
@@ -242,6 +272,7 @@ Syntax.lib.multiLineDoubleQuotedString = {pattern: /"([^\\"]|\\.)*"/g, klass: 's
 Syntax.lib.multiLineSingleQuotedString = {pattern: /'([^\\']|\\.)*'/g, klass: 'string'};
 Syntax.lib.stringEscape = {pattern: /\\./g, klass: 'escape', only: ['string']};
 
+// Main match constructor. Make sure value is the correct size.
 Syntax.Match = function (offset, length, expression, value) {
 	this.offset = offset;
 	this.endOffset = offset + length;
@@ -279,34 +310,39 @@ Syntax.Match.prototype.adjust = function (offset, length, text) {
 	}
 };
 
+// Sort helper for sorting matches in forward order (e.g. same as the text that they were extracted from)
 Syntax.Match.sort = function (a,b) {
 	return (a.offset - b.offset) || (b.length - a.length);
 };
 
+// Is the given match contained in the range of the parent match?
 Syntax.Match.prototype.contains = function (match) {
 	return (match.offset >= this.offset) && (match.endOffset <= this.endOffset);
 };
 
+// Reduce a givent tree node into an html node.
 Syntax.Match.defaultReduceCallback = function (node, container) {
 	// We avoid using jQuery in this function since it is incredibly performance sensitive.
 	// Using jQuery jQuery.fn.append() can reduce performance by as much as 1/3rd.
 	if (typeof(node) === 'string') {
 		node = document.createTextNode(node);
-	} else {
-		node = node[0];
 	}
 	
-	container[0].appendChild(node);
+	container.appendChild(node);
 };
 
+// Convert a tree of matches into some flat form (typically HTML nodes).
 Syntax.Match.prototype.reduce = function (append, process) {
 	var start = this.offset;
-	var container = jQuery('<span></span>');
+	var container = document.createElement('span');
 	
 	append = append || Syntax.Match.defaultReduceCallback;
 	
 	if (this.expression && this.expression.klass) {
-		container.addClass(this.expression.klass);
+		if (container.className.length > 0)
+			container.className += ' ';
+		
+		container.className += this.expression.klass;
 	}
 	
 	for (var i = 0; i < this.children.length; i += 1) {
@@ -339,6 +375,7 @@ Syntax.Match.prototype.reduce = function (append, process) {
 	return container;
 };
 
+// Main nesting check - can a match contain the given match?
 Syntax.Match.prototype.canContain = function (match) {
 	// This is a special conditional for explicitly added ranges by the user.
 	// Since user added it, we honour it no matter what.
@@ -379,6 +416,8 @@ Syntax.Match.prototype.canContain = function (match) {
 	return false;
 };
 
+// Return true if the given match can be spliced in as a child.
+// Checked automatically when calling _splice.
 Syntax.Match.prototype.canHaveChild = function(match) {
 	var only = match.expression.only;
 	
@@ -405,6 +444,9 @@ Syntax.Match.prototype.canHaveChild = function(match) {
 	return true;
 };
 
+// Add a child into the list of children for a given match, if it is acceptable to do so.
+// Updates the owner of the match.
+// Returns null if splice failed.
 Syntax.Match.prototype._splice = function(i, match) {
 	if (this.canHaveChild(match)) {
 		this.children.splice(i, 0, match);
@@ -424,19 +466,70 @@ Syntax.Match.prototype._splice = function(i, match) {
 // This function implements a full insertion procedure, and will break up the match to fit.
 // This operation is potentially very expensive, but is used to insert custom ranges into
 // the tree, if they are specified by the user. A custom <span> may cover multiple leafs in
-// the tree, thus naturally it needs to be broken up.
+// the tree, thus some parts of the tree may need to be split. This behavior is controlled
+// by whole - if true, the tree is split, if false, the match is split.
 // You should avoid using this function except in very specific cases.
-Syntax.Match.prototype.insert = function(match) {
+Syntax.Match.prototype.insert = function(match, whole) {
 	if (!this.contains(match))
 		return null;
 	
-	return this._insert(match);
+	if (whole) {
+		var top = this, i = 0;
+		while (i < top.children.length) {
+			if (top.children[i].contains(match)) {
+				top = top.children[i];
+				i = 0;
+			} else {
+				i += 1;
+			}
+		}
+		
+		return top._insertWhole(match);
+	} else {
+		return this._insert(match);
+	}
+}
+
+Syntax.Match.prototype._insertWhole = function(match) {
+	var parts = this.bisectAtOffsets([match.offset, match.endOffset])
+	this.children = [];
+	
+	if (parts[0]) {
+		this.children = this.children.concat(parts[0].children);
+	}
+	
+	if (parts[1]) {
+		match.children = [];
+		
+		// Update the match's expression based on the current position in the tree:
+		if (this.expression && this.expression.owner) {
+			match.expression = this.expression.owner.getRuleForKlass(match.expression.klass) || match.expression;
+		}
+		
+		// This probably isn't ideal, it would be better to convert all children and children-of-children
+		// into a linear array and reinsert - it would be slightly more accurate in many cases.
+		for (var i = 0; i < parts[1].children.length; i += 1) {
+			var child = parts[1].children[i];
+			
+			if (match.canContain(child)) {
+				match.children.push(child);
+			}
+		}
+		
+		this.children.push(match);
+	}
+	
+	if (parts[2]) {
+		this.children = this.children.concat(parts[2].children);
+	}
+	
+	return this;
 }
 
 // This is not a general tree insertion function. It is optimised to run in almost constant
 // time, but data must be inserted in sorted order, otherwise you will have problems.
 // This function also ensures that matches won't be broken up unless absolutely necessary.
-Syntax.Match.prototype.insertAtEnd = function (match) {
+Syntax.Match.prototype.insertAtEnd = function(match) {
 	if (!this.contains(match)) {
 		Syntax.log("Syntax Error: Child is not contained in parent node!");
 		return null;
@@ -493,7 +586,8 @@ Syntax.Match.prototype.insertAtEnd = function (match) {
 };
 
 // This insertion function is relatively complex because it is required to split the match over
-// several children.
+// several children. This function is used infrequently and is mostly for completeness. However,
+// it might be possible to remove it to reduce code.
 Syntax.Match.prototype._insert = function(match) {
 	if (this.children.length == 0)
 		return this._splice(0, match);
@@ -522,9 +616,9 @@ Syntax.Match.prototype._insert = function(match) {
 			return child._insert(match);
 		}
 		
-		console.log("Bisect at offsets", match, child.offset, child.endOffset);
+		// console.log("Bisect at offsets", match, child.offset, child.endOffset);
 		var parts = match.bisectAtOffsets([child.offset, child.endOffset]);
-		console.log("parts =", parts);
+		// console.log("parts =", parts);
 		// We now have at most three parts
 		//           {------child------}   {---possibly some other child---}
 		//   |--[0]--|-------[1]-------|--[2]--|
@@ -695,6 +789,9 @@ Syntax.Match.prototype.bisectAtOffsets = function(splits) {
 	return parts;
 };
 
+// Split a match at points in the tree that match a specific regular expression pattern.
+// Uses the fast tree bisection algorithm, performance should be bounded O(S log N) where N is
+// the total number of matches and S is the number of splits (?).
 Syntax.Match.prototype.split = function(pattern) {
 	var splits = [], match;
 	
@@ -724,6 +821,28 @@ Syntax.Brush = function () {
 	this.processes = {};
 };
 
+// Add a parent to the brush. This brush should be loaded as a dependency.
+Syntax.Brush.prototype.derives = function (name) {
+	this.parents.push(name);
+	this.rules.push({
+		apply: function(text, expr) {
+			return Syntax.brushes[name].getMatches(text);
+		}
+	});
+}
+
+// Return an array of all classes that the brush consists of.
+// A derivied brush is its own klass + the klass of any and all parents.
+Syntax.Brush.prototype.allKlasses = function () {
+	var klasses = [this.klass];
+	
+	for (var i = 0; i < this.parents.length; i += 1) {
+		klasses = klasses.concat(Syntax.brushes[this.parents[i]].allKlasses());
+	}
+	
+	return klasses;
+}
+
 Syntax.Brush.convertStringToTokenPattern = function (pattern, escape) {
 	var prefix = "\\b", postfix = "\\b";
 	
@@ -745,35 +864,55 @@ Syntax.Brush.convertStringToTokenPattern = function (pattern, escape) {
 	return prefix + pattern + postfix;
 }
 
-// Add a parent to the brush. This brush should be loaded as a dependency.
-Syntax.Brush.prototype.derives = function (name) {
-	this.parents.push(name);
-	this.rules.push({
-		apply: function(text, expr, offset) {
-			return Syntax.brushes[name].getMatches(text, offset);
-		}
-	});
-}
-
-// Return an array of all classes that the brush consists of.
-// A derivied brush is its own klass + the klass of any and all parents.
-Syntax.Brush.prototype.allKlasses = function () {
-	var klasses = [this.klass];
+Syntax.Brush.MatchPattern = function (text, rule) {
+	if (!rule.pattern)
+		return [];
 	
-	for (var i = 0; i < this.parents.length; i += 1) {
-		klasses = klasses.concat(Syntax.brushes[this.parents[i]].allKlasses());
+	// Duplicate the pattern so that the function is reentrant.
+	var matches = [], pattern = new RegExp;
+	pattern.compile(rule.pattern);
+	
+	while((match = pattern.exec(text)) !== null) {
+		if (rule.matches) {
+			matches = matches.concat(rule.matches(match, rule));
+		} else if (rule.brush) {
+			matches.push(Syntax.Brush.buildTree(rule, match[0], match.index));
+		} else {
+			matches.push(new Syntax.Match(match.index, match[0].length, rule, match[0]));
+		}
+		
+		if (rule.incremental) {
+			// Don't start scanning from the end of the match..
+			pattern.lastIndex = match.index + 1;
+		}
 	}
 	
-	return klasses;
+	return matches;
 }
 
 Syntax.Brush.prototype.push = function () {
 	if (jQuery.isArray(arguments[0])) {
 		var patterns = arguments[0], rule = arguments[1];
 		
+		var all = "(";
+		
 		for (var i = 0; i < patterns.length; i += 1) {
-			this.push(jQuery.extend({pattern: patterns[i]}, rule));
+			if (i > 0) all += "|";
+			
+			var p = patterns[i];
+			
+			if (p instanceof RegExp) {
+				all += p.source;
+			} else {
+				all += Syntax.Brush.convertStringToTokenPattern(p, true);
+			}
 		}
+		
+		all += ")";
+		
+		this.push(jQuery.extend({
+			pattern: new RegExp(all, rule.options || 'g')
+		}, rule));
 	} else {
 		var rule = arguments[0];
 		
@@ -785,67 +924,84 @@ Syntax.Brush.prototype.push = function () {
 		if (typeof(XRegExp) !== 'undefined') {
 			rule.pattern = new XRegExp(rule.pattern);
 		}
+		
+		// Default pattern extraction algorithm
+		rule.apply = rule.apply || Syntax.Brush.MatchPattern;
 
-		if (rule.pattern && rule.pattern.global) {
+		if (rule.pattern && rule.pattern.global || typeof(rule.pattern) == 'undefined') {
 			this.rules.push(jQuery.extend({owner: this}, rule));
-		} else if (typeof(console) != "undefined") {
+		} else {
 			Syntax.log("Syntax Error: Malformed rule: ", rule);
 		}
 	}
 };
 
-Syntax.Brush.prototype.getMatchesForRule = function (text, rule, offset) {
+Syntax.Brush.prototype.getMatchesForRule = function (text, rule) {
 	var matches = [], match = null;
 	
 	// Short circuit (user defined) function:
-	if (typeof rule.apply != "undefined") {
-		return rule.apply(text, rule, offset);
+	if (typeof(rule.apply) != 'undefined') {
+		matches = rule.apply(text, rule);
 	}
 	
-	// Duplicate the pattern so that the function is reentrant.
-	var pattern = new RegExp;
-	pattern.compile(rule.pattern);
+	if (rule.debug) {
+		Syntax.log("Syntax matches:", rule, text, matches);
+	}
 	
-	while((match = pattern.exec(text)) !== null) {
-		if (rule.matches) {
-			matches = matches.concat(rule.matches(match, rule));
-		} else if (rule.brush) {
-			matches.push(Syntax.brushes[rule.brush].buildTree(match[0], match.index));
-		} else {
-			matches.push(new Syntax.Match(match.index, match[0].length, rule, match[0]));
+	return matches;
+};
+
+Syntax.Brush.prototype.getRuleForKlass = function (klass) {
+	for (var i = 0; i < this.rules.length; i += 1) {
+		if (this.rules[i].klass == klass) {
+			return this.rules[i];
 		}
 	}
 	
+	return null;
+}
+
+// Get all matches from a given block of text.
+Syntax.Brush.prototype.getMatches = function(text) {
+	var matches = [];
+	
+	for (var i = 0; i < this.rules.length; i += 1) {
+		matches = matches.concat(this.getMatchesForRule(text, this.rules[i]));
+	}
+	
+	return matches;
+};
+
+// A helper function for building a tree from a specific rule.
+// Typically used where sub-trees are required, e.g. CSS brush in HTML brush.
+Syntax.Brush.buildTree = function(rule, text, offset, additionalMatches) {
+	var match = Syntax.brushes[rule.brush].buildTree(text, offset, additionalMatches);
+	
+	jQuery.extend(match.expression, rule);
+	
+	return match;
+}
+
+// This function builds a tree from a given block of text.
+// This is done by applying all rules to the text to get a complete list of matches,
+// sorting them in order, and inserting them into a syntax tree data structure.
+// Additional matches are forcefully inserted into the tree.
+// Provide an offset if the text is offset in a larger block of text. Matches
+// will be shifted along appropriately.
+Syntax.Brush.prototype.buildTree = function(text, offset, additionalMatches) {
+	offset = offset || 0;
+	
+	// Fixes code that uses \r\n for line endings. /$/ matches both \r\n, which is a problem..
+	text = text.replace(/\r/g, '');
+	
+	var matches = this.getMatches(text);
+	
+	// Shift matches if offset is provided.
 	if (offset && offset > 0) {
 		for (var i = 0; i < matches.length; i += 1) {
 			matches[i].shift(offset);
 		}
 	}
-	
-	if (rule.debug) {
-		Syntax.log("matches", matches);
-	}
-	
-	return matches;
-};
-
-Syntax.Brush.prototype.getMatches = function(text, offset) {
-	var matches = [];
-	
-	for (var i = 0; i < this.rules.length; i += 1) {
-		matches = matches.concat(this.getMatchesForRule(text, this.rules[i], offset));
-	}
-	
-	return matches;
-};
-
-Syntax.Brush.prototype.buildTree = function(text, offset, additionalMatches) {
-	offset = offset || 0;
-	
-	// Fixes code that uses \r\n for line endings. /$/ matches both \r\n, which is a problem..
-	text = text.replace(/\r/g, "");
-	
-	var matches = this.getMatches(text, offset);
 	
 	var top = new Syntax.Match(offset, text.length, {klass: this.allKlasses().join(" "), allow: '*', owner: this}, text);
 
@@ -867,35 +1023,85 @@ Syntax.Brush.prototype.buildTree = function(text, offset, additionalMatches) {
 	return top;
 };
 
-// Matches is optional, and provides a set of pre-existing matches.
-Syntax.Brush.prototype.process = function(text, matches) {
+// This function builds a syntax tree from the given text and matches (optional).
+// The syntax tree is then flattened into html using a variety of functions.
+//
+// By default, you can't control reduction process through this function, but
+// it is possible to control the element conversion process by replace
+// .reduce(null, ...) with  .reduce(reduceCallback, ...)
+// See Syntax.Match.defaultReduceCallback for more details about interface.
+//
+// Matches is optional, and provides a set of pre-existing matches to add
+// to the tree.
+// Options are passed to element level processing functions.
+Syntax.Brush.prototype.process = function(text, matches, options) {
 	var top = this.buildTree(text, 0, matches);
 	
 	var lines = top.split(/\n/g);
 	
-	var html = jQuery('<pre class="syntax"></pre>');
+	var html = document.createElement('pre');
+	html.className = 'syntax';
 	
 	for (var i = 0; i < lines.length; i += 1) {
 		var line = lines[i].reduce(null, function (container, match) {
 			if (match.expression) {
 				if (match.expression.process) {
-					container = match.expression.process(container, match);
+					container = match.expression.process(container, match, options);
 				}
 				
-				var process = match.expression.owner.processes[match.expression.klass];
-				if (process) {
-					container = process(container, match);
+				if (match.expression.owner) {
+					var process = match.expression.owner.processes[match.expression.klass];
+					if (process) {
+						container = process(container, match, options);
+					}
 				}
 			}
 			return container;
 		});
 		
-		html.append(line);
+		html.appendChild(line);
 	}
 	
 	return html;
 };
 
+// Highlights a given block of text with a given set of options.
+// options.brush should specify the brush to use, either by direct reference
+// or name.
+// Callback will be called with (highlighted_html, brush_used, original_text, options)
+Syntax.highlightText = function(text, options, callback) {
+	var brushName = (options.brush || 'plain').toLowerCase();
+	
+	brushName = Syntax.aliases[brushName] || brushName;
+	
+	Syntax.brushes.get(brushName, function(brush) {
+		if (options.tabWidth) {
+			// Calculate the tab expansion and offsets
+			replacement = Syntax.convertTabsToSpaces(text, options.tabWidth);
+			
+			// Update any existing matches
+			if (options.matches && options.matches.length) {
+				var linearOffsets = Syntax.convertToLinearOffsets(replacement.offsets, text.length);
+				options.matches = Syntax.updateMatchesWithOffsets(options.matches, linearOffsets, replacement.text);
+			}
+			
+			text = replacement.text;
+		}
+		
+		var html = brush.process(text, options.matches, options);
+		
+		if (options.linkify !== false) {
+			jQuery('span.href', html).each(function(){
+				jQuery(this).replaceWith(jQuery('<a>').attr('href', this.innerHTML).text(this.innerHTML));
+			});
+		}
+		
+		callback(html, brush, text, options);
+	});
+}
+
+// Highlight a given set of elements with a set of options.
+// Callback will be called once per element with (options, highlighted_html, original_container)
 Syntax.highlight = function (elements, options, callback) {
 	if (typeof(options) === 'function') {
 		callback = options;
@@ -903,6 +1109,7 @@ Syntax.highlight = function (elements, options, callback) {
 	}
 	
 	options.layout = options.layout || 'preformatted';
+	options.matches = [];
 	
 	if (typeof(options.tabWidth) === 'undefined') {
 		options.tabWidth = 4;
@@ -911,56 +1118,44 @@ Syntax.highlight = function (elements, options, callback) {
 	elements.each(function () {
 		var container = jQuery(this);
 		
-		// We can augment the plain text to extract existing annotations.
-		var matches = Syntax.extractElementMatches(container);
-		var text = Syntax.getCDATA(container);
+		// We can augment the plain text to extract existing annotations (e.g. <span class="foo">...</span>).
+		options.matches = options.matches.concat(Syntax.extractElementMatches(container));
+		
+		var text = Syntax.innerText(this);
 		
 		var match = text.match(/-\*- mode: (.+?);(.*?)-\*-/i);
 		var endOfSecondLine = text.indexOf("\n", text.indexOf("\n") + 1);
-		
+
 		if (match && match.index < endOfSecondLine) {
 			options.brush = options.brush || match[1];
 			var modeline = match[2];
-			
+
 			var mode = /([a-z\-]+)\:(.*?)\;/gi;
-			
+
 			while((match = mode.exec(modeline)) !== null) {
 				var setter = Syntax.modeLineOptions[match[1]];
-				
+
 				if (setter) {
 					setter(match[1], match[2], options);
 				}
 			}
 		}
 		
-		var brushName = (options.brush || 'plain').toLowerCase();
-		
-		brushName = Syntax.aliases[brushName] || brushName;
-		
-		Syntax.brushes.get(brushName, function(brush) {
-			if (options.tabWidth) {
-				// Calculate the tab expansion and offsets
-				replacement = Syntax.convertTabsToSpaces(text, options.tabWidth);
-				
-				// Update any existing matches
-				if (matches && matches.length) {
-					var linearOffsets = Syntax.convertToLinearOffsets(replacement.offsets, text.length);
-					matches = Syntax.updateMatchesWithOffsets(matches, linearOffsets, replacement.text);
-				}
-				
-				text = replacement.text;
-			}
-			
-			var html = brush.process(text, matches);
-			
-			if (options.linkify !== false) {
-				jQuery('span.href', html).each(function(){
-					jQuery(this).replaceWith(jQuery('<a>').attr('href', this.innerHTML).text(this.innerHTML));
-				});
-			}
-			
+		Syntax.highlightText(text, options, function(html, brush/*, text, options*/) {
 			Syntax.layouts.get(options.layout, function(layout) {
-				html = layout(options, html, container);
+				html = layout(options, $(html), $(container));
+
+				// If there is a theme specified, ensure it is added to the top level class.
+				if (options.theme) {
+					// Load dependencies
+					var themes = Syntax.themes[options.theme];
+					for (var i = 0; i < themes.length; i += 1) {
+						html.addClass("syntax-theme-" + themes[i]);
+					}
+
+					// Add the base theme
+					html.addClass("syntax-theme-" + options.theme);
+				}
 
 				if (brush.postprocess) {
 					html = brush.postprocess(options, html, container);
